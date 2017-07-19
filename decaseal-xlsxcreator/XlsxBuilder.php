@@ -1,1 +1,0 @@
-<?phpnamespace Decaseal\XlsxCreator;class XlsxBuilder{	var $tempDir = '';	var $author = '';	var $defaultStyle = [];	function __construct(string $tempDir = '', string $author = '', array $defaultStyle = []){	}}
