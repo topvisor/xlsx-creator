@@ -1,0 +1,1 @@
+<?phpnamespace Decaseal\XlsxCreator\Data\Style;class Style{}

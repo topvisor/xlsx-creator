@@ -1,0 +1,1 @@
+<?phpnamespace Decaseal\XlsxCreator\Files;use ZipArchive;interface InnerFile{	function addToZip(ZipArchive $zip);}
