@@ -4,6 +4,6 @@ namespace Decaseal\XlsxCreator;
 
 use Exception;
 
-class ElementCommittedException extends Exception{
+class ElementIsCommittedException extends Exception{
 
 }
