@@ -40,7 +40,7 @@ class FontXml extends BaseXml{
 
 		$xml->startElement($this->tag);
 
-		foreach ($model as $prop => $subModel) $this->subNodes[$prop]->render($xml, $subModel);
+		foreach ($this->subNodes as $prop => $node) if (isset($model[$prop])) $node->render($xml, $model[$prop]);
 
 		$xml->endElement();
 	}
