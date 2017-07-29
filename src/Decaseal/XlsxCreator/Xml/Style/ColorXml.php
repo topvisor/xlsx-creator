@@ -2,13 +2,23 @@
 
 namespace Decaseal\XlsxCreator\Xml\Style;
 
+use Decaseal\XlsxCreator\XlsxCreator;
 use Decaseal\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class ColorXml extends BaseXml{
+	const DEFAULT_TAG = 'color';
+	const DEFAULT_AUTO = 1;
+
+	const RGB = 'rgb';
+	const THEME = 'theme';
+	const TINT = 'tint';
+	const INDEXED = 'indexed';
+	const AUTO = 'auto';
+
 	private $tag;
 
-	public function __construct(string $tag = 'color'){
+	public function __construct(string $tag = ColorXml::DEFAULT_TAG){
 		$this->tag = $tag;
 	}
 
@@ -17,15 +27,15 @@ class ColorXml extends BaseXml{
 
 		$xml->startElement($this->tag);
 
-		if (isset($model['rgb'])) {
-			$xml->writeAttribute('rgb', $model['rgb']);
-		} elseif (isset($model['theme'])) {
-			$xml->writeAttribute('theme', $model['theme']);
-			if (isset($model['tint'])) $xml->writeAttribute('tint', $model['tint']);
-		} elseif(isset($model['indexed'])) {
-			$xml->writeAttribute('indexed', $model['indexed']);
+		if (isset($model[XlsxCreator::COLOR_ARGB])) {
+			$xml->writeAttribute(ColorXml::RGB, $model[XlsxCreator::COLOR_ARGB]);
+		} elseif (isset($model[ColorXml::THEME])) {
+			$xml->writeAttribute(ColorXml::THEME, $model[ColorXml::THEME]);
+			if (isset($model[ColorXml::TINT])) $xml->writeAttribute(ColorXml::TINT, $model[ColorXml::TINT]);
+		} elseif(isset($model[ColorXml::INDEXED])) {
+			$xml->writeAttribute(ColorXml::INDEXED, $model[ColorXml::INDEXED]);
 		} else {
-			$xml->writeAttribute('auto', 1);
+			$xml->writeAttribute(ColorXml::AUTO, ColorXml::DEFAULT_AUTO);
 		}
 
 		$xml->endElement();

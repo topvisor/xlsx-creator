@@ -2,42 +2,48 @@
 
 namespace Decaseal\XlsxCreator\Xml\Style\Fill;
 
+use Decaseal\XlsxCreator\XlsxCreator;
 use Decaseal\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class GradientFillXml extends BaseXml{
+	const TAG = 'gradientFill';
+	const TYPE = 'type';
+
 	function render(XMLWriter $xml, $model = null){
 		if(is_null($model)) return;
 
-		$xml->startElement('gradientFill');
+		$xml->startElement(GradientFillXml::TAG);
 
-		switch ($model['gradient']) {
-			case 'angle':
-				$xml->writeAttribute('degree', $model['degree']);
+		switch ($model[XlsxCreator::FILL_GRADIENT]) {
+			case XlsxCreator::FILL_GRADIENT_ANGLE:
+				$xml->writeAttribute(XlsxCreator::FILL_DEGREE, $model[XlsxCreator::FILL_DEGREE]);
 				break;
 
-			case 'path':
-				$xml->writeAttribute('type', 'path');
+			case XlsxCreator::FILL_GRADIENT_PATH:
+				$xml->writeAttribute(GradientFillXml::TYPE, XlsxCreator::FILL_GRADIENT_PATH);
 
-				if ($model['left']) {
-					$xml->writeAttribute('left', $model['left']);
-					if(!$model['right']) $xml->writeAttribute('right', $model['left']);
+				$center = $model[XlsxCreator::FILL_CENTER] ?? [];
+
+				if ($center[XlsxCreator::FILL_CENTER_LEFT]) {
+					$xml->writeAttribute(XlsxCreator::FILL_CENTER_LEFT, $center[XlsxCreator::FILL_CENTER_LEFT]);
+					if(!$center[XlsxCreator::FILL_CENTER_RIGHT]) $xml->writeAttribute(XlsxCreator::FILL_CENTER_RIGHT, $center[XlsxCreator::FILL_CENTER_LEFT]);
 				}
 
-				if ($model['top']) {
-					$xml->writeAttribute('top', $model['top']);
-					if(!$model['bottom']) $xml->writeAttribute('bottom', $model['top']);
+				if ($center[XlsxCreator::FILL_CENTER_TOP]) {
+					$xml->writeAttribute(XlsxCreator::FILL_CENTER_TOP, $center[XlsxCreator::FILL_CENTER_TOP]);
+					if(!$center[XlsxCreator::FILL_CENTER_BOTTOM]) $xml->writeAttribute(XlsxCreator::FILL_CENTER_BOTTOM, $center[XlsxCreator::FILL_CENTER_TOP]);
 				}
 
-				if($model['right']) $xml->writeAttribute('right', $model['right']);
+				if($center[XlsxCreator::FILL_CENTER_RIGHT]) $xml->writeAttribute(XlsxCreator::FILL_CENTER_RIGHT, $center[XlsxCreator::FILL_CENTER_RIGHT]);
 
-				if($model['bottom']) $xml->writeAttribute('bottom', $model['bottom']);
+				if($center[XlsxCreator::FILL_CENTER_BOTTOM]) $xml->writeAttribute(XlsxCreator::FILL_CENTER_BOTTOM, $center[XlsxCreator::FILL_CENTER_BOTTOM]);
 
 				break;
 		}
 
 		$stopXml = new StopXml();
-		foreach ($model['stops'] as $stopModel) $stopXml->render($xml, $stopModel);
+		foreach ($model[XlsxCreator::FILL_STOPS] as $stopModel) $stopXml->render($xml, $stopModel);
 
 		$xml->endElement();
 	}

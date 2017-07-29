@@ -2,9 +2,12 @@
 
 namespace Decaseal\XlsxCreator\Xml;
 
+use TypeError;
 use XMLWriter;
 
 class ListXml extends BaseXml{
+	const DEFAULT_COUNT_ATTRIBUTE_NAME = 'count';
+
 	private $tag;
 	private $baseXml;
 	private $attributes;
@@ -12,7 +15,9 @@ class ListXml extends BaseXml{
 	private $isCount;
 	private $countAttributeName;
 
-	function __construct(string $tag, BaseXml $baseXml, array $attributes = [], bool $isEmpty = false, bool $isCount = false, string $countAttributeName = 'count'){
+	function __construct(string $tag, BaseXml $baseXml, array $attributes = [], bool $isEmpty = false,
+						 bool $isCount = false, string $countAttributeName = ListXml::DEFAULT_COUNT_ATTRIBUTE_NAME){
+
 		$this->tag = $tag;
 		$this->baseXml = $baseXml;
 		$this->attributes = $attributes;
@@ -25,7 +30,7 @@ class ListXml extends BaseXml{
 		if ($this->isEmpty) {
 			$xml->writeElement($this->tag);
 		} else {
-			if(is_null($model)) return;
+			if (is_null($model)) return;
 
 			$xml->startElement($this->tag);
 

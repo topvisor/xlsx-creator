@@ -6,15 +6,15 @@ use Decaseal\XlsxCreator\Xml\BaseXml;
 use Iterator;
 
 class Index implements Iterator{
-	private $indexes;
-	private $position;
+	protected $indexes;
+	protected $position;
 
-	public function __construct(){
-		$indexes = [];
-		$position = 0;
+	function __construct(){
+		$this->indexes = [];
+		$this->position = 0;
 	}
 
-	function addIndex(BaseXml $baseXml, $model = null) : int{
+	function addIndex(BaseXml $baseXml, $model) : int{
 		$xml = $baseXml->toXml($model);
 
 		$index = $this->indexes[$xml] ?? false;
