@@ -123,6 +123,8 @@ class XlsxCreator{
 			'company' => $this->company,
 			'manager' => $this->manager
 		]));
+
+		### Продолжаем отсюда
 	}
 
 	private function nextId() : int{
