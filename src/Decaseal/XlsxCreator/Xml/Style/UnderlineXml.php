@@ -2,27 +2,21 @@
 
 namespace Decaseal\XlsxCreator\Xml\Style;
 
-use Decaseal\XlsxCreator\XlsxCreator;
+
 use Decaseal\XlsxCreator\Xml\BaseXml;
-use TypeError;
 use XMLWriter;
 
 class UnderlineXml extends BaseXml{
-	const TAG = 'u';
-	const VAL = 'val';
-
 	function render(XMLWriter $xml, $model = null){
 		if (!$model) return;
 
-		$xml->startElement(UnderlineXml::TAG);
+		$xml->startElement('u');
 
 		switch ($model) {
-			case XlsxCreator::FONT_UNDERLINE_DOUBLE: $attributes = [UnderlineXml::VAL => XlsxCreator::FONT_UNDERLINE_DOUBLE]; break;
-			case XlsxCreator::FONT_UNDERLINE_SINGLE_ACCOUNTING: $attributes = [UnderlineXml::VAL => XlsxCreator::FONT_UNDERLINE_SINGLE_ACCOUNTING]; break;
-			case XlsxCreator::FONT_UNDERLINE_DOUBLE_ACCOUNTING: $attributes = [UnderlineXml::VAL => XlsxCreator::FONT_UNDERLINE_DOUBLE_ACCOUNTING]; break;
-			default: $attributes = []; break;
+			case 'double' : $xml->writeAttribute('val', 'double'); break;
+			case 'singleAccounting' : $xml->writeAttribute('val', 'singleAccounting'); break;
+			case 'doubleAccounting' : $xml->writeAttribute('val', 'doubleAccounting'); break;
 		}
-		foreach ($attributes as $name => $value) $xml->writeAttribute($name, $value);
 
 		$xml->endElement();
 	}

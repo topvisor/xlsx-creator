@@ -12,6 +12,7 @@ namespace Decaseal\XlsxCreator;
 use DateTime;
 use Decaseal\XlsxCreator\Xml\Core\AppXml;
 use Decaseal\XlsxCreator\Xml\Core\ContentTypesXml;
+use Decaseal\XlsxCreator\Xml\Core\CoreXml;
 use Decaseal\XlsxCreator\Xml\Core\RelationshipsXml;
 use Decaseal\XlsxCreator\Xml\Style\StylesXml;
 use ZipArchive;
@@ -102,6 +103,22 @@ class XlsxCreator{
 		return $this->worksheets;
 	}
 
+	function getCreator() : string{
+		return $this->creator;
+	}
+
+	function getLastModifiedBy() : string{
+		return $this->lastModifiedBy;
+	}
+
+	function getCreated() : DateTime{
+		return $this->created;
+	}
+
+	function getModified() : DateTime{
+		return $this->modified;
+	}
+
 	function isCommitted() : bool{
 		return $this->committed;
 	}
@@ -123,8 +140,23 @@ class XlsxCreator{
 			'company' => $this->company,
 			'manager' => $this->manager
 		]));
+		$this->zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this));
+		$this->zip->addFromString('xl/styles.xml', (new StylesXml())->toXml());
 
-		### Продолжаем отсюда
+		$relationships = [
+			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles', 'Target' => 'styles.xml'],
+			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme', 'Target' => 'theme/theme1.xml']
+		];
+		foreach ($this->getWorksheets() as $worksheet) {
+			$relationships[] = [
+				'Id' => 'rId' . (count($relationships) + 1),
+				'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
+				'Target' => 'worksheets/sheet' . $worksheet->getId() . '.xml'
+			];
+		}
+		$this->zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($relationships));
+
+		### addWorkbookXml
 	}
 
 	private function nextId() : int{
@@ -135,122 +167,3 @@ class XlsxCreator{
 
 	}
 }
-
-//	const BORDER_LEFT = 'left';
-//	const BORDER_RIGHT = 'right';
-//	const BORDER_TOP = 'top';
-//	const BORDER_BOTTOM = 'bottom';
-//
-//	const BORDER_DIAGONAL = 'diagonal';
-//	const BORDER_DIAGONAL_UP = 'up';
-//	const BORDER_DIAGONAL_DOWN = 'down';
-//
-//	const BORDER_COLOR = 'color';
-//	const BORDER_STYLE = 'style';
-//
-//	const BORDER_STYLE_THIN = 'thin';
-//	const BORDER_STYLE_DOTTED = 'dotted';
-//	const BORDER_STYLE_DASHDOT = 'dashdot';
-//	const BORDER_STYLE_HAIR = 'hair';
-//	const BORDER_STYLE_DASHDOTDOT = 'dashdotdot';
-//	const BORDER_STYLE_SLANTDASHDOT = 'slantdashdot';
-//	const BORDER_STYLE_MEDIUMDASHED = 'mediumdashed';
-//	const BORDER_STYLE_MEDIUMDASHDOTDOT = 'mediumdashdotdot';
-//	const BORDER_STYLE_MEDIUMDASHDOT = 'mediumdashdot';
-//	const BORDER_STYLE_MEDIUM = 'medium';
-//	const BORDER_STYLE_DOUBLE = 'double';
-//	const BORDER_STYLE_THICK = 'thick';
-//
-//	const FILL_TYPE = 'type';
-//
-//	const FILL_GRADIENT = 'gradient';
-//	const FILL_GRADIENT_ANGLE = 'angle';
-//	const FILL_GRADIENT_PATH = 'path';
-//	const FILL_DEGREE = 'degree';
-//	const FILL_CENTER = 'center';
-//	const FILL_CENTER_LEFT = 'left';
-//	const FILL_CENTER_RIGHT = 'right';
-//	const FILL_CENTER_TOP = 'top';
-//	const FILL_CENTER_BOTTOM = 'bottom';
-//	const FILL_STOPS = 'stops';
-//	const FILL_STOP_POSITION = 'position';
-//	const FILL_STOP_COLOR = 'color';
-//
-//	const FILL_PATTERN = 'pattern';
-//	const FILL_FG_COLOR = 'fgColor';
-//	const FILL_BG_COLOR = 'bgColor';
-//
-//	const FILL_PATTERN_NONE = 'none';
-//	const FILL_PATTERN_SOLID = 'solid';
-//	const FILL_PATTERN_DARK_GRAY = 'darkGray';
-//	const FILL_PATTERN_MEDIUM_GRAY = 'mediumGray';
-//	const FILL_PATTERN_LIGHT_GRAY = 'lightGray';
-//	const FILL_PATTERN_GRAY_125 = 'gray125';
-//	const FILL_PATTERN_GRAY_0625 = 'gray0625';
-//	const FILL_PATTERN_DARK_HORIZONTAL = 'darkHorizontal';
-//	const FILL_PATTERN_DARK_VERTICAL = 'darkVertical';
-//	const FILL_PATTERN_DARK_DOWN = 'darkDown';
-//	const FILL_PATTERN_DARK_UP = 'darkUp';
-//	const FILL_PATTERN_DARK_GRID = 'darkGrid';
-//	const FILL_PATTERN_DARK_TRELLIS = 'darkTrellis';
-//	const FILL_PATTERN_LIGHT_HORIZONTAL = 'lightHorizontal';
-//	const FILL_PATTERN_LIGHT_VERTICAL = 'lightVertical';
-//	const FILL_PATTERN_LIGHT_DOWN = 'lightDown';
-//	const FILL_PATTERN_LIGHT_UP = 'lightUp';
-//	const FILL_PATTERN_LIGHT_TRELLIS = 'lightTrellis';
-//	const FILL_PATTERN_LIGHT_GRID = 'lightGrid';
-//
-//	const COLOR_ARGB = 'argb';
-//
-//	const FONT_BOLD = 'b';
-//	const FONT_ITALIC = 'i';
-//	const FONT_UNDERLINE = 'u';
-//	const FONT_CHARSET = 'charset';
-//	const FONT_COLOR = 'color';
-//	const FONT_CONDENSE = 'condense';
-//	const FONT_EXTEND = 'extend';
-//	const FONT_FAMILY = 'family';
-//	const FONT_OUTLINE = 'outline';
-//	const FONT_SCHEME = 'scheme';
-//	const FONT_SHADOW = 'shadow';
-//	const FONT_STRIKE = 'strike';
-//	const FONT_SIZE = 'sz';
-//	const FONT_NAME = 'name';
-//
-//	const FONT_SCHEME_MINOR = 'minor';
-//	const FONT_SCHEME_MAJOR = 'major';
-//	const FONT_SCHEME_NONE = 'none';
-//
-//	const FONT_UNDERLINE_SINGLE = 'single';
-//	const FONT_UNDERLINE_DOUBLE = 'double';
-//	const FONT_UNDERLINE_SINGLE_ACCOUNTING = 'singleAccounting';
-//	const FONT_UNDERLINE_DOUBLE_ACCOUNTING = 'doubleAccounting';
-//
-//	const NUM_FMT = 'numFmt';
-//
-//	const ALIGNMENT_HORIZONTAL = 'horizontal';
-//	const ALIGNMENT_HORIZONTAL_LEFT = 'left';
-//	const ALIGNMENT_HORIZONTAL_CENTER = 'center';
-//	const ALIGNMENT_HORIZONTAL_RIGHT = 'right';
-//	const ALIGNMENT_HORIZONTAL_FILL = 'fill';
-//	const ALIGNMENT_HORIZONTAL_JUSTIFY = 'justify';
-//	const ALIGNMENT_HORIZONTAL_CENTER_CONTINUOUS = 'centerContinuous';
-//	const ALIGNMENT_HORIZONTAL_DISTRIBUTED = 'distributed';
-//
-//	const ALIGNMENT_VERTICAL = 'vertical';
-//	const ALIGNMENT_VERTICAL_TOP = 'top';
-//	const ALIGNMENT_VERTICAL_CENTER = 'center';
-//	const ALIGNMENT_VERTICAL_BOTTOM = 'bottom';
-//	const ALIGNMENT_VERTICAL_DISTRIBUTED = 'distributed';
-//	const ALIGNMENT_VERTICAL_JUSTIFY = 'justify';
-//
-//	const ALIGNMENT_WRAP_TEXT = 'wrapText';
-//	const ALIGNMENT_SHRINK_TO_FIT = 'shrinkToFit';
-//	const ALIGNMENT_INDENT = 'indent';
-//
-//	const ALIGNMENT_READING_ORDER = 'readingOrder';
-//	const ALIGNMENT_READING_ORDER_LTR = '1';
-//	const ALIGNMENT_READING_ORDER_RTL = '2';
-//
-//	const ALIGNMENT_TEXT_ROTATION = 'textRotation';
-//	const ALIGNMENT_TEXT_ROTATION_VERTICAL = '255';
