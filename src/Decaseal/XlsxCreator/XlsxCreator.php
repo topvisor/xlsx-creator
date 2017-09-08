@@ -10,10 +10,10 @@
 namespace Decaseal\XlsxCreator;
 
 use DateTime;
-use Decaseal\XlsxCreator\Xml\Core\AppXml;
+use Decaseal\XlsxCreator\Xml\Core\App\AppXml;
 use Decaseal\XlsxCreator\Xml\Core\ContentTypesXml;
 use Decaseal\XlsxCreator\Xml\Core\CoreXml;
-use Decaseal\XlsxCreator\Xml\Core\RelationshipsXml;
+use Decaseal\XlsxCreator\Xml\Core\Relationships\RelationshipsXml;
 use Decaseal\XlsxCreator\Xml\Styles\StylesXml;
 use ZipArchive;
 
