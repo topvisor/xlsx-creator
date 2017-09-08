@@ -9,14 +9,16 @@ use XMLWriter;
 class StylesXml extends BaseXml{
 	private $fontIndex;
 	private $borderIndex;
+	private $styleIndex;
 
 	function __construct(){
 		$this->fontIndex = new StylesIndex(new FontXml());
 		$this->borderIndex = new StylesIndex(new BorderXml());
+		$this->styleIndex = new StylesIndex(new StyleXml());
 
 		$this->fontIndex->addIndex(['sz' => 11, 'color' => ['theme' => 1], 'name' => 'Calibri', 'family' => 2, 'scheme' => 'minor']);
 		$this->borderIndex->addIndex([]);
-		### StyleXml
+		$this->styleIndex->addIndex(['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0, 'xfId' => 0]);
 	}
 
 	function render(XMLWriter $xml, $model = null){
