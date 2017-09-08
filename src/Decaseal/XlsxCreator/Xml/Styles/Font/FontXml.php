@@ -1,10 +1,11 @@
 <?php
 
-namespace Decaseal\XlsxCreator\Xml\Style;
+namespace Decaseal\XlsxCreator\Xml\Styles\Font;
 
 use Decaseal\XlsxCreator\Xml\BaseXml;
 use Decaseal\XlsxCreator\Xml\Simple\BoolXml;
 use Decaseal\XlsxCreator\Xml\Simple\StringXml;
+use Decaseal\XlsxCreator\Xml\Styles\ColorXml;
 use XMLWriter;
 
 class FontXml extends BaseXml{

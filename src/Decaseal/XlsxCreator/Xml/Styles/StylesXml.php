@@ -1,9 +1,12 @@
 <?php
 
-namespace Decaseal\XlsxCreator\Xml\Style;
+namespace Decaseal\XlsxCreator\Xml\Styles;
 
 use Decaseal\XlsxCreator\Xml\BaseXml;
-use Decaseal\XlsxCreator\Xml\Style\Index\StylesIndex;
+use Decaseal\XlsxCreator\Xml\Styles\Border\BorderXml;
+use Decaseal\XlsxCreator\Xml\Styles\Font\FontXml;
+use Decaseal\XlsxCreator\Xml\Styles\Index\StylesIndex;
+use Decaseal\XlsxCreator\Xml\Styles\Style\StyleXml;
 use XMLWriter;
 
 class StylesXml extends BaseXml{
@@ -19,6 +22,7 @@ class StylesXml extends BaseXml{
 		$this->fontIndex->addIndex(['sz' => 11, 'color' => ['theme' => 1], 'name' => 'Calibri', 'family' => 2, 'scheme' => 'minor']);
 		$this->borderIndex->addIndex([]);
 		$this->styleIndex->addIndex(['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0, 'xfId' => 0]);
+
 	}
 
 	function render(XMLWriter $xml, $model = null){

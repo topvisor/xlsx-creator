@@ -1,6 +1,6 @@
 <?php
 
-namespace Decaseal\XlsxCreator\Xml\Style\Index;
+namespace Decaseal\XlsxCreator\Xml\Styles\Index;
 
 class StylesNumFmtsIndex extends StylesIndex{
 	private const DEFAULT_NUM_FMTS = [

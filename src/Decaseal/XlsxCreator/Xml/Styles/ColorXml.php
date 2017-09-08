@@ -1,6 +1,6 @@
 <?php
 
-namespace Decaseal\XlsxCreator\Xml\Style;
+namespace Decaseal\XlsxCreator\Xml\Styles;
 
 use Decaseal\XlsxCreator\Xml\BaseXml;
 use XMLWriter;

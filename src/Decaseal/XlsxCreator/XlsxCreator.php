@@ -14,7 +14,7 @@ use Decaseal\XlsxCreator\Xml\Core\AppXml;
 use Decaseal\XlsxCreator\Xml\Core\ContentTypesXml;
 use Decaseal\XlsxCreator\Xml\Core\CoreXml;
 use Decaseal\XlsxCreator\Xml\Core\RelationshipsXml;
-use Decaseal\XlsxCreator\Xml\Style\StylesXml;
+use Decaseal\XlsxCreator\Xml\Styles\StylesXml;
 use ZipArchive;
 
 /**
