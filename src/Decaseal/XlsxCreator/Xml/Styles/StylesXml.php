@@ -13,23 +13,19 @@ use Decaseal\XlsxCreator\Xml\Styles\Style\StyleXml;
 use XMLWriter;
 
 class StylesXml extends BaseXml{
-	private const CELL_STYLES_XML =
-		'<cellStyles count="1">
-			<cellStyle name="Normal" xfId="0" builtinId="0"/>
-		</cellStyles>';
-	private const DXFS_XML =
-		'<dxfs count="0"/>';
-	private const TABLE_STYLES_XML =
-		'<tableStyles count="0" defaultTableStyle="TableStyleMedium2" defaultPivotStyle="PivotStyleLight16"/>';
-	private const EXT_LST_XML =
-		'<extLst>
-			<ext uri="{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
-				<x14:slicerStyles defaultSlicerStyle="SlicerStyleLight1"/>
-			</ext>
-			<ext uri="{9260A510-F301-46a8-8635-F512D64BE5F5}" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main">
-				<x15:timelineStyles defaultTimelineStyle="TimeSlicerStyleLight1"/>
-			</ext>
-		</extLst>';
+	private const CELL_STYLES_XML = '<cellStyles count="1">
+		<cellStyle name="Normal" xfId="0" builtinId="0"/>
+	</cellStyles>';
+	private const DXFS_XML = '<dxfs count="0"/>';
+	private const TABLE_STYLES_XML = '<tableStyles count="0" defaultTableStyle="TableStyleMedium2" defaultPivotStyle="PivotStyleLight16"/>';
+	private const EXT_LST_XML = '<extLst>
+		<ext uri="{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
+			<x14:slicerStyles defaultSlicerStyle="SlicerStyleLight1"/>
+		</ext>
+		<ext uri="{9260A510-F301-46a8-8635-F512D64BE5F5}" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main">
+			<x15:timelineStyles defaultTimelineStyle="TimeSlicerStyleLight1"/>
+		</ext>
+	</extLst>';
 
 	private $fontIndex;
 	private $borderIndex;
