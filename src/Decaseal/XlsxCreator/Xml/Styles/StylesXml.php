@@ -4,6 +4,7 @@ namespace Decaseal\XlsxCreator\Xml\Styles;
 
 use Decaseal\XlsxCreator\Xml\BaseXml;
 use Decaseal\XlsxCreator\Xml\Styles\Border\BorderXml;
+use Decaseal\XlsxCreator\Xml\Styles\Fill\FillXml;
 use Decaseal\XlsxCreator\Xml\Styles\Font\FontXml;
 use Decaseal\XlsxCreator\Xml\Styles\Index\StylesIndex;
 use Decaseal\XlsxCreator\Xml\Styles\Style\StyleXml;
@@ -13,17 +14,20 @@ class StylesXml extends BaseXml{
 	private $fontIndex;
 	private $borderIndex;
 	private $styleIndex;
+	private $fillIndex;
+//	private $
 
 	function __construct(){
 		$this->fontIndex = new StylesIndex(new FontXml());
 		$this->borderIndex = new StylesIndex(new BorderXml());
 		$this->styleIndex = new StylesIndex(new StyleXml());
+		$this->fillIndex = new StylesIndex(new FillXml());
 
 		$this->fontIndex->addIndex(['sz' => 11, 'color' => ['theme' => 1], 'name' => 'Calibri', 'family' => 2, 'scheme' => 'minor']);
 		$this->borderIndex->addIndex([]);
 		$this->styleIndex->addIndex(['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0, 'xfId' => 0]);
-
-		### FillXml
+		$this->fillIndex->addIndex(['type' => 'pattern', 'pattern' => 'none']);
+		$this->fillIndex->addIndex(['type' => 'pattern', 'pattern' => 'gray125']);
 	}
 
 	function render(XMLWriter $xml, $model = null){
