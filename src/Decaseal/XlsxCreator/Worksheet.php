@@ -9,6 +9,7 @@ class Worksheet{
 	private $defaultRowHeight;
 
 	private $committed;
+	private $rId;
 
 	function __construct(int $id, string $name, string $tabColor = null, int $defaultRowHeight = 15){
 		$this->id = $id;
@@ -29,6 +30,14 @@ class Worksheet{
 
 	function isCommitted() : bool{
 		return $this->committed;
+	}
+
+	function setRId(string $rId){
+		$this->rId = $rId;
+	}
+
+	function getRId() : string{
+		return $this->rId ?? '';
 	}
 
 	function commit(){

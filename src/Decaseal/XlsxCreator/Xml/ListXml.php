@@ -2,7 +2,6 @@
 
 namespace Decaseal\XlsxCreator\Xml;
 
-use TypeError;
 use XMLWriter;
 
 class ListXml extends BaseXml{
@@ -28,7 +27,7 @@ class ListXml extends BaseXml{
 		if ($this->isEmpty) {
 			$xml->writeElement($this->tag);
 		} else {
-			if (is_null($model)) return;
+			if (!$model) return;
 
 			$xml->startElement($this->tag);
 

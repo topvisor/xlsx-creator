@@ -10,6 +10,7 @@
 namespace Decaseal\XlsxCreator;
 
 use DateTime;
+use Decaseal\XlsxCreator\Xml\Book\Workbook\WorkbookXml;
 use Decaseal\XlsxCreator\Xml\Core\App\AppXml;
 use Decaseal\XlsxCreator\Xml\Core\ContentTypesXml;
 use Decaseal\XlsxCreator\Xml\Core\CoreXml;
@@ -142,28 +143,32 @@ class XlsxCreator{
 		]));
 		$this->zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this));
 		$this->zip->addFromString('xl/styles.xml', (new StylesXml())->toXml());
-
-		$relationships = [
-			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles', 'Target' => 'styles.xml'],
-			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme', 'Target' => 'theme/theme1.xml']
-		];
-		foreach ($this->getWorksheets() as $worksheet) {
-			$relationships[] = [
-				'Id' => 'rId' . (count($relationships) + 1),
-				'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
-				'Target' => 'worksheets/sheet' . $worksheet->getId() . '.xml'
-			];
-		}
-		$this->zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($relationships));
-
-		### addWorkbookXml
+		$this->zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
+		$this->zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheets()));
 	}
 
 	private function nextId() : int{
 		return $this->nextId++;
 	}
 
-	private function finalize(){
+	private function genRelationships() : array{
+		$count = 1;
 
+		$relationships = [
+			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles', 'Target' => 'styles.xml'],
+			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme', 'Target' => 'theme/theme1.xml']
+		];
+
+		foreach ($this->getWorksheets() as $worksheet) {
+			$worksheet->setRId('rId' . $count++);
+
+			$relationships[] = [
+				'Id' => $worksheet->getRId(),
+				'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
+				'Target' => 'worksheets/sheet' . $worksheet->getId() . '.xml'
+			];
+		}
+
+		return $relationships;
 	}
 }
