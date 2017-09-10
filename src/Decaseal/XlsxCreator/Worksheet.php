@@ -9,6 +9,9 @@ class Worksheet{
 	private $defaultRowHeight;
 
 	private $committed;
+	private $rows;
+	private $startedData;
+
 	private $rId;
 
 	function __construct(int $id, string $name, string $tabColor = null, int $defaultRowHeight = 15){
@@ -18,6 +21,8 @@ class Worksheet{
 		$this->defaultRowHeight = $defaultRowHeight;
 
 		$this->committed = false;
+		$this->rows = [];
+		$this->startedData = false;
 	}
 
 	function getId() : int{
@@ -40,7 +45,37 @@ class Worksheet{
 		return $this->rId ?? '';
 	}
 
+	function addRow($values = null) : Row{
+		$row = new Row($this, count($this->rows) + 1);
+		if (!is_null($values)) $row->setValues($values);
+
+		$this->rows[] = $row;
+
+		return $row;
+	}
+
 	function commit(){
 		if ($this->isCommitted()) return;
+		$this->committed = true;
+	}
+
+	private function writeRows(){ ###
+		if (!$this->startedData) {
+			$this->writeColumns();
+			$this->writeOpenSheetData();
+			$this->startedData = true;
+		}
+
+		foreach ($this->rows as $row) {
+//			if ($row->hasValues())
+		}
+	}
+
+	private function writeColumns(){
+
+	}
+
+	private function writeOpenSheetData(){
+
 	}
 }
