@@ -126,6 +126,7 @@ class XlsxCreator{
 
 	function commit(){
 		if ($this->isCommitted() || !count($this->getWorksheets())) return;
+		$this->committed = true;
 
 		foreach ($this->worksheets as $worksheet) $worksheet->commit();
 
@@ -145,6 +146,8 @@ class XlsxCreator{
 		$this->zip->addFromString('xl/styles.xml', (new StylesXml())->toXml());
 		$this->zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
 		$this->zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheets()));
+
+		$this->zip->close();
 	}
 
 	private function nextId() : int{
