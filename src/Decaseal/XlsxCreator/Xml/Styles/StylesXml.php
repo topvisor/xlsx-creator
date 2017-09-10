@@ -23,7 +23,7 @@ class StylesXml extends BaseXml{
 		$this->borderIndex = new StylesIndex(new BorderXml());
 		$this->styleIndex = new StylesIndex(new StyleXml());
 		$this->fillIndex = new StylesIndex(new FillXml());
-//		$this->numFmtIndex = new StylesNumFmtIndex();
+		$this->numFmtIndex = new StylesNumFmtIndex(new NumFmtXml());
 
 		$this->fontIndex->addIndex(['sz' => 11, 'color' => ['theme' => 1], 'name' => 'Calibri', 'family' => 2, 'scheme' => 'minor']);
 		$this->borderIndex->addIndex([]);
