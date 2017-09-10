@@ -29,4 +29,8 @@ class StylesIndex{
 
 		return $index;
 	}
+
+	function getXmls() : array{
+		return $this->xmls;
+	}
 }

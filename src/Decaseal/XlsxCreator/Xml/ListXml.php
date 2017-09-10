@@ -6,8 +6,6 @@ use TypeError;
 use XMLWriter;
 
 class ListXml extends BaseXml{
-	const DEFAULT_COUNT_ATTRIBUTE_NAME = 'count';
-
 	private $tag;
 	private $baseXml;
 	private $attributes;
@@ -16,7 +14,7 @@ class ListXml extends BaseXml{
 	private $countAttributeName;
 
 	function __construct(string $tag, BaseXml $baseXml, array $attributes = [], bool $isEmpty = false,
-						 bool $isCount = false, string $countAttributeName = ListXml::DEFAULT_COUNT_ATTRIBUTE_NAME){
+						 bool $isCount = false, string $countAttributeName = 'count'){
 
 		$this->tag = $tag;
 		$this->baseXml = $baseXml;

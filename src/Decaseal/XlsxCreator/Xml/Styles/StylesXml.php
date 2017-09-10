@@ -3,6 +3,7 @@
 namespace Decaseal\XlsxCreator\Xml\Styles;
 
 use Decaseal\XlsxCreator\Xml\BaseXml;
+use Decaseal\XlsxCreator\Xml\ListXml;
 use Decaseal\XlsxCreator\Xml\Styles\Border\BorderXml;
 use Decaseal\XlsxCreator\Xml\Styles\Fill\FillXml;
 use Decaseal\XlsxCreator\Xml\Styles\Font\FontXml;
@@ -42,9 +43,28 @@ class StylesXml extends BaseXml{
 		$xml->writeAttribute('xmlns:x14ac', 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac');
 		$xml->writeAttribute('xmlns:x16r2', 'http://schemas.microsoft.com/office/spreadsheetml/2015/02/main');
 
+		if ($rawXmls = $this->numFmtIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'numFmts', $rawXmls);
+		if ($rawXmls = $this->fontIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'fonts', $rawXmls);
+		if ($rawXmls = $this->fillIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'fills', $rawXmls);
+		if ($rawXmls = $this->borderIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'borders', $rawXmls);
+
+		(new ListXml('cellStyleXfs', new StyleXml(false), [], false, true))
+			->render($xml, ['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0]);
+
+		if ($rawXmls = $this->styleIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'cellXfs', $rawXmls);
+
 
 
 		$xml->endElement();
 		$xml->endDocument();
+	}
+
+	function addIndexToXml(XMLWriter $xml, string $tag, array $rawXmls){
+		$xml->startElement($tag);
+		$xml->writeAttribute('count', count($rawXmls));
+
+		foreach ($rawXmls as $rawXml) $xml->writeRaw($rawXml);
+
+		$xml->endElement();
 	}
 }
