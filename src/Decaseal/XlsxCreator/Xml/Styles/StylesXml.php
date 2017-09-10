@@ -7,6 +7,7 @@ use Decaseal\XlsxCreator\Xml\Styles\Border\BorderXml;
 use Decaseal\XlsxCreator\Xml\Styles\Fill\FillXml;
 use Decaseal\XlsxCreator\Xml\Styles\Font\FontXml;
 use Decaseal\XlsxCreator\Xml\Styles\Index\StylesIndex;
+use Decaseal\XlsxCreator\Xml\Styles\Index\StylesNumFmtIndex;
 use Decaseal\XlsxCreator\Xml\Styles\Style\StyleXml;
 use XMLWriter;
 
@@ -15,13 +16,14 @@ class StylesXml extends BaseXml{
 	private $borderIndex;
 	private $styleIndex;
 	private $fillIndex;
-//	private $
+	private $numFmtIndex;
 
 	function __construct(){
 		$this->fontIndex = new StylesIndex(new FontXml());
 		$this->borderIndex = new StylesIndex(new BorderXml());
 		$this->styleIndex = new StylesIndex(new StyleXml());
 		$this->fillIndex = new StylesIndex(new FillXml());
+//		$this->numFmtIndex = new StylesNumFmtIndex();
 
 		$this->fontIndex->addIndex(['sz' => 11, 'color' => ['theme' => 1], 'name' => 'Calibri', 'family' => 2, 'scheme' => 'minor']);
 		$this->borderIndex->addIndex([]);

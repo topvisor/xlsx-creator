@@ -5,10 +5,10 @@ namespace Decaseal\XlsxCreator\Xml\Styles\Index;
 use Decaseal\XlsxCreator\Xml\BaseXml;
 
 class StylesIndex{
-	private $baseXml;
+	protected $baseXml;
 
-	private $indexes;
-	private $xmls;
+	protected $indexes;
+	protected $xmls;
 
 	function __construct(BaseXml $baseXml){
 		$this->baseXml = $baseXml;

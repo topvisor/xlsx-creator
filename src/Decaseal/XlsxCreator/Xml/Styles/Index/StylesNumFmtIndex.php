@@ -2,8 +2,8 @@
 
 namespace Decaseal\XlsxCreator\Xml\Styles\Index;
 
-class StylesNumFmtsIndex extends StylesIndex{
-	private const DEFAULT_NUM_FMTS = [
+class StylesNumFmtIndex extends StylesIndex{
+	private const DEFAULT_NUM_FMT = [
 		'General' => 0,
 		'0' => 1,
 		'0.00' => 2,
@@ -34,5 +34,15 @@ class StylesNumFmtsIndex extends StylesIndex{
 		'@' => 49
 	];
 
-	private const NUM_FMTS_START_INDEX = 164;
+	private const NUM_FMT_START_INDEX = 164;
+
+	function addIndex($model){
+		if (isset(StylesNumFmtIndex::DEFAULT_NUM_FMT[$model])) return StylesNumFmtIndex::DEFAULT_NUM_FMT[$model];
+		if (isset($this->indexes[$model])) return $this->indexes[$model];
+
+		$index = StylesNumFmtIndex::NUM_FMT_START_INDEX + count($this->xmls);
+		$this->xmls[] = $this->baseXml->toXml(['id' => $index, 'formatCode' => $model]);
+
+		return $index;
+	}
 }
