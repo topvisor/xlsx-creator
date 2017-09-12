@@ -25,7 +25,7 @@ class Row{
 		}
 	}
 
-	function hasValues() {
+	function hasValues(){
 		foreach ($this->cells as $cell) if ($cell->getType() !== Cell::TYPE_NULL) return true;
 		return false;
 	}

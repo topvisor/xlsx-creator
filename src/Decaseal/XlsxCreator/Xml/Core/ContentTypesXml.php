@@ -31,7 +31,7 @@ class ContentTypesXml extends BaseXml{
 
 		foreach ($model['worksheets'] as $worksheet) {
 			$xml->startElement('Override');
-			$xml->writeAttribute('PartName', '/xl/worksheets/sheet'.$worksheet->getId().'.xml');
+			$xml->writeAttribute('PartName', $worksheet->getRelativeFilename());
 			$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml');
 			$xml->endElement();
 		}

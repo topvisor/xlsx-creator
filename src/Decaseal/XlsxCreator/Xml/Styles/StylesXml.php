@@ -2,6 +2,7 @@
 
 namespace Decaseal\XlsxCreator\Xml\Styles;
 
+use Decaseal\XlsxCreator\Cell;
 use Decaseal\XlsxCreator\Xml\BaseXml;
 use Decaseal\XlsxCreator\Xml\ListXml;
 use Decaseal\XlsxCreator\Xml\Styles\Border\BorderXml;
@@ -74,6 +75,29 @@ class StylesXml extends BaseXml{
 
 		$xml->endElement();
 		$xml->endDocument();
+	}
+
+	function addStyle(array $model, int $cellType = null) : int{
+		if (!$model) return 0;
+
+		$cellType = $cellType ?? Cell::TYPE_NUMBER;
+		$styleModel = [];
+
+		if ($model['numFmt'] ?? false) {
+			$styleModel['numFmtId'] = $this->numFmtIndex->addIndex($styleModel['numFmt']);
+		} else {
+			switch ($cellType) {
+				case Cell::TYPE_NUMBER: $styleModel['numFmtId'] = $this->numFmtIndex->addIndex('General'); break;
+				case Cell::TYPE_DATE: $styleModel['numFmtId'] = $this->numFmtIndex->addIndex('mm-dd-yy'); break;
+			}
+		}
+
+		if ($model['font'] ?? false) $styleModel['fontId'] = $this->fontIndex->addIndex($model['font']);
+		if ($model['fill'] ?? false) $styleModel['fillId'] = $this->fillIndex->addIndex($model['fill']);
+		if ($model['border'] ?? false) $styleModel['borderId'] = $this->fillIndex->addIndex($model['border']);
+		if ($model['alignment'] ?? false) $styleModel['alignment'] = $model['alignment'];
+
+		return $this->styleIndex->addIndex($styleModel);
 	}
 
 	private function addIndexToXml(XMLWriter $xml, string $tag, array $rawXmls){

@@ -17,7 +17,7 @@ class StylesIndex{
 		$this->xmls = [];
 	}
 
-	function addIndex($model){
+	function addIndex($model) : int{
 		$xml = $this->baseXml->toXml($model);
 
 		if (isset($this->indexes[$xml])) return $this->indexes[$xml];

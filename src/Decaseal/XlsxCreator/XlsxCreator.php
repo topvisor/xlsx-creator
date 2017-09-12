@@ -104,6 +104,10 @@ class XlsxCreator{
 		return $this->worksheets;
 	}
 
+	function getTempdir() : string{
+		return $this->tempdir;
+	}
+
 	function getCreator() : string{
 		return $this->creator;
 	}

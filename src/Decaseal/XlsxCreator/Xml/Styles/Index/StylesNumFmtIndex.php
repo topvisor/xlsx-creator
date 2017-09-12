@@ -36,7 +36,7 @@ class StylesNumFmtIndex extends StylesIndex{
 
 	private const NUM_FMT_START_INDEX = 164;
 
-	function addIndex($model){
+	function addIndex($model) : int{
 		if (isset(StylesNumFmtIndex::DEFAULT_NUM_FMT[$model])) return StylesNumFmtIndex::DEFAULT_NUM_FMT[$model];
 		if (isset($this->indexes[$model])) return $this->indexes[$model];
 
