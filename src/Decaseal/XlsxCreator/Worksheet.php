@@ -11,31 +11,38 @@ class Worksheet{
 	private $workbook;
 	private $id;
 	private $name;
-	private $tabColor;
-	private $defaultRowHeight;
-	private $view;
+//	private $tabColor;
+//	private $defaultRowHeight;
+//	private $view;
 
 	private $committed;
 	private $rows;
+	private $merges;
+	private $sheetRels;
 	private $startedData;
+
+	private $filename;
 	private $xml;
 
 	private $rId;
 
-	function __construct(XlsxCreator $workbook, int $id, string $name, string $tabColor = null, int $defaultRowHeight = 15, array $view = null){
+	function __construct(XlsxCreator $workbook, int $id, string $name){
 		$this->workbook = $workbook;
 		$this->id = $id;
 		$this->name = $name;
-		$this->tabColor = $tabColor;
-		$this->defaultRowHeight = $defaultRowHeight;
-		$this->view = $view;
-
+//		$this->tabColor = $tabColor;
+//		$this->defaultRowHeight = $defaultRowHeight;
+//		$this->view = $view;
+//
 		$this->committed = false;
 		$this->rows = [];
+		$this->merges = [];
+		$this->sheetRels = new SheetRels($this);
 		$this->startedData = false;
 
+		$this->filename = $this->workbook->genTempFilename();
 		$this->xml = new XMLWriter();
-		$this->xml->openURI($this->getAbsFilename());
+		$this->xml->openURI($this->filename);
 
 		$this->startWorksheet();
 	}
@@ -60,22 +67,26 @@ class Worksheet{
 		return $this->rId ?? '';
 	}
 
-	function getAbsFilename() : string{
-		return $this->workbook->getTempdir() . $this->getRelFilename();
+	function getWorkbook() : XlsxCreator{
+		return $this->workbook;
 	}
 
-	function getRelFilename() : string{
-		return '/xl/worksheets/sheet' . $this->getId() . '.xml';
-	}
+//	function getAbsFilename() : string{
+//		return $this->workbook->getTempdir() . $this->getRelFilename();
+//	}
 
-	function addRow($values = null) : Row{
-		$row = new Row($this, count($this->rows) + 1);
-		if (!is_null($values)) $row->setValues($values);
+//	function getRelFilename() : string{
+//		return '/xl/worksheets/sheet' . $this->getId() . '.xml';
+//	}
 
-		$this->rows[] = $row;
-
-		return $row;
-	}
+//	function addRow($values = null) : Row{
+//		$row = new Row($this, count($this->rows) + 1);
+//		if (!is_null($values)) $row->setValues($values);
+//
+//		$this->rows[] = $row;
+//
+//		return $row;
+//	}
 
 	function commit(){
 		if ($this->isCommitted()) return;
@@ -92,33 +103,38 @@ class Worksheet{
 		$this->xml->writeAttribute('mc:Ignorable', 'x14ac');
 		$this->xml->writeAttribute('xmlns:x14ac', 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac');
 
-		(new SheetPropertiesXml())->render($this->xml, $this->tabColor);
-		(new ListXml('sheetViews', new SheetViewXml()))->render($this->xml, [$this->view]);
+		(new SheetPropertiesXml())->render($this->xml, [
+
+		]);
+		(new ListXml('sheetViews', new SheetViewXml()))->render($this->xml, [
+
+		]);
 	}
 
-	private function endWorksheet(){
+//	private function endWorksheet(){
+//
+//	}
 
-	}
+//	private function writeRows(){
+//		if (!$this->startedData) {
+//			$this->writeColumns();
+//			$this->writeOpenSheetData();
+//			$this->startedData = true;
+//		}
+//
+//		foreach ($this->rows as $row) {
+//			if ($row->hasValues()) {
+//
+//			}
+//		}
+//	}
 
-	private function writeRows(){
-		if (!$this->startedData) {
-			$this->writeColumns();
-			$this->writeOpenSheetData();
-			$this->startedData = true;
-		}
+//	private function writeColumns(){
 
-		foreach ($this->rows as $row) {
-			if ($row->hasValues()) {
+//	}
 
-			}
-		}
-	}
+//	private function writeOpenSheetData(){
 
-	private function writeColumns(){
+//	}
 
-	}
-
-	private function writeOpenSheetData(){
-
-	}
 }

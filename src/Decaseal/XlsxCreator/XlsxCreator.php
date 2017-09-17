@@ -34,6 +34,7 @@ class XlsxCreator{
 
 	private $stylesXml;
 	private $worksheets;
+	private $worksheetsIds;
 	private $committed;
 	private $nextId;
 	private $zip;
@@ -63,8 +64,8 @@ class XlsxCreator{
 
 		$this->stylesXml = new StylesXml();
 		$this->worksheets = [];
+		$this->worksheetsIds = [];
 		$this->committed = false;
-		$this->nextId = 1;
 
 		$this->zip = new ZipArchive();
 		$this->zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
@@ -74,25 +75,36 @@ class XlsxCreator{
 	 * Добавить таблицу
 	 *
 	 * @param string $name - имя таблицы
-	 * @param string|null $tabColor - цвет вкладки в формате argb (#FFFFFF00)
-	 * @param int $defaultRowHeight - высота строки в px
 	 * @return Worksheet - таблица
 	 */
-	function addWorksheet(string $name, string $tabColor = null, int $defaultRowHeight = 15) : Worksheet{
-		$worksheet = new Worksheet($this->nextId(), $name, $tabColor, $defaultRowHeight);
-		$worksheets[$name] = $worksheet;
+	function addWorksheet(string $name) : Worksheet{
+		$id = count($this->worksheets) + 1;
+		$this->worksheetsIds[$name] = $id;
+
+		$worksheet = new Worksheet($this, $id, $name);
+		$worksheets[] = $worksheet;
 
 		return $worksheet;
 	}
 
 	/**
-	 * Получить таблицу
+	 * Получить таблицу по имени
 	 *
 	 * @param string $name - имя таблицы
 	 * @return Worksheet - таблица
 	 */
-	function getWorksheet(string $name) : Worksheet{
-		return $this->worksheets[$name];
+	function getWorksheetByName(string $name) : Worksheet{
+		return $this->worksheets[$this->worksheetsIds[$name] - 1];
+	}
+
+	/**
+	 * Получить таблицу по имени
+	 *
+	 * @param int $id - имя таблицы
+	 * @return Worksheet - таблица
+	 */
+	function getWorksheetById(int $id) : Worksheet{
+		return $this->worksheets[$id - 1];
 	}
 
 	/**
@@ -129,53 +141,55 @@ class XlsxCreator{
 	}
 
 	function commit(){
-		if ($this->isCommitted() || !count($this->getWorksheets())) return;
-		$this->committed = true;
-
-		foreach ($this->worksheets as $worksheet) $worksheet->commit();
-
-		$this->zip->addFile('./Xml/Static/theme1.xml', 'xl/theme/theme1.xml');
-		$this->zip->addFromString('/_rels/.rels', (new RelationshipsXml())->toXml([
-			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
-			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
-			['Id' => 'rId3', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'Target' => 'docProps/app.xml']
-		]));
-		$this->zip->addFromString('[Content_Types].xml', (new ContentTypesXml())->toXml(['worksheets' => $this->getWorksheets()]));
-		$this->zip->addFromString('docProps/app.xml', (new AppXml())->toXml([
-			'worksheets' => $this->getWorksheets(),
-			'company' => $this->company,
-			'manager' => $this->manager
-		]));
-		$this->zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this));
-		$this->zip->addFromString('xl/styles.xml', (new StylesXml())->toXml());
-		$this->zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
-		$this->zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheets()));
-
-		$this->zip->close();
+//		if ($this->isCommitted() || !count($this->getWorksheets())) return;
+//		$this->committed = true;
+//
+//		foreach ($this->worksheets as $worksheet) $worksheet->commit();
+//
+//		$this->zip->addFile('./Xml/Static/theme1.xml', 'xl/theme/theme1.xml');
+//		$this->zip->addFromString('/_rels/.rels', (new RelationshipsXml())->toXml([
+//			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
+//			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
+//			['Id' => 'rId3', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'Target' => 'docProps/app.xml']
+//		]));
+//		$this->zip->addFromString('[Content_Types].xml', (new ContentTypesXml())->toXml(['worksheets' => $this->getWorksheets()]));
+//		$this->zip->addFromString('docProps/app.xml', (new AppXml())->toXml([
+//			'worksheets' => $this->getWorksheets(),
+//			'company' => $this->company,
+//			'manager' => $this->manager
+//		]));
+//		$this->zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this));
+//		$this->zip->addFromString('xl/styles.xml', (new StylesXml())->toXml());
+//		$this->zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
+//		$this->zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheets()));
+//
+//		$this->zip->close();
 	}
 
-	private function nextId() : int{
-		return $this->nextId++;
-	}
+//	private function genRelationships() : array{
+//		$count = 1;
+//
+//		$relationships = [
+//			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles', 'Target' => 'styles.xml'],
+//			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme', 'Target' => 'theme/theme1.xml']
+//		];
+//
+//		foreach ($this->getWorksheets() as $worksheet) {
+//			$worksheet->setRId('rId' . $count++);
+//
+//			$relationships[] = [
+//				'Id' => $worksheet->getRId(),
+//				'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
+//				'Target' => 'worksheets/sheet' . $worksheet->getId() . '.xml'
+//			];
+//		}
+//
+//		return $relationships;
+//	}
 
-	private function genRelationships() : array{
-		$count = 1;
-
-		$relationships = [
-			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles', 'Target' => 'styles.xml'],
-			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme', 'Target' => 'theme/theme1.xml']
-		];
-
-		foreach ($this->getWorksheets() as $worksheet) {
-			$worksheet->setRId('rId' . $count++);
-
-			$relationships[] = [
-				'Id' => $worksheet->getRId(),
-				'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
-				'Target' => 'worksheets/sheet' . $worksheet->getId() . '.xml'
-			];
-		}
-
-		return $relationships;
+	function genTempFilename(){
+		$filename = $this->getTempdir() . '/xlsxcreator_' . base64_encode(rand()) . '.xml';
+		if (file_exists($filename)) return $this->genTempFilename();
+		else return $filename;
 	}
 }
