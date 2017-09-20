@@ -6,7 +6,7 @@ use Decaseal\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class AppTitlesOfPartsXml extends BaseXml{
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		if (is_null($model)) return;
 
 		$xml->startElement('TitlesOfParts');
@@ -15,7 +15,7 @@ class AppTitlesOfPartsXml extends BaseXml{
 		$xml->writeAttribute('size', (string) count($model));
 		$xml->writeAttribute('baseType', 'lpstr');
 
-		foreach ($model as $worksheet) $xml->writeElement('vt:lpstr', $worksheet->getName());
+		foreach ($model as $worksheet) $xml->writeElement('vt:lpstr', $worksheet['name']);
 
 		$xml->endElement();
 		$xml->endElement();

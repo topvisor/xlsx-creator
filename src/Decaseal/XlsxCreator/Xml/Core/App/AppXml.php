@@ -7,7 +7,7 @@ use Decaseal\XlsxCreator\Xml\Simple\StringXml;
 use XMLWriter;
 
 class AppXml extends BaseXml{
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		if (is_null($model)) return;
 
 		$xml->startDocument('1.0', 'UTF-8', 'yes');
@@ -22,8 +22,8 @@ class AppXml extends BaseXml{
 
 		(new AppHeadingPairsXml())->render($xml, $model['worksheets']);
 		(new AppTitlesOfPartsXml())->render($xml, $model['worksheets']);
-		(new StringXml('Company'))->render($xml, $model['company']);
-		(new StringXml('Manager'))->render($xml, $model['manager']);
+		(new StringXml('Company'))->render($xml, [$model['company']]);
+		(new StringXml('Manager'))->render($xml, [$model['manager']]);
 
 		$xml->writeElement('LinksUpToDate', 'false');
 		$xml->writeElement('SharedDoc', 'false');

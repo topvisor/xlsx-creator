@@ -6,7 +6,7 @@ use Decaseal\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class NumFmtXml extends BaseXml{
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		if (!$model) return;
 
 		$xml->startElement('numFmt');

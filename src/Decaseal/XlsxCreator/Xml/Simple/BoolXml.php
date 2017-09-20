@@ -12,7 +12,7 @@ class BoolXml extends BaseXml{
 		$this->tag = $tag;
 	}
 
-	function render(XMLWriter $xml, $model = null){
-		if ($model) $xml->writeElement($this->tag);
+	function render(XMLWriter $xml, array $model = null){
+		if ($model && ($model[0] ?? false)) $xml->writeElement($this->tag);
 	}
 }

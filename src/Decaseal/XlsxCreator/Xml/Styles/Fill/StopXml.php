@@ -7,7 +7,7 @@ use Decaseal\XlsxCreator\Xml\Styles\ColorXml;
 use XMLWriter;
 
 class StopXml extends BaseXml{
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		if (!$model) return;
 
 		$xml->startElement('stop');

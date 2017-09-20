@@ -7,7 +7,7 @@ use Decaseal\XlsxCreator\Xml\Styles\ColorXml;
 use XMLWriter;
 
 class PatternFillXml extends BaseXml{
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		if (!$model) return;
 
 		$xml->startElement('patternFill');

@@ -146,22 +146,22 @@ class XlsxCreator{
 //
 //		foreach ($this->worksheets as $worksheet) $worksheet->commit();
 //
-//		$this->zip->addFile('./Xml/Static/theme1.xml', 'xl/theme/theme1.xml');
+//		$this->zip->addFile('./Xml/Static/theme1.xml', '/xl/theme/theme1.xml');
 //		$this->zip->addFromString('/_rels/.rels', (new RelationshipsXml())->toXml([
 //			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
 //			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
 //			['Id' => 'rId3', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'Target' => 'docProps/app.xml']
 //		]));
-//		$this->zip->addFromString('[Content_Types].xml', (new ContentTypesXml())->toXml(['worksheets' => $this->getWorksheets()]));
-//		$this->zip->addFromString('docProps/app.xml', (new AppXml())->toXml([
-//			'worksheets' => $this->getWorksheets(),
+//		$this->zip->addFromString('/[Content_Types].xml', (new ContentTypesXml())->toXml(['worksheets' => $this->getWorksheetsModels()]));
+//		$this->zip->addFromString('/docProps/app.xml', (new AppXml())->toXml([
+//			'worksheets' => $this->getWorksheetsModels(),
 //			'company' => $this->company,
 //			'manager' => $this->manager
 //		]));
-//		$this->zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this));
-//		$this->zip->addFromString('xl/styles.xml', (new StylesXml())->toXml());
+//		$this->zip->addFromString('/docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
+//		$this->zip->addFromString('/xl/styles.xml', (new StylesXml())->toXml());
 //		$this->zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
-//		$this->zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheets()));
+//		$this->zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
 //
 //		$this->zip->close();
 	}
@@ -186,6 +186,24 @@ class XlsxCreator{
 //
 //		return $relationships;
 //	}
+
+	private function getWorksheetsModels() : array{
+		return array_map(
+			function($worksheet){
+				return $worksheet->getModel();
+			},
+			$this->getWorksheets()
+		);
+	}
+
+	private function getModel(){
+		return [
+			'creator' => $this->getCreator(),
+			'lastModifiedBy' => $this->getLastModifiedBy(),
+			'created' => $this->getCreated(),
+			'modified' => $this->getModified()
+		];
+	}
 
 	function genTempFilename(){
 		$filename = $this->getTempdir() . '/xlsxcreator_' . base64_encode(rand()) . '.xml';

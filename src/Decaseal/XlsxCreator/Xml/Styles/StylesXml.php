@@ -48,7 +48,7 @@ class StylesXml extends BaseXml{
 		$this->fillIndex->addIndex(['type' => 'pattern', 'pattern' => 'gray125']);
 	}
 
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		$xml->startDocument('1.0', 'UTF-8', 'yes');
 		$xml->startElement('styleSheet');
 

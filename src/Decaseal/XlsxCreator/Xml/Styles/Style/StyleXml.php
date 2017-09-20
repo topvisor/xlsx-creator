@@ -12,7 +12,7 @@ class StyleXml extends BaseXml{
 		$this->isXfId = $isXfId;
 	}
 
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		$model = $model ?? [];
 
 		$xml->startElement('xf');

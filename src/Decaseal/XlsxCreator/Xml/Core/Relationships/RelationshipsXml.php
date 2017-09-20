@@ -6,7 +6,7 @@ use Decaseal\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class RelationshipsXml extends BaseXml{
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		if (is_null($model)) return;
 
 		$xml->startDocument('1.0', 'UTF-8', 'yes');

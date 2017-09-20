@@ -9,7 +9,7 @@ use Decaseal\XlsxCreator\Xml\Simple\StringXml;
 use XMLWriter;
 
 class CoreXml extends BaseXml{
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		if (is_null($model)) return;
 
 		$xml->startDocument('1.0', 'UTF-8', 'yes');
@@ -21,7 +21,7 @@ class CoreXml extends BaseXml{
 		$xml->writeAttribute('xmlns:dcmitype', 'http://purl.org/dc/dcmitype/');
 		$xml->writeAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
 
-		(new StringXml('dc:creator'))->render($xml, $model->getCreator());
+		(new StringXml('dc:creator'))->render($xml, [$model['creator']]);
 		(new StringXml('dc:title'))->render($xml, null);
 		(new StringXml('dc:subject'))->render($xml, null);
 		(new StringXml('dc:description'))->render($xml, null);
@@ -29,14 +29,14 @@ class CoreXml extends BaseXml{
 		(new StringXml('dc:language'))->render($xml, null);
 		(new StringXml('cp:keywords'))->render($xml, null);
 		(new StringXml('cp:category'))->render($xml, null);
-		(new StringXml('cp:lastModifiedBy'))->render($xml, $model->getLastModifiedBy());
+		(new StringXml('cp:lastModifiedBy'))->render($xml, [$model['lastModifiedBy']]);
 		(new StringXml('cp:lastPrinted'))->render($xml, null);
 		(new StringXml('cp:revision'))->render($xml, null);
 		(new StringXml('cp:contentStatus'))->render($xml, null);
 		(new StringXml('dcterms:created', ['xsi:type', 'dcterms:W3CDTF']))
-			->render($xml, $model->getCreated()->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'));
+			->render($xml, [$model['created']->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z')]);
 		(new StringXml('dcterms:modified', ['xsi:type', 'dcterms:W3CDTF']))
-			->render($xml, $model->getModified()->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z'));
+			->render($xml, [$model['modified']->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z')]);
 
 		$xml->endElement();
 		$xml->endDocument();

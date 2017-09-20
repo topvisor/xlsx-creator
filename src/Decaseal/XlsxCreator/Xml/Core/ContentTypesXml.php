@@ -6,7 +6,7 @@ use Decaseal\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class ContentTypesXml extends BaseXml{
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		if (is_null($model)) return;
 
 		$xml->startDocument('1.0', 'UTF-8', 'yes');
@@ -29,9 +29,9 @@ class ContentTypesXml extends BaseXml{
 		$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml');
 		$xml->endElement();
 
-		foreach ($model['worksheets'] as $worksheet) {
+		foreach ($model as $worksheet) {
 			$xml->startElement('Override');
-			$xml->writeAttribute('PartName', $worksheet->getRelativeFilename());
+			$xml->writeAttribute('PartName', $worksheet['partName']);
 			$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml');
 			$xml->endElement();
 		}

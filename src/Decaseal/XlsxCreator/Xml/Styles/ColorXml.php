@@ -12,14 +12,14 @@ class ColorXml extends BaseXml{
 		$this->tag = $tag;
 	}
 
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		if (!$model) return;
 
 		$xml->startElement($this->tag);
 
 		switch (true) {
-			case is_string($model):
-				$xml->writeAttribute('rgb', $model);
+			case isset($model['argb']):
+				$xml->writeAttribute('rgb', $model['argb']);
 				break;
 
 			case isset($model['theme']):

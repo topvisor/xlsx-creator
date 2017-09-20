@@ -16,15 +16,15 @@ class StringXml extends BaseXml{
 		$this->attribute = $attribute;
 	}
 
-	function render(XMLWriter $xml, $model = null){
-		if(is_null($model)) return;
+	function render(XMLWriter $xml, array $model = null){
+		if(!$model || !($model[0] ?? false)) return;
 
 		$xml->startElement($this->tag);
 
 		if ($this->attributes) foreach ($this->attributes as $name => $value) $xml->writeAttribute($name, $value);
 
-		if ($this->attribute) $xml->writeAttribute($this->attribute, $model);
-		else $xml->text($model);
+		if ($this->attribute) $xml->writeAttribute($this->attribute, $model[0]);
+		else $xml->text($model[0]);
 
 		$xml->endElement();
 	}

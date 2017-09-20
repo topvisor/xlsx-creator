@@ -6,13 +6,13 @@ use Decaseal\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class BorderXml extends BaseXml{
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		$xml->startElement('border');
 
 		$model = $model ?? [];
 		$defaultColor = $model['color'] ?? null;
 
-		if ($model['diagonal'] ?? false && $model['diagonal']['style'] ?? false) {
+		if (($model['diagonal'] ?? false) && ($model['diagonal']['style'] ?? false)) {
 			if ($model['diagonal']['up'] ?? false) $xml->writeAttribute('diagonalUp', 1);
 			if ($model['diagonal']['down'] ?? false) $xml->writeAttribute('diagonalDown', 1);
 		}

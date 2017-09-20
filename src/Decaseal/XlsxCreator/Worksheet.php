@@ -93,6 +93,15 @@ class Worksheet{
 		$this->committed = true;
 	}
 
+	function getModel() : array{
+		return [
+			'id' => $this->getId(),
+			'name' => $this->getName(),
+			'rId' => $this->getRId(),
+			'partName' => '/xl/worksheets/sheet' . $this->getId() . '.xml'
+		];
+	}
+
 	private function startWorksheet(){
 		$this->xml->startDocument('1.0', 'UTF-8', 'yes');
 

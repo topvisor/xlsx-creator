@@ -17,24 +17,24 @@ class FontXml extends BaseXml{
 		$this->fontNameTag = $fontNameTag;
 	}
 
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		$xml->startElement($this->tag);
 
 		if ($model) {
-			(new BoolXml('b'))->render($xml, $model['b']);
-			(new BoolXml('i'))->render($xml, $model['i']);
-			(new UnderlineXml())->render($xml, $model['u']);
-			(new StringXml('charset', [], 'val'))->render($xml, $model['charset']);
+			(new BoolXml('b'))->render($xml, [$model['b']]);
+			(new BoolXml('i'))->render($xml, [$model['i']]);
+			(new UnderlineXml())->render($xml, [$model['u']]);
+			(new StringXml('charset', [], 'val'))->render($xml, [$model['charset']]);
 			(new ColorXml())->render($xml, $model['color']);
-			(new BoolXml('condense'))->render($xml, $model['condense']);
-			(new BoolXml('extend'))->render($xml, $model['extend']);
-			(new StringXml('family', [], 'val'))->render($xml, $model['family']);
-			(new BoolXml('outline'))->render($xml, $model['outline']);
-			(new StringXml('scheme', [], 'val'))->render($xml, $model['scheme']);
-			(new BoolXml('shadow'))->render($xml, $model['shadow']);
-			(new BoolXml('strike'))->render($xml, $model['strike']);
-			(new StringXml('sz', [], 'val'))->render($xml, $model['sz']);
-			(new StringXml($this->fontNameTag, [], 'val'))->render($xml, $model['name']);
+			(new BoolXml('condense'))->render($xml, [$model['condense']]);
+			(new BoolXml('extend'))->render($xml, [$model['extend']]);
+			(new StringXml('family', [], 'val'))->render($xml, [$model['family']]);
+			(new BoolXml('outline'))->render($xml, [$model['outline']]);
+			(new StringXml('scheme', [], 'val'))->render($xml, [$model['scheme']]);
+			(new BoolXml('shadow'))->render($xml, [$model['shadow']]);
+			(new BoolXml('strike'))->render($xml, [$model['strike']]);
+			(new StringXml('sz', [], 'val'))->render($xml, [$model['sz']]);
+			(new StringXml($this->fontNameTag, [], 'val'))->render($xml, [$model['name']]);
 		}
 
 		$xml->endElement();

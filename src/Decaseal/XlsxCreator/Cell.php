@@ -86,7 +86,7 @@ class Cell{
 			case ($value instanceof DateTime): return Cell::TYPE_DATE;
 			case is_array($value):
 				switch (true) {
-					case ($value['text'] ?? false && $value['hyperlink'] ?? false): return Cell::TYPE_HYPERLINK;
+					case (($value['text'] ?? false) && ($value['hyperlink'] ?? false)): return Cell::TYPE_HYPERLINK;
 					case ($value['formula'] ?? false): return Cell::TYPE_FORMULA;
 					case ($value['richText'] ?? false): return Cell::TYPE_RICH_TEXT;
 					case ($value['error'] ?? false): return Cell::TYPE_ERROR;

@@ -14,7 +14,7 @@ class WorkbookXml extends BaseXml{
 	</bookViews>';
 	private const CALC_PR_XML = '<calcPr calcId="171027"/>';
 
-	function render(XMLWriter $xml, $model = null){
+	function render(XMLWriter $xml, array $model = null){
 		$xml->startDocument('1.0', 'UTF-8', 'yes');
 		$xml->startElement('workbook');
 
