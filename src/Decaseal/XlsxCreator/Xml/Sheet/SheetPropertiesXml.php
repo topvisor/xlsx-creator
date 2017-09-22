@@ -13,7 +13,7 @@ class SheetPropertiesXml extends BaseXml{
 
 		$xml->startElement('sheetPr');
 
-		(new ColorXml('tabColor'))->render($model);
+		(new ColorXml('tabColor'))->render($xml, $model);
 
 		$xml->endElement();
 	}

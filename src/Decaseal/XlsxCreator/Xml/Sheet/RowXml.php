@@ -2,7 +2,9 @@
 
 namespace Decaseal\XlsxCreator\Xml\Sheet;
 
+use Decaseal\XlsxCreator\Row;
 use Decaseal\XlsxCreator\Xml\BaseXml;
+use Decaseal\XlsxCreator\Xml\Styles\StylesXml;
 use XMLWriter;
 
 class RowXml extends BaseXml {
@@ -11,5 +13,6 @@ class RowXml extends BaseXml {
 
 		$xml->startElement('row');
 
+		###
 	}
 }

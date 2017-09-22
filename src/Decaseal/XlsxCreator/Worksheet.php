@@ -3,6 +3,7 @@
 namespace Decaseal\XlsxCreator;
 
 use Decaseal\XlsxCreator\Xml\ListXml;
+use Decaseal\XlsxCreator\Xml\Sheet\SheetFormatPropertiesXml;
 use Decaseal\XlsxCreator\Xml\Sheet\SheetPropertiesXml;
 use Decaseal\XlsxCreator\Xml\Sheet\SheetViewXml;
 use XMLWriter;
@@ -19,12 +20,13 @@ class Worksheet{
 	private $defaultRowHeight;
 	private $view;
 	private $autoFilter;
+	private $columns;
 
 	private $committed;
+	private $lastUncommittedRow;
 	private $rows;
 	private $merges;
 	private $sheetRels;
-	private $startedData;
 
 	private $filename;
 	private $xml;
@@ -43,9 +45,10 @@ class Worksheet{
 		$this->defaultRowHeight = $defaultRowHeight;
 		$this->view = $view;
 		$this->autoFilter = $autoFilter;
+		$this->columns = [];
 
 		$this->committed = false;
-		$this->startedData = false;
+		$this->lastUncommittedRow = 1;
 		$this->rows = [];
 		$this->merges = [];
 		$this->sheetRels = new SheetRels($this);
@@ -55,6 +58,7 @@ class Worksheet{
 		$this->xml->openURI($this->filename);
 
 		$this->startWorksheet();
+
 	}
 
 	function getId() : int{
@@ -63,6 +67,10 @@ class Worksheet{
 
 	function getName() : string{
 		return $this->name;
+	}
+
+	function getOutlineLevelRow() : int{
+		return $this->outlineLevelRow;
 	}
 
 	function isCommitted() : bool{
@@ -81,34 +89,32 @@ class Worksheet{
 		return $this->workbook;
 	}
 
-//	function getAbsFilename() : string{
-//		return $this->workbook->getTempdir() . $this->getRelFilename();
-//	}
+	function getSheetRels() : SheetRels{
+		return $this->sheetRels;
+	}
 
-//	function getRelFilename() : string{
-//		return '/xl/worksheets/sheet' . $this->getId() . '.xml';
-//	}
+	function addRow(array $values = null) : Row{
+		$row = new Row($this, count($this->rows) + $this->lastUncommittedRow);
+		if (!is_null($values)) $row->setValues($values);
 
-//	function addRow($values = null) : Row{
-//		$row = new Row($this, count($this->rows) + 1);
-//		if (!is_null($values)) $row->setValues($values);
-//
-//		$this->rows[] = $row;
-//
-//		return $row;
-//	}
+		$this->rows[] = $row;
+
+		return $row;
+	}
 
 	function commit(){
 		if ($this->isCommitted()) return;
 		$this->committed = true;
+
+		foreach ($this->rows as $row) $row->commit();
 	}
 
 	function getModel() : array{
 		return [
-			'id' => $this->getId(),
-			'name' => $this->getName(),
-			'rId' => $this->getRId(),
-			'partName' => '/xl/worksheets/sheet' . $this->getId() . '.xml'
+			'id' => $this->id,
+			'name' => $this->name,
+			'rId' => $this->rId ?? '',
+			'partName' => '/xl/worksheets/sheet' . $this->id . '.xml'
 		];
 	}
 
@@ -122,38 +128,20 @@ class Worksheet{
 		$this->xml->writeAttribute('mc:Ignorable', 'x14ac');
 		$this->xml->writeAttribute('xmlns:x14ac', 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac');
 
-		(new SheetPropertiesXml())->render($this->xml, [
-
+		if ($this->tabColor) (new SheetPropertiesXml())->render($this->xml, ['argb' => $this->tabColor]);
+		(new SheetFormatPropertiesXml())->render($this->xml, [
+			'defaultRowHeight' => $this->defaultRowHeight,
+			'outlineLevelCol' => $this->outlineLevelCol,
+			'outlineLevelRow' => $this->outlineLevelRow,
+			'dyDescent' => Worksheet::DY_DESCENT
 		]);
-		(new ListXml('sheetViews', new SheetViewXml()))->render($this->xml, [
 
-		]);
+		$this->writeColumns();
+
+		$this->xml->startElement('sheetData');
 	}
 
-//	private function endWorksheet(){
-//
-//	}
-
-//	private function writeRows(){
-//		if (!$this->startedData) {
-//			$this->writeColumns();
-//			$this->writeOpenSheetData();
-//			$this->startedData = true;
-//		}
-//
-//		foreach ($this->rows as $row) {
-//			if ($row->hasValues()) {
-//
-//			}
-//		}
-//	}
-
-//	private function writeColumns(){
-
-//	}
-
-//	private function writeOpenSheetData(){
-
-//	}
-
+	private function writeColumns(){
+		// Реализовать
+	}
 }

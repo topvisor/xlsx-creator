@@ -30,7 +30,7 @@ class SheetViewXml extends BaseXml{
 
 		switch ($model['state'] ?? 'normal') {
 			case 'frozen':
-				$topLeftCell = $topLeftCell ?? Cell::getAddress($xSplit + 1, $ySplit + 1);
+				$topLeftCell = $topLeftCell ?? Cell::genAddress($xSplit + 1, $ySplit + 1);
 
 				switch (true) {
 					case ($xSplit && $ySplit): $activePane = 'bottomRight'; break;
