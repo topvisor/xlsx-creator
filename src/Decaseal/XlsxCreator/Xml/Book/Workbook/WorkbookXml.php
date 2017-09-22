@@ -7,13 +7,6 @@ use Decaseal\XlsxCreator\Xml\ListXml;
 use XMLWriter;
 
 class WorkbookXml extends BaseXml{
-	private const FILE_VERSION_XML = '<fileVersion appName="xl" lastEdited="5" lowestEdited="5" rupBuild="9303"/>';
-	private const WORKBOOK_PR_XML = '<workbookPr defaultThemeVersion="164011" filterPrivacy="1"/>';
-	private const BOOK_VIEWS_XML = '<bookViews>
-		<workbookView xWindow="0" yWindow="0" windowWidth="12000" windowHeight="24000"/>
-	</bookViews>';
-	private const CALC_PR_XML = '<calcPr calcId="171027"/>';
-
 	function render(XMLWriter $xml, array $model = null){
 		$xml->startDocument('1.0', 'UTF-8', 'yes');
 		$xml->startElement('workbook');
@@ -24,13 +17,34 @@ class WorkbookXml extends BaseXml{
 		$xml->writeAttribute('mc:Ignorable', 'x15');
 		$xml->writeAttribute('xmlns:x15', 'http://schemas.microsoft.com/office/spreadsheetml/2010/11/main');
 
-		$xml->writeRaw(WorkbookXml::FILE_VERSION_XML);
-		$xml->writeRaw(WorkbookXml::WORKBOOK_PR_XML);
-		$xml->writeRaw(WorkbookXml::BOOK_VIEWS_XML);
+		$xml->startElement('fileVersion');
+		$xml->writeAttribute('appName', 'xl');
+		$xml->writeAttribute('lastEdited', 5);
+		$xml->writeAttribute('lowestEdited', 5);
+		$xml->writeAttribute('rupBuild', 9303);
+		$xml->endElement();
+
+		$xml->startElement('workbookPr');
+		$xml->writeAttribute('defaultThemeVersion', 164011);
+		$xml->writeAttribute('filterPrivacy', 1);
+		$xml->endElement();
+
+		$xml->startElement('bookViews');
+
+		$xml->startElement('workbookView');
+		$xml->writeAttribute('xWindow', 0);
+		$xml->writeAttribute('yWindow', 0);
+		$xml->writeAttribute('windowWidth', 12000);
+		$xml->writeAttribute('windowHeight', 24000);
+		$xml->endElement();
+
+		$xml->endElement();
 
 		(new ListXml('sheets', new SheetXml()))->render($xml, $model);
 
-		$xml->writeRaw(WorkbookXml::CALC_PR_XML);
+		$xml->startElement('calcPr');
+		$xml->writeAttribute('calcId', 171027);
+		$xml->endElement();
 
 		$xml->endElement();
 		$xml->endDocument();

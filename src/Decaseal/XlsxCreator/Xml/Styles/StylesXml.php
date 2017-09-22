@@ -14,20 +14,6 @@ use Decaseal\XlsxCreator\Xml\Styles\Style\StyleXml;
 use XMLWriter;
 
 class StylesXml extends BaseXml{
-	private const CELL_STYLES_XML = '<cellStyles count="1">
-		<cellStyle name="Normal" xfId="0" builtinId="0"/>
-	</cellStyles>';
-	private const DXFS_XML = '<dxfs count="0"/>';
-	private const TABLE_STYLES_XML = '<tableStyles count="0" defaultTableStyle="TableStyleMedium2" defaultPivotStyle="PivotStyleLight16"/>';
-	private const EXT_LST_XML = '<extLst>
-		<ext uri="{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">
-			<x14:slicerStyles defaultSlicerStyle="SlicerStyleLight1"/>
-		</ext>
-		<ext uri="{9260A510-F301-46a8-8635-F512D64BE5F5}" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main">
-			<x15:timelineStyles defaultTimelineStyle="TimeSlicerStyleLight1"/>
-		</ext>
-	</extLst>';
-
 	private $fontIndex;
 	private $borderIndex;
 	private $styleIndex;
@@ -68,10 +54,7 @@ class StylesXml extends BaseXml{
 
 		if ($rawXmls = $this->styleIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'cellXfs', $rawXmls);
 
-		$xml->writeRaw(StylesXml::CELL_STYLES_XML);
-		$xml->writeRaw(StylesXml::DXFS_XML);
-		$xml->writeRaw(StylesXml::TABLE_STYLES_XML);
-		$xml->writeRaw(StylesXml::EXT_LST_XML);
+		$this->writeStatic($xml);
 
 		$xml->endElement();
 		$xml->endDocument();
@@ -105,6 +88,53 @@ class StylesXml extends BaseXml{
 		$xml->writeAttribute('count', count($rawXmls));
 
 		foreach ($rawXmls as $rawXml) $xml->writeRaw($rawXml);
+
+		$xml->endElement();
+	}
+
+	private function writeStatic(XMLWriter $xml){
+		$xml->startElement('cellStyles');
+		$xml->writeAttribute('count', 1);
+
+		$xml->startElement('cellStyle');
+		$xml->writeAttribute('name', 'Normal');
+		$xml->writeAttribute('xfId', 0);
+		$xml->writeAttribute('builtinId', 0);
+
+		$xml->endElement();
+		$xml->endElement();
+
+		$xml->startElement('dxfs');
+		$xml->writeAttribute('count', 0);
+		$xml->endElement();
+
+		$xml->startElement('tableStyles');
+		$xml->writeAttribute('count', 0);
+		$xml->writeAttribute('defaultTableStyle', 'TableStyleMedium2');
+		$xml->writeAttribute('defaultPivotStyle', 'PivotStyleLight16');
+		$xml->endElement();
+
+		$xml->startElement('extLst');
+
+		$xml->startElement('ext');
+		$xml->writeAttribute('uri', '{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}');
+		$xml->writeAttribute('xmlns:x14', 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/main');
+
+		$xml->startElement('x14:slicerStyles');
+		$xml->writeAttribute('defaultSlicerStyle', 'SlicerStyleLight1');
+
+		$xml->endElement();
+		$xml->endElement();
+
+		$xml->startElement('ext');
+		$xml->writeAttribute('uri', '{9260A510-F301-46a8-8635-F512D64BE5F5}');
+		$xml->writeAttribute('xmlns:x15', 'http://schemas.microsoft.com/office/spreadsheetml/2010/11/main');
+
+		$xml->startElement('x15:timelineStyles');
+		$xml->writeAttribute('defaultTimelineStyle', 'TimeSlicerStyleLight1');
+
+		$xml->endElement();
+		$xml->endElement();
 
 		$xml->endElement();
 	}

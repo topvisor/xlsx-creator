@@ -19,11 +19,11 @@ use Decaseal\XlsxCreator\Xml\Styles\StylesXml;
 use ZipArchive;
 
 /**
- * Class XlsxCreator. Используйте его для создания xlsx файла.
+ * Class Workbook. Используйте его для создания xlsx файла.
  *
- * @package Decaseal\XlsxCreator
+ * @package Decaseal\Workbook
  */
-class XlsxCreator{
+class Workbook{
 	private $tempdir;
 	private $created;
 	private $modified;
@@ -40,7 +40,7 @@ class XlsxCreator{
 	private $zip;
 
 	/**
-	 * XlsxCreator constructor
+	 * Workbook constructor
 	 *
 	 * @param string $filename - путь к xlsx файлу
 	 * @param string|null $tempdir - путь к директории для хранения временных файлов

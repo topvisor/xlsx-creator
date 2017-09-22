@@ -8,12 +8,17 @@ use Decaseal\XlsxCreator\Xml\Sheet\SheetViewXml;
 use XMLWriter;
 
 class Worksheet{
+	private const DY_DESCENT = 55;
+
 	private $workbook;
 	private $id;
 	private $name;
-//	private $tabColor;
-//	private $defaultRowHeight;
-//	private $view;
+	private $tabColor;
+	private $outlineLevelCol;
+	private $outlineLevelRow;
+	private $defaultRowHeight;
+	private $view;
+	private $autoFilter;
 
 	private $committed;
 	private $rows;
@@ -26,19 +31,24 @@ class Worksheet{
 
 	private $rId;
 
-	function __construct(XlsxCreator $workbook, int $id, string $name){
+	function __construct(Workbook $workbook, int $id, string $name, string $tabColor = null, int $outlineLevelCol = 0, int $outlineLevelRow = 0,
+						 int $defaultRowHeight = 15, array $view = null, array $autoFilter = null){
 		$this->workbook = $workbook;
 		$this->id = $id;
 		$this->name = $name;
-//		$this->tabColor = $tabColor;
-//		$this->defaultRowHeight = $defaultRowHeight;
-//		$this->view = $view;
-//
+
+		$this->tabColor = $tabColor;
+		$this->outlineLevelCol = $outlineLevelCol;
+		$this->outlineLevelRow = $outlineLevelRow;
+		$this->defaultRowHeight = $defaultRowHeight;
+		$this->view = $view;
+		$this->autoFilter = $autoFilter;
+
 		$this->committed = false;
+		$this->startedData = false;
 		$this->rows = [];
 		$this->merges = [];
 		$this->sheetRels = new SheetRels($this);
-		$this->startedData = false;
 
 		$this->filename = $this->workbook->genTempFilename();
 		$this->xml = new XMLWriter();
@@ -67,7 +77,7 @@ class Worksheet{
 		return $this->rId ?? '';
 	}
 
-	function getWorkbook() : XlsxCreator{
+	function getWorkbook() : Workbook{
 		return $this->workbook;
 	}
 
