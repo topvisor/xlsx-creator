@@ -9,7 +9,6 @@ use Decaseal\XlsxCreator\Xml\Sheet\PageSetupXml;
 use Decaseal\XlsxCreator\Xml\Sheet\RowXml;
 use Decaseal\XlsxCreator\Xml\Sheet\SheetFormatPropertiesXml;
 use Decaseal\XlsxCreator\Xml\Sheet\SheetPropertiesXml;
-use Decaseal\XlsxCreator\Xml\Sheet\SheetViewXml;
 use XMLWriter;
 
 class Worksheet{
@@ -39,7 +38,7 @@ class Worksheet{
 	private $rId;
 
 	function __construct(Workbook $workbook, int $id, string $name, string $tabColor = null, int $outlineLevelCol = 0, int $outlineLevelRow = 0,
-						 int $defaultRowHeight = 15, array $view = null, array $pageSetup = null, array $autoFilter = null){
+						 int $defaultRowHeight = 15, array $view = null, array $pageSetup = [], array $autoFilter = null){
 		$this->workbook = $workbook;
 		$this->id = $id;
 		$this->name = $name;
@@ -54,7 +53,7 @@ class Worksheet{
 			'orientation' => 'portrait',
 			'horizontalDpi' => 4294967295,
 			'verticalDpi' => 4294967295,
-			'fitToPage' => (bool) ($pageSetup && (($pageSetup['fitToWidth'] || $pageSetup['fitToHeight']) && !$pageSetup['scale'])),
+			'fitToPage' => (bool) ($pageSetup && ((($pageSetup['fitToWidth'] ?? false) || ($pageSetup['fitToHeight'] ?? false)) && !($pageSetup['scale'] ?? false))),
 			'pageOrder' => 'downThenOver',
 			'blackAndWhite' => false,
 			'draft' => false,
