@@ -2,13 +2,12 @@
 
 namespace Decaseal\XlsxCreator\Xml\Styles\Font;
 
-
 use Decaseal\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class UnderlineXml extends BaseXml{
 	function render(XMLWriter $xml, array $model = null){
-		if (!$model) return;
+		if (!$model || !$model[0]) return;
 
 		$xml->startElement('u');
 
