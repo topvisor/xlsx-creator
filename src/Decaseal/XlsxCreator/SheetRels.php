@@ -6,9 +6,6 @@ namespace Decaseal\XlsxCreator;
 use XMLWriter;
 
 class SheetRels{
-	private const REL_TYPE = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink';
-	private const TARGET_MODE = 'External';
-
 	private $worksheet;
 
 	private $hyperlinks;

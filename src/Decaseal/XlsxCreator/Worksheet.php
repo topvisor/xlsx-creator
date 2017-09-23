@@ -13,7 +13,7 @@ use Decaseal\XlsxCreator\Xml\Sheet\SheetViewXml;
 use XMLWriter;
 
 class Worksheet{
-	private const DY_DESCENT = 55;
+	const DY_DESCENT = 55;
 
 	private $workbook;
 	private $id;

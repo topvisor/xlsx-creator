@@ -3,7 +3,7 @@
 namespace Decaseal\XlsxCreator\Xml\Styles\Index;
 
 class StylesNumFmtIndex extends StylesIndex{
-	private const DEFAULT_NUM_FMT = [
+	const DEFAULT_NUM_FMT = [
 		'General' => 0,
 		'0' => 1,
 		'0.00' => 2,
@@ -34,7 +34,7 @@ class StylesNumFmtIndex extends StylesIndex{
 		'@' => 49
 	];
 
-	private const NUM_FMT_START_INDEX = 164;
+	const NUM_FMT_START_INDEX = 164;
 
 	function addIndex($model) : int{
 		if (isset(StylesNumFmtIndex::DEFAULT_NUM_FMT[$model])) return StylesNumFmtIndex::DEFAULT_NUM_FMT[$model];
