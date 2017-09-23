@@ -25,6 +25,7 @@ use ZipArchive;
  * @package Decaseal\Workbook
  */
 class Workbook{
+	private $filename;
 	private $tempdir;
 	private $created;
 	private $modified;
@@ -38,7 +39,6 @@ class Workbook{
 	private $worksheetsIds;
 	private $committed;
 	private $tempFilenames;
-	private $zip;
 
 	/**
 	 * Workbook constructor
@@ -55,6 +55,7 @@ class Workbook{
 	function __construct(string $filename, string $tempdir = null, DateTime $created = null, DateTime $modified = null, string $creator = null,
 						 string $lastModifiedBy = null, string $company = null, string $manager = null){
 
+		$this->filename = $filename;
 		$this->tempdir = $tempdir ?? sys_get_temp_dir();
 		$this->created = $created ?? new DateTime();
 		$this->modified = $modified ?? $this->created;
@@ -68,9 +69,6 @@ class Workbook{
 		$this->worksheetsIds = [];
 		$this->committed = false;
 		$this->tempFilenames = [];
-
-		$this->zip = new ZipArchive();
-		$this->zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 	}
 
 	public function __destruct(){
@@ -154,33 +152,36 @@ class Workbook{
 		if ($this->isCommitted() || !count($this->worksheets)) return;
 		$this->committed = true;
 
+		$zip = new ZipArchive();
+		$zip->open($this->filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
 		foreach ($this->worksheets as $worksheet){
 			$worksheet->commit();
-			$this->zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
-			$this->zip->addFile($worksheet->getSheetRels()->getFilename(), $worksheet->getSheetRels()->getLocalname());
+			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
+			$zip->addFile($worksheet->getSheetRels()->getFilename(), $worksheet->getSheetRels()->getLocalname());
 
 			unlink($worksheet->getFilename());
 			unlink($worksheet->getSheetRels()->getFilename());
 		}
 
-		$this->zip->addFile('./Xml/Static/theme1.xml', '/xl/theme/theme1.xml');
-		$this->zip->addFromString('/_rels/.rels', (new RelationshipsXml())->toXml([
+		$zip->addFile('./Xml/Static/theme1.xml', '/xl/theme/theme1.xml');
+		$zip->addFromString('/_rels/.rels', (new RelationshipsXml())->toXml([
 			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
 			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
 			['Id' => 'rId3', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'Target' => 'docProps/app.xml']
 		]));
-		$this->zip->addFromString('/[Content_Types].xml', (new ContentTypesXml())->toXml(['worksheets' => $this->getWorksheetsModels()]));
-		$this->zip->addFromString('/docProps/app.xml', (new AppXml())->toXml([
+		$zip->addFromString('/[Content_Types].xml', (new ContentTypesXml())->toXml(['worksheets' => $this->getWorksheetsModels()]));
+		$zip->addFromString('/docProps/app.xml', (new AppXml())->toXml([
 			'worksheets' => $this->getWorksheetsModels(),
 			'company' => $this->company,
 			'manager' => $this->manager
 		]));
-		$this->zip->addFromString('/docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
-		$this->zip->addFromString('/xl/styles.xml', (new StylesXml())->toXml());
-		$this->zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
-		$this->zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
+		$zip->addFromString('/docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
+		$zip->addFromString('/xl/styles.xml', (new StylesXml())->toXml());
+		$zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
+		$zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
 
-		$this->zip->close();
+		$zip->close();
 	}
 
 	private function genRelationships() : array{
