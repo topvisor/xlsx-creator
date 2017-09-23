@@ -37,7 +37,7 @@ class Workbook{
 	private $worksheets;
 	private $worksheetsIds;
 	private $committed;
-	private $nextId;
+	private $tempFilenames;
 	private $zip;
 
 	/**
@@ -67,9 +67,14 @@ class Workbook{
 		$this->worksheets = [];
 		$this->worksheetsIds = [];
 		$this->committed = false;
+		$this->tempFilenames = [];
 
 		$this->zip = new ZipArchive();
 		$this->zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+	}
+
+	public function __destruct(){
+		foreach ($this->tempFilenames as $tempFilename) if (file_exists($tempFilename)) unlink($tempFilename);
 	}
 
 	/**
@@ -149,7 +154,14 @@ class Workbook{
 		if ($this->isCommitted() || !count($this->worksheets)) return;
 		$this->committed = true;
 
-		foreach ($this->worksheets as $worksheet) $worksheet->commit();
+		foreach ($this->worksheets as $worksheet){
+			$worksheet->commit();
+			$this->zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
+			$this->zip->addFile($worksheet->getSheetRels()->getFilename(), $worksheet->getSheetRels()->getLocalname());
+
+			unlink($worksheet->getFilename());
+			unlink($worksheet->getSheetRels()->getFilename());
+		}
 
 		$this->zip->addFile('./Xml/Static/theme1.xml', '/xl/theme/theme1.xml');
 		$this->zip->addFromString('/_rels/.rels', (new RelationshipsXml())->toXml([
@@ -212,7 +224,9 @@ class Workbook{
 
 	function genTempFilename(){
 		$filename = $this->tempdir . '/xlsxcreator_' . base64_encode(rand()) . '.xml';
-		if (file_exists($filename)) return $this->genTempFilename();
-		else return $filename;
+		if (file_exists($filename)) $filename = $this->genTempFilename();
+
+		$this->tempFilenames[] = $filename;
+		return $filename;
 	}
 }

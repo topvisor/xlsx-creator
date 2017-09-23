@@ -9,11 +9,12 @@ use XMLWriter;
 class SheetPropertiesXml extends BaseXml{
 
 	function render(XMLWriter $xml, array $model = null){
-		if (!$model) return;
+		if (!$model || !$model['tabColor'] && (!$model['pageSetup'] || !$model['pageSetup']['fitToPage'])) return;
 
 		$xml->startElement('sheetPr');
 
-		(new ColorXml('tabColor'))->render($xml, $model);
+		(new ColorXml('tabColor'))->render($xml, $model['tabColor']);
+		(new PageSetupPropertiesXml())->render($xml, $model['pageSetup']);
 
 		$xml->endElement();
 	}

@@ -30,8 +30,20 @@ class SheetRels{
 		$this->startSheetRels();
 	}
 
+	public function __destruct(){
+		if (file_exists($this->filename)) unlink($this->filename);
+	}
+
+	function getHyperlinks() : array{
+		return $this->hyperlinks;
+	}
+
 	function getFilename() : string{
 		return $this->filename;
+	}
+
+	function getLocalname() : string{
+		return '/xl/worksheets/_rels/sheet' . $this->worksheet->getId() . '.xml.rels';
 	}
 
 	function addHyperlink($target, $address){
