@@ -86,7 +86,7 @@ class Workbook{
 		$this->worksheetsIds[$name] = $id;
 
 		$worksheet = new Worksheet($this, $id, $name);
-		$worksheets[] = $worksheet;
+		$this->worksheets[] = $worksheet;
 
 		return $worksheet;
 	}
