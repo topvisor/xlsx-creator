@@ -169,7 +169,7 @@ class Workbook{
 			unlink($worksheet->getSheetRels()->getFilename());
 		}
 
-		$zip->addFile('./Xml/Static/theme1.xml', '/xl/theme/theme1.xml');
+		$zip->addFile(dirname(__FILE__) . '/Xml/Static/theme1.xml', '/xl/theme/theme1.xml');
 		$zip->addFromString('/_rels/.rels', (new RelationshipsXml())->toXml([
 			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
 			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
