@@ -1,6 +1,6 @@
 <?php
 
-namespace Decaseal\XlsxCreator\Xml\Book\Workbook;
+namespace Decaseal\XlsxCreator\Xml\Book;
 
 use Decaseal\XlsxCreator\Xml\BaseXml;
 use Decaseal\XlsxCreator\Xml\ListXml;
@@ -29,16 +29,7 @@ class WorkbookXml extends BaseXml{
 		$xml->writeAttribute('filterPrivacy', 1);
 		$xml->endElement();
 
-		$xml->startElement('bookViews');
-
-		$xml->startElement('workbookView');
-		$xml->writeAttribute('xWindow', 0);
-		$xml->writeAttribute('yWindow', 0);
-		$xml->writeAttribute('windowWidth', 12000);
-		$xml->writeAttribute('windowHeight', 24000);
-		$xml->endElement();
-
-		$xml->endElement();
+//		if ($model['view'] ?? false) (new ListXml('bookViews', new WorkbookView()))->render($model['view']);
 
 		(new ListXml('sheets', new SheetXml()))->render($xml, $model);
 

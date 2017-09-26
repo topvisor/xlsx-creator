@@ -10,7 +10,7 @@
 namespace Decaseal\XlsxCreator;
 
 use DateTime;
-use Decaseal\XlsxCreator\Xml\Book\Workbook\WorkbookXml;
+use Decaseal\XlsxCreator\Xml\Book\WorkbookXml;
 use Decaseal\XlsxCreator\Xml\Core\App\AppXml;
 use Decaseal\XlsxCreator\Xml\Core\ContentTypesXml;
 use Decaseal\XlsxCreator\Xml\Core\CoreXml;

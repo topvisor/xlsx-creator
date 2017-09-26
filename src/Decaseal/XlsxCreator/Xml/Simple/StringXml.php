@@ -17,7 +17,7 @@ class StringXml extends BaseXml{
 	}
 
 	function render(XMLWriter $xml, array $model = null){
-		if(!$model || !($model[0] ?? false)) return;
+		if(!$model || !isset($model[0])) return;
 
 		$xml->startElement($this->tag);
 

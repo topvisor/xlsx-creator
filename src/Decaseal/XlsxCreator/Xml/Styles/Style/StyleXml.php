@@ -24,10 +24,10 @@ class StyleXml extends BaseXml{
 
 		if ($this->isXfId) $xml->writeAttribute('xfId', $model['xfId'] ?? 0);
 
-		if (isset($model['numFmtId'])) $xml->writeAttribute('applyNumberFormat', 1);
-		if (isset($model['fontId'])) $xml->writeAttribute('applyFont', 1);
-		if (isset($model['fillId'])) $xml->writeAttribute('applyFill', 1);
-		if (isset($model['borderId'])) $xml->writeAttribute('applyBorder', 1);
+		if ($model['numFmtId'] ?? false) $xml->writeAttribute('applyNumberFormat', 1);
+		if ($model['fontId'] ?? false) $xml->writeAttribute('applyFont', 1);
+		if ($model['fillId'] ?? false) $xml->writeAttribute('applyFill', 1);
+		if ($model['borderId'] ?? false) $xml->writeAttribute('applyBorder', 1);
 
 		if ($model['alignment'] ?? false) {
 			$xml->writeAttribute('applyAlignment', 1);
