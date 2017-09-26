@@ -88,6 +88,12 @@ class Worksheet{
 	}
 
 	public function __destruct(){
+		unset($this->workbook);
+		unset($this->rows);
+		unset($this->merges);
+		unset($this->sheetRels);
+		unset($this->xml);
+
 		if (file_exists($this->filename)) unlink($this->filename);
 	}
 

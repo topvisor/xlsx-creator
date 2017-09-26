@@ -36,6 +36,12 @@ class Cell{
 		$this->master = null;
 	}
 
+	public function __destruct(){
+		unset($this->row);
+		unset($this->value);
+		unset($this->master);
+	}
+
 	function setValue($value){
 		if ($this->type === Cell::TYPE_MERGE && !is_null($this->master)) {
 			$this->master->setValue($value);

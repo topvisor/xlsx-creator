@@ -28,6 +28,8 @@ class SheetRels{
 	}
 
 	public function __destruct(){
+		unset($this->xml);
+
 		if (file_exists($this->filename)) unlink($this->filename);
 	}
 
@@ -43,7 +45,7 @@ class SheetRels{
 		return '/xl/worksheets/_rels/sheet' . $this->id . '.xml.rels';
 	}
 
-	function addHyperlink($target, $address){
+	function addHyperlink(string $target, string $address){
 		$this->hyperlinks = [
 			'address' => $address,
 			'rId' => $this->writeRelationship('http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink', $target, 'External')

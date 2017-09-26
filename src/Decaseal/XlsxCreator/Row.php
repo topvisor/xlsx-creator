@@ -23,6 +23,10 @@ class Row{
 		$this->cells = [];
 	}
 
+	public function __destruct(){
+		unset($this->worksheet);
+	}
+
 	function getWorksheet() : Worksheet{
 		return $this->worksheet;
 	}

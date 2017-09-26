@@ -72,6 +72,11 @@ class Workbook{
 	}
 
 	public function __destruct(){
+		unset($this->created);
+		unset($this->modified);
+		unset($this->stylesXml);
+		unset($this->worksheets);
+
 		foreach ($this->tempFilenames as $tempFilename) if (file_exists($tempFilename)) unlink($tempFilename);
 	}
 
