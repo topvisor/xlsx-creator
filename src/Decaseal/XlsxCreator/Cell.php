@@ -26,7 +26,7 @@ class Cell{
 	private $type;
 	private $master;
 
-	function __construct(Row $row, int $col, array $style = null){
+	function __construct(Row $row, int $col, array $style = []){
 		$this->row = $row;
 		$this->col = $col;
 		$this->style = $style;
