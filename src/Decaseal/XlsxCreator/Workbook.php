@@ -77,7 +77,7 @@ class Workbook{
 		unset($this->stylesXml);
 		unset($this->worksheets);
 
-		foreach ($this->tempFilenames as $tempFilename) if (file_exists($tempFilename)) unlink($tempFilename);
+		$this->unlinkTempFiles();
 	}
 
 	/**
@@ -164,9 +164,6 @@ class Workbook{
 			$worksheet->commit();
 			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
 			$zip->addFile($worksheet->getSheetRels()->getFilename(), $worksheet->getSheetRels()->getLocalname());
-
-			unlink($worksheet->getFilename());
-			unlink($worksheet->getSheetRels()->getFilename());
 		}
 
 		$zip->addFile(dirname(__FILE__) . '/Xml/Static/theme1.xml', '/xl/theme/theme1.xml');
@@ -187,6 +184,8 @@ class Workbook{
 		$zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
 
 		$zip->close();
+
+		$this->unlinkTempFiles();
 	}
 
 	private function genRelationships() : array{
@@ -226,6 +225,10 @@ class Workbook{
 			'created' => $this->created,
 			'modified' => $this->modified
 		];
+	}
+
+	function unlinkTempFiles(){
+		foreach ($this->tempFilenames as $tempFilename) if (file_exists($tempFilename)) unlink($tempFilename);
 	}
 
 	function genTempFilename(){
