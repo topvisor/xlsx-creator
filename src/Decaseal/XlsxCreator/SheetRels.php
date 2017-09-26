@@ -2,7 +2,6 @@
 
 namespace Decaseal\XlsxCreator;
 
-
 use XMLWriter;
 
 class SheetRels{

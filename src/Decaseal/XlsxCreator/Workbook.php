@@ -4,7 +4,7 @@
  * Библиотека для создания xlsx файлов
  *
  * @author decaseal <decaseal@gmail.com>
- * @version 1.0
+ * @version 0.1
  */
 
 namespace Decaseal\XlsxCreator;
@@ -15,7 +15,6 @@ use Decaseal\XlsxCreator\Xml\Core\App\AppXml;
 use Decaseal\XlsxCreator\Xml\Core\ContentTypesXml;
 use Decaseal\XlsxCreator\Xml\Core\CoreXml;
 use Decaseal\XlsxCreator\Xml\Core\Relationships\RelationshipsXml;
-use Decaseal\XlsxCreator\Xml\Styles\Index\StylesIndex;
 use Decaseal\XlsxCreator\Xml\Styles\StylesXml;
 use ZipArchive;
 
