@@ -71,7 +71,7 @@ class Workbook{
 		$this->tempFilenames = [];
 	}
 
-	public function __destruct(){
+	function __destruct(){
 		unset($this->created);
 		unset($this->modified);
 		unset($this->stylesXml);
@@ -163,7 +163,9 @@ class Workbook{
 		foreach ($this->worksheets as $worksheet){
 			$worksheet->commit();
 			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
-			$zip->addFile($worksheet->getSheetRels()->getFilename(), $worksheet->getSheetRels()->getLocalname());
+
+			$sheetRelsFilename = $worksheet->getSheetRels()->getFilename();
+			if ($sheetRelsFilename)	$zip->addFile($sheetRelsFilename, $worksheet->getSheetRels()->getLocalname());
 		}
 
 		$zip->addFile(dirname(__FILE__) . '/Xml/Static/theme1.xml', '/xl/theme/theme1.xml');

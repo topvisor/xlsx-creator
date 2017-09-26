@@ -36,7 +36,7 @@ class Cell{
 		$this->master = null;
 	}
 
-	public function __destruct(){
+	function __destruct(){
 		unset($this->row);
 		unset($this->value);
 		unset($this->master);

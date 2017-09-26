@@ -87,7 +87,7 @@ class Worksheet{
 
 	}
 
-	public function __destruct(){
+	function __destruct(){
 		unset($this->workbook);
 		unset($this->rows);
 		unset($this->merges);

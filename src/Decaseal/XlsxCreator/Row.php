@@ -23,7 +23,7 @@ class Row{
 		$this->cells = [];
 	}
 
-	public function __destruct(){
+	function __destruct(){
 		unset($this->worksheet);
 	}
 
