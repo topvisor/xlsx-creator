@@ -175,7 +175,7 @@ class Workbook{
 			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
 			['Id' => 'rId3', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'Target' => 'docProps/app.xml']
 		]));
-		$zip->addFromString('/[Content_Types].xml', (new ContentTypesXml())->toXml(['worksheets' => $this->getWorksheetsModels()]));
+		$zip->addFromString('/[Content_Types].xml', (new ContentTypesXml())->toXml($this->getWorksheetsModels()));
 		$zip->addFromString('/docProps/app.xml', (new AppXml())->toXml([
 			'worksheets' => $this->getWorksheetsModels(),
 			'company' => $this->company,
