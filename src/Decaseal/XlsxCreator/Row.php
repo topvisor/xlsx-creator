@@ -39,7 +39,7 @@ class Row{
 		$this->cells = [];
 
 		foreach ($values as $index => $value) {
-			$cell = new Cell($this, $index);
+			$cell = new Cell($this, $index + 1);
 			$this->cells[] = $cell;
 			if ($value) $cell->setValue($value);
 		}
