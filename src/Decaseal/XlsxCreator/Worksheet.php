@@ -196,7 +196,7 @@ class Worksheet{
 		$this->xml->writeAttribute('xmlns:x14ac', 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac');
 
 		(new SheetPropertiesXml())->render($this->xml, [
-			'tabColor' => ['argb' => $this->tabColor],
+			'tabColor' => $this->tabColor,
 			'pageSetup' => $this->pageSetup
 		]);
 

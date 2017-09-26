@@ -13,8 +13,9 @@ class SheetPropertiesXml extends BaseXml{
 
 		$xml->startElement('sheetPr');
 
-		(new ColorXml('tabColor'))->render($xml, $model['tabColor']);
-		(new PageSetupPropertiesXml())->render($xml, $model['pageSetup']);
+		if ($model['tabColor'] ?? false) (new ColorXml('tabColor'))->render($xml, ['argb' => $model['tabColor']]);
+
+		(new PageSetupPropertiesXml())->render($xml, $model['pageSetup'] ?? null);
 
 		$xml->endElement();
 	}
