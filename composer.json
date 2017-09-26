@@ -1,3 +1,24 @@
 {
-	"name": "decaseal/XlsxCreator"
+	"name": "decaseal/XlsxCreator",
+	"description": "Library for creating xlsx files for Topvisor",
+	"keywords": ["PHP","Excel","OpenXML","xlsx","xls","spreadsheet"],
+	"license": "MIT",
+	"type": "library",
+	"authors": [
+		{
+			"name": "decaseal",
+			"email": "decaseal@gmail.com"
+		}
+	],
+	"require": {
+		"php": "^7.0",
+		"ext-xmlwriter": "*",
+		"ext-zip": "*",
+		"ext-date": "*"
+	},
+	"autoload": {
+		"psr-0": {
+			"Decaseal\\": "src/"
+		}
+	}
 }
