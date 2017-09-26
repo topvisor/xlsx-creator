@@ -33,9 +33,9 @@ class CoreXml extends BaseXml{
 		(new StringXml('cp:lastPrinted'))->render($xml, null);
 		(new StringXml('cp:revision'))->render($xml, null);
 		(new StringXml('cp:contentStatus'))->render($xml, null);
-		(new StringXml('dcterms:created', ['xsi:type', 'dcterms:W3CDTF']))
+		(new StringXml('dcterms:created', ['xsi:type' => 'dcterms:W3CDTF']))
 			->render($xml, [$model['created']->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z')]);
-		(new StringXml('dcterms:modified', ['xsi:type', 'dcterms:W3CDTF']))
+		(new StringXml('dcterms:modified', ['xsi:type' => 'dcterms:W3CDTF']))
 			->render($xml, [$model['modified']->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z')]);
 
 		$xml->endElement();
