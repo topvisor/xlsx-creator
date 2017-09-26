@@ -74,7 +74,7 @@ class Worksheet{
 		$this->lastUncommittedRow = 1;
 		$this->rows = [];
 		$this->merges = [];
-		$this->sheetRels = new SheetRels($this->id, $this->workbook->genTempFilename());
+		$this->sheetRels = new SheetRels($this);
 
 		$this->filename = $this->workbook->genTempFilename();
 		$this->xml = new XMLWriter();
