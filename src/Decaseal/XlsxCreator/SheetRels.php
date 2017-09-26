@@ -6,21 +6,21 @@ namespace Decaseal\XlsxCreator;
 use XMLWriter;
 
 class SheetRels{
-	private $worksheet;
+	private $id;
+	private $filename;
 
 	private $hyperlinks;
 	private $committed;
 
-	private $filename;
 	private $xml;
 
-	function __construct(Worksheet $worksheet){
-		$this->worksheet = $worksheet;
+	function __construct(int $id, string $filename){
+		$this->id = $id;
+		$this->filename = $filename;
 
 		$this->hyperlinks = [];
 		$this->committed = false;
 
-		$this->filename = $this->worksheet->getWorkbook()->genTempFilename();
 		$this->xml = new XMLWriter();
 		$this->xml->openURI($this->filename);
 
@@ -40,7 +40,7 @@ class SheetRels{
 	}
 
 	function getLocalname() : string{
-		return '/xl/worksheets/_rels/sheet' . $this->worksheet->getId() . '.xml.rels';
+		return '/xl/worksheets/_rels/sheet' . $this->id . '.xml.rels';
 	}
 
 	function addHyperlink($target, $address){
