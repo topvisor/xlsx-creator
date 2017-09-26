@@ -38,7 +38,7 @@ class Row{
 	function setValues(array $values = null){
 		$this->cells = [];
 
-		foreach ($values as $index => $value) {
+		if ($values) foreach ($values as $index => $value) {
 			$cell = new Cell($this, $index + 1);
 			$this->cells[] = $cell;
 			if ($value) $cell->setValue($value);
