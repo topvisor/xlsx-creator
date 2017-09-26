@@ -69,6 +69,7 @@ class Cell{
 
 		switch ($this->type) {
 			case Cell::TYPE_NUMBER:
+			case Cell::TYPE_STRING:
 			case Cell::TYPE_DATE:
 			case Cell::TYPE_RICH_TEXT:
 			case Cell::TYPE_BOOL:
