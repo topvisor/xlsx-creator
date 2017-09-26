@@ -115,7 +115,7 @@ class Worksheet{
 	}
 
 	function getLocalname() :string{
-		return '/xl/worksheets/sheet' . $this->id . '.xml';
+		return 'xl/worksheets/sheet' . $this->id . '.xml';
 	}
 
 	function setRId(string $rId){

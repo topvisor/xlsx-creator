@@ -36,7 +36,7 @@ class SheetRels{
 	}
 
 	function getLocalname() : string{
-		return '/xl/worksheets/_rels/sheet' . $this->worksheet->getId() . '.xml.rels';
+		return 'xl/worksheets/_rels/sheet' . $this->worksheet->getId() . '.xml.rels';
 	}
 
 	function addHyperlink(string $target, string $address){

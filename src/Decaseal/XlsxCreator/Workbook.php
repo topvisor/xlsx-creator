@@ -168,22 +168,22 @@ class Workbook{
 			if ($sheetRelsFilename)	$zip->addFile($sheetRelsFilename, $worksheet->getSheetRels()->getLocalname());
 		}
 
-		$zip->addFile(dirname(__FILE__) . '/Xml/Static/theme1.xml', '/xl/theme/theme1.xml');
-		$zip->addFromString('/_rels/.rels', (new RelationshipsXml())->toXml([
+		$zip->addFile(dirname(__FILE__) . '/Xml/Static/theme1.xml', 'xl/theme/theme1.xml');
+		$zip->addFromString('_rels/.rels', (new RelationshipsXml())->toXml([
 			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
 			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
 			['Id' => 'rId3', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'Target' => 'docProps/app.xml']
 		]));
-		$zip->addFromString('/[Content_Types].xml', (new ContentTypesXml())->toXml($this->getWorksheetsModels()));
-		$zip->addFromString('/docProps/app.xml', (new AppXml())->toXml([
+		$zip->addFromString('[Content_Types].xml', (new ContentTypesXml())->toXml($this->getWorksheetsModels()));
+		$zip->addFromString('docProps/app.xml', (new AppXml())->toXml([
 			'worksheets' => $this->getWorksheetsModels(),
 			'company' => $this->company,
 			'manager' => $this->manager
 		]));
-		$zip->addFromString('/docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
-		$zip->addFromString('/xl/styles.xml', (new StylesXml())->toXml());
-		$zip->addFromString('/xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
-		$zip->addFromString('/xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
+		$zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
+		$zip->addFromString('xl/styles.xml', (new StylesXml())->toXml());
+		$zip->addFromString('xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
+		$zip->addFromString('xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
 
 		$zip->close();
 
