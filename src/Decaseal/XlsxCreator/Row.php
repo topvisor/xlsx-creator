@@ -12,7 +12,7 @@ class Row{
 
 	private $cells;
 
-	function __construct(Worksheet $worksheet, int $number, array $style = null, int $height = null, bool $hidden = false, int $outlineLevel = 0){
+	function __construct(Worksheet $worksheet, int $number, array $style = [], int $height = null, bool $hidden = false, int $outlineLevel = 0){
 		$this->worksheet = $worksheet;
 		$this->number = $number;
 		$this->style = $style;
