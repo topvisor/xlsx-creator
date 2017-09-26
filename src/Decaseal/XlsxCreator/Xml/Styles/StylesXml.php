@@ -50,7 +50,7 @@ class StylesXml extends BaseXml{
 		if ($rawXmls = $this->borderIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'borders', $rawXmls);
 
 		(new ListXml('cellStyleXfs', new StyleXml(false), [], false, true))
-			->render($xml, ['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0]);
+			->render($xml, [['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0]]);
 
 		if ($rawXmls = $this->styleIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'cellXfs', $rawXmls);
 
