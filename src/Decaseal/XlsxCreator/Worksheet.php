@@ -393,7 +393,7 @@ class Worksheet{
 			$row = array_shift($this->rows);
 			$found = (bool) ($row->getNumber() == $lastRow->getNumber());
 
-			$rowXml->render($this->xml, $row->getModel());
+			$rowXml->render($this->xml, $row->genModel());
 			$this->lastUncommittedRow++;
 		}
 	}
