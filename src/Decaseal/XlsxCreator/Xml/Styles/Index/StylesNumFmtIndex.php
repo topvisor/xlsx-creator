@@ -2,6 +2,11 @@
 
 namespace Decaseal\XlsxCreator\Xml\Styles\Index;
 
+/**
+ * Class StylesNumFmtIndex. Индексирует модели NumFmtsXml, учитывая значения по умолчанию.
+ *
+ * @package Decaseal\XlsxCreator\Xml\Styles\Index
+ */
 class StylesNumFmtIndex extends StylesIndex{
 	const DEFAULT_NUM_FMT = [
 		'General' => 0,
