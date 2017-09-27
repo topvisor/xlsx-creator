@@ -2,6 +2,11 @@
 
 namespace Decaseal\XlsxCreator;
 
+/**
+ * Class Row. Содержит методы для работы со строкой.
+ *
+ * @package Decaseal\XlsxCreator
+ */
 class Row{
 	private $worksheet;
 	private $number;
@@ -12,13 +17,20 @@ class Row{
 
 	private $cells;
 
-	function __construct(Worksheet $worksheet, int $number, array $style = [], int $height = null, bool $hidden = false, int $outlineLevel = 0){
+	/**
+	 * Row constructor.
+	 *
+	 * @param Worksheet $worksheet - таблица
+	 * @param int $number - номер строки
+	 */
+	function __construct(Worksheet $worksheet, int $number){
 		$this->worksheet = $worksheet;
 		$this->number = $number;
-		$this->style = $style;
-		$this->height = $height;
-		$this->hidden = $hidden;
-		$this->outlineLevel = $outlineLevel;
+
+		$this->style = [];
+		$this->height = null;
+		$this->hidden = false;
+		$this->outlineLevel = 0;
 
 		$this->cells = [];
 	}
@@ -27,15 +39,91 @@ class Row{
 		unset($this->worksheet);
 	}
 
+	/**
+	 * @return Worksheet - таблица
+	 */
 	function getWorksheet() : Worksheet{
 		return $this->worksheet;
 	}
 
+	/**
+	 * @return int - номер строки
+	 */
 	function getNumber() : int{
 		return $this->number;
 	}
 
-	function setValues(array $values = null){
+	/**
+	 * @see Row::setStyle() Параметры $style
+	 *
+	 * @return array - стили
+	 */
+	function getStyle() : array{
+		return $this->style;
+	}
+
+	/**
+	 * @param array $style - стили
+	 * @return Row - $this
+	 */
+	function setStyle(array $style) : Row{
+		$this->style = $style;
+		return $this;
+	}
+
+	/**
+	 * @return null|int - высота строки
+	 */
+	function getHeight(){
+		return $this->height;
+	}
+
+	/**
+	 * @param int|null $height - высота строки
+	 * @return Row - $this
+	 */
+	function setHeight(int $height = null) : Row{
+		$this->height = $height;
+		return $this;
+	}
+
+	/**
+	 * @return bool - скрытая ли строка
+	 */
+	function isHidden() : bool{
+		return $this->hidden;
+	}
+
+	/**
+	 * @param bool $hidden - скрыть строку
+	 * @return Row - $this
+	 */
+	function setHidden(bool $hidden) : Row{
+		$this->hidden = $hidden;
+		return $this;
+	}
+
+	/**
+	 * @return int - row outline level
+	 */
+	function getOutlineLevel() : int{
+		return $this->outlineLevel;
+	}
+
+	/**
+	 * @param int $outlineLevel - row outline level
+	 * @return Row - $this
+	 */
+	function setOutlineLevel(int $outlineLevel) : Row{
+		$this->outlineLevel = $outlineLevel;
+		return $this;
+	}
+
+	/**
+	 * @param array|null $values - значения ячеек строки
+	 * @return Row - $this
+	 */
+	function setValues(array $values = null) : Row{
 		$this->cells = [];
 
 		if ($values) foreach ($values as $index => $value) {
@@ -43,17 +131,28 @@ class Row{
 			$this->cells[] = $cell;
 			if ($value) $cell->setValue($value);
 		}
+
+		return $this;
 	}
 
-	function commit(){
-		$this->worksheet->commitRow($this);
-	}
-
+	/**
+	 * @return bool - есть ли в строке ячейки
+	 */
 	function hasValues(){
 		foreach ($this->cells as $cell) if ($cell->getType() !== Cell::TYPE_NULL) return true;
 		return false;
 	}
 
+	/**
+	 *	Зафиксировать строку (и предыдущие).
+	 */
+	function commit(){
+		$this->worksheet->commitRow($this);
+	}
+
+	/**
+	 * @return array|null - модель строки
+	 */
 	function genModel(){
 		$cellsModels = [];
 		$min = 0;
@@ -70,7 +169,7 @@ class Row{
 		$styleId = $this->worksheet->getWorkbook()->getStyles()->addStyle($this->style);
 		$collapsed = (bool) ($this->outlineLevel && $this->outlineLevel >= $this->worksheet->getOutlineLevelRow());
 
-		return $cellsModels ? [
+		return ($cellsModels || $this->height) ? [
 			'cells' => $cellsModels,
 			'number' => $this->number,
 			'min' => $min,
