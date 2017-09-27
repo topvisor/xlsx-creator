@@ -80,17 +80,12 @@ class Worksheet{
 		];
 		$this->autoFilter = null;
 
-
 		$this->committed = false;
 		$this->columns = [];
 		$this->rows = [];
 		$this->merges = [];
 		$this->lastUncommittedRow = 1;
 		$this->sheetRels = new SheetRels($this);
-
-
-
-		$this->startWorksheet();
 	}
 
 	function __destruct(){
