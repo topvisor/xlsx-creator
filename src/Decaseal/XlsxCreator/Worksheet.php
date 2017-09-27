@@ -134,7 +134,7 @@ class Worksheet{
 	}
 
 	/**
-	 * @param string|null $tabColor - цвет вкладки
+	 * @param string|null $tabColor - цвет вкладки в формате 'FF00FF00'
 	 * @return Worksheet - $this
 	 */
 	function setTabColor(string $tabColor = null) : Worksheet{
