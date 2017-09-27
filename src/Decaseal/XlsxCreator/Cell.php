@@ -5,6 +5,11 @@ namespace Decaseal\XlsxCreator;
 use DateTime;
 use Exception;
 
+/**
+ * Class Cell. Содержит методы для работы c ячейкой.
+ *
+ * @package Decaseal\XlsxCreator
+ */
 class Cell{
 	const TYPE_NULL = 0;
 	const TYPE_MERGE = 1;
@@ -26,10 +31,16 @@ class Cell{
 	private $type;
 	private $master;
 
-	function __construct(Row $row, int $col, array $style = []){
+	/**
+	 * Cell constructor.
+	 *
+	 * @param Row $row - строка
+	 * @param int $col - номер колонки
+	 */
+	function __construct(Row $row, int $col){
 		$this->row = $row;
 		$this->col = $col;
-		$this->style = $style;
+		$this->style = [];
 
 		$this->value = null;
 		$this->type = Cell::TYPE_NULL;
@@ -42,6 +53,9 @@ class Cell{
 		unset($this->master);
 	}
 
+	/**
+	 * @param $value - значение ячейки
+	 */
 	function setValue($value){
 		if ($this->type === Cell::TYPE_MERGE && !is_null($this->master)) {
 			$this->master->setValue($value);
@@ -51,14 +65,50 @@ class Cell{
 		}
 	}
 
+	/**
+	 * @return Row - строка
+	 */
+	function getRow() : Row{
+		return $this->row;
+	}
+
+	/**
+	 * @return int - колонка
+	 */
 	function getCol() : int{
 		return $this->col;
 	}
 
+	/**
+	 * @see Row::setStyle() Параметры $style
+	 *
+	 * @return array - стили
+	 */
+	function getStyle() : array{
+		return $this->style;
+	}
+
+	/**
+	 * @see Row::setStyle() Параметры $style
+	 *
+	 * @param array $style - стили
+	 * @return Cell - $this
+	 */
+	function setStyle(array $style) : Cell{
+		$this->style = $style;
+		return $this;
+	}
+
+	/**
+	 * @return int - тип значения ячейки
+	 */
 	function getType() : int{
 		return $this->type;
 	}
 
+	/**
+	 * @return array - модель ячейки
+	 */
 	function genModel() : array{
 		$model = [
 			'address' => $this->getAddress(),
@@ -103,16 +153,33 @@ class Cell{
 		return $model;
 	}
 
+	/**
+	 * @return string - адрес ячейки ('A1', 'D23')
+	 */
 	function getAddress() : string{
 		return Cell::genAddress($this->col, $this->row->getNumber());
 	}
 
+	/**
+	 * Возвращает строку колонки по ее номеру. Например, 1 - A, 3 - C.
+	 *
+	 * @param int $col - номер колонки
+	 * @return string - строка колонки
+	 * @throws Exception - ошибочный номер колонки
+	 */
 	static function genColStr(int $col) : string{
 		if ($col < 1 || $col > 16384) throw new Exception("$col is out of bounds. Excel supports columns from 1 to 16384");
 		if ($col > 26) return Cell::genColStr(($col - 1) / 26) . chr(($col % 26 ? $col % 26 : 26) + 64);
 		return chr($col + 64);
 	}
 
+	/**
+	 * Возвращает номер колонки по ее строке. Например, A - 1, AA - 27.
+	 *
+	 * @param string $col - строка колонки
+	 * @return int - номер колонки
+	 * @throws Exception - ошибочная строка колонки
+	 */
 	static function genColNum(string $col) : int{
 		$len = strlen($col);
 		if ($len < 1 || $len > 3) throw new Exception("Out of bounds. Invalid column $col");
@@ -128,11 +195,21 @@ class Cell{
 		return $result;
 	}
 
+	/**
+	 * @param int $col - номер колонки
+	 * @param int $row - номер строки
+	 * @return string - адрес ячейки ('A1', 'D23')
+	 * @throws Exception - ошибочный номер колонки/строки
+	 */
 	static function genAddress(int $col, int $row) : string{
 		if ($row < 1 || $col > 1048576) throw new Exception("$row is out of bounds. Excel supports rows from 1 to 1048576");
 		return self::genColStr($col) . $row;
 	}
 
+	/**
+	 * @param $value - значение ячейки
+	 * @return int - тип значения ячейки
+	 */
 	private static function genValueType($value) : int{
 		switch (true) {
 			case is_null($value): return Cell::TYPE_NULL;
