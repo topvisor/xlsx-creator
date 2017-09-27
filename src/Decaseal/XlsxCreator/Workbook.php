@@ -251,7 +251,7 @@ class Workbook{
 	}
 
 	/**
-	 * Зафиксировать изменения workbook. Используйте для создания xlsx файла.
+	 * Зафиксировать файл workbook. Используйте для создания xlsx файла.
 	 */
 	function commit(){
 		if ($this->committed || !count($this->worksheets)) return;

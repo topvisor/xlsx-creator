@@ -4,6 +4,11 @@ namespace Decaseal\XlsxCreator;
 
 use XMLWriter;
 
+/**
+ * Class Worksheet. Служит для добавления связей в таблицу.
+ *
+ * @package Decaseal\XlsxCreator
+ */
 class SheetRels{
 	private $worksheet;
 
@@ -13,6 +18,10 @@ class SheetRels{
 	private $filename;
 	private $xml;
 
+	/**
+	 * SheetRels constructor.
+	 * @param Worksheet $worksheet - таблица
+	 */
 	function __construct(Worksheet $worksheet){
 		$this->worksheet = $worksheet;
 
@@ -26,18 +35,31 @@ class SheetRels{
 		if ($this->filename && file_exists($this->filename)) unlink($this->filename);
 	}
 
+	/**
+	 * @return array - список гиперссылок
+	 */
 	function getHyperlinks() : array{
 		return $this->hyperlinks;
 	}
 
+	/**
+	 * @return null|string - путь к временному файлу связей
+	 */
 	function getFilename(){
 		return $this->filename;
 	}
 
+	/**
+	 * @return string - путь к файлу связей внутри xlsx файла
+	 */
 	function getLocalname() : string{
 		return 'xl/worksheets/_rels/sheet' . $this->worksheet->getId() . '.xml.rels';
 	}
 
+	/**
+	 * @param string $target - гиперссылка
+	 * @param string $address - ячейка таблицы ('A1', 'B5')
+	 */
 	function addHyperlink(string $target, string $address){
 		$this->hyperlinks = [
 			'address' => $address,
@@ -45,6 +67,9 @@ class SheetRels{
 		];
 	}
 
+	/**
+	 *	Зафиксировать файл связей.
+	 */
 	function commit() {
 		if (!$this->xml || $this->committed) return;
 		$this->committed = true;
@@ -52,6 +77,9 @@ class SheetRels{
 		$this->endSheetRels();
 	}
 
+	/**
+	 *	Начать файл связей.
+	 */
 	private function startSheetRels(){
 		$this->filename = $this->worksheet->getWorkbook()->genTempFilename();
 
@@ -63,6 +91,9 @@ class SheetRels{
 		$this->xml->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/package/2006/relationships');
 	}
 
+	/**
+	 *	Завершить файл связей.
+	 */
 	private function endSheetRels(){
 		$this->xml->endElement();
 		$this->xml->endDocument();
@@ -71,6 +102,14 @@ class SheetRels{
 		unset($this->xml);
 	}
 
+	/**
+	 * Записать связь в файл.
+	 *
+	 * @param string $type - схема связи
+	 * @param string $target - связь
+	 * @param string|null $targetMode - тип связи
+	 * @return string - id связи
+	 */
 	private function writeRelationship(string $type, string $target, string $targetMode = null) : string{
 		if (!$this->xml) $this->startSheetRels();
 

@@ -361,7 +361,7 @@ class Worksheet{
 	}
 
 	/**
-	 *	Зафиксировать изменения таблицы.
+	 *	Зафиксировать файл таблицы.
 	 */
 	function commit(){
 		if ($this->isCommitted()) return;
