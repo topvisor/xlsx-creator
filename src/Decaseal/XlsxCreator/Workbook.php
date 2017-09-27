@@ -4,7 +4,7 @@
  * Библиотека для создания xlsx файлов
  *
  * @author decaseal <decaseal@gmail.com>
- * @version 0.1
+ * @version v0.1-alpha
  */
 
 namespace Decaseal\XlsxCreator;
@@ -40,7 +40,7 @@ class Workbook{
 	private $tempFilenames;
 
 	/**
-	 * Workbook constructor
+	 * Workbook constructor.
 	 *
 	 * @param string $filename - путь к xlsx файлу
 	 */
