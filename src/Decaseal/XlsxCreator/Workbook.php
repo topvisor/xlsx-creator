@@ -225,9 +225,9 @@ class Workbook{
 	}
 
 	/**
-	 * Получить таблицу по имени
+	 * Получить таблицу по id
 	 *
-	 * @param int $id - имя таблицы
+	 * @param int $id - id таблицы
 	 * @return Worksheet - таблица
 	 */
 	function getWorksheetById(int $id) : Worksheet{
