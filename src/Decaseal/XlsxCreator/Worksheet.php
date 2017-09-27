@@ -88,9 +88,7 @@ class Worksheet{
 		$this->lastUncommittedRow = 1;
 		$this->sheetRels = new SheetRels($this);
 
-		$this->filename = $this->workbook->genTempFilename();
-		$this->xml = new XMLWriter();
-		$this->xml->openURI($this->filename);
+
 
 		$this->startWorksheet();
 	}
@@ -311,9 +309,9 @@ class Worksheet{
 	}
 
 	/**
-	 * @return string - путь к временному файлу таблицы
+	 * @return null|string - путь к временному файлу таблицы
 	 */
-	function getFilename() : string{
+	function getFilename(){
 		return $this->filename;
 	}
 
@@ -352,6 +350,8 @@ class Worksheet{
 	 * @return Row - строка таблицы
 	 */
 	function addRow(array $values = null) : Row{
+		if (!$this->xml) $this->startWorksheet();
+
 		$row = new Row($this, count($this->rows) + $this->lastUncommittedRow);
 		if (!is_null($values)) $row->setValues($values);
 
@@ -371,11 +371,6 @@ class Worksheet{
 		unset($this->rows);
 
 		$this->endWorksheet();
-
-		$this->xml->flush();
-		unset($this->xml);
-
-		$this->sheetRels->commit();
 	}
 
 	/**
@@ -414,6 +409,10 @@ class Worksheet{
 	 *	Начать файл таблицы.
 	 */
 	private function startWorksheet(){
+		$this->filename = $this->workbook->genTempFilename();
+		$this->xml = new XMLWriter();
+		$this->xml->openURI($this->filename);
+
 		$this->xml->startDocument('1.0', 'UTF-8', 'yes');
 		$this->xml->startElement('worksheet');
 
@@ -455,6 +454,11 @@ class Worksheet{
 
 		$this->xml->endElement();
 		$this->xml->endDocument();
+
+		$this->xml->flush();
+		unset($this->xml);
+
+		$this->sheetRels->commit();
 	}
 
 	private function writeColumns(){
