@@ -21,7 +21,7 @@ use ZipArchive;
 /**
  * Class Workbook. Используйте его для создания xlsx файла.
  *
- * @package Decaseal\Workbook
+ * @package Decaseal\XlsxCreator
  */
 class Workbook{
 	private $filename;
@@ -43,25 +43,16 @@ class Workbook{
 	 * Workbook constructor
 	 *
 	 * @param string $filename - путь к xlsx файлу
-	 * @param string|null $tempdir - путь к директории для хранения временных файлов
-	 * @param DateTime|null $created - время создания файла
-	 * @param DateTime|null $modified - время изменения файла
-	 * @param string|null $creator - автор файла
-	 * @param string|null $lastModifiedBy - автор последнего изменения файла
-	 * @param string|null $company - компания
-	 * @param string|null $manager - менеджер
 	 */
-	function __construct(string $filename, string $tempdir = null, DateTime $created = null, DateTime $modified = null, string $creator = null,
-						 string $lastModifiedBy = null, string $company = null, string $manager = null){
-
+	function __construct(string $filename){
 		$this->filename = $filename;
-		$this->tempdir = $tempdir ?? sys_get_temp_dir();
-		$this->created = $created ?? new DateTime();
-		$this->modified = $modified ?? $this->created;
-		$this->creator = $creator ?? 'XlsxWriter';
-		$this->lastModifiedBy = $lastModifiedBy ?? $this->creator;
-		$this->company = $company ?? '';
-		$this->manager = $manager ?? null;
+		$this->tempdir = sys_get_temp_dir();
+		$this->created = new DateTime();
+		$this->modified = $this->created;
+		$this->creator = 'XlsxWriter';
+		$this->lastModifiedBy = $this->creator;
+		$this->company = '';
+		$this->manager = null;
 
 		$this->stylesXml = new StylesXml();
 		$this->worksheets = [];
@@ -77,6 +68,134 @@ class Workbook{
 		unset($this->worksheets);
 
 		$this->unlinkTempFiles();
+	}
+
+	/**
+	 * @return string - путь к xlsx файлу
+	 */
+	function getFilename() : string{
+		return $this->filename;
+	}
+
+	/**
+	 * @param string $filename - путь к xlsx файлу
+	 * @return Workbook - $this
+	 */
+	function setFilename(string $filename) : Workbook{
+		$this->filename = $filename;
+		return $this;
+	}
+
+	/**
+	 * @return string - путь к директории для хранения временных файлов
+	 */
+	function getTempdir() : string{
+		return $this->tempdir;
+	}
+
+	/**
+	 * @param string $tempdir - путь к директории для хранения временных файлов
+	 * @return Workbook - $this
+	 */
+	function setTempdir(string $tempdir) : Workbook{
+		$this->tempdir = $tempdir;
+		return $this;
+	}
+
+	/**
+	 * @return DateTime - время создания файла
+	 */
+	function getCreated() : DateTime{
+		return $this->created;
+	}
+
+	/**
+	 * @param DateTime $created - время создания файла
+	 * @return Workbook - $this
+	 */
+	function setCreated(DateTime $created) : Workbook{
+		$this->created = $created;
+		return $this;
+	}
+
+	/**
+	 * @return DateTime - время изменения файла
+	 */
+	function getModified() : DateTime{
+		return $this->modified;
+	}
+
+	/**
+	 * @param DateTime $modified - время изменения файла
+	 * @return Workbook - $this
+	 */
+	function setModified(DateTime $modified) : Workbook{
+		$this->modified = $modified;
+		return $this;
+	}
+
+	/**
+	 * @return string - автор файла
+	 */
+	function getCreator() : string{
+		return $this->creator;
+	}
+
+	/**
+	 * @param string $creator - автор файла
+	 * @return Workbook - $this
+	 */
+	function setCreator(string $creator) : Workbook{
+		$this->creator = $creator;
+		return $this;
+	}
+
+	/**
+	 * @return string - автор последнего изменения файла
+	 */
+	function getLastModifiedBy() : string{
+		return $this->lastModifiedBy;
+	}
+
+	/**
+	 * @param string $lastModifiedBy - автор последнего изменения файла
+	 * @return Workbook - $this
+	 */
+	function setLastModifiedBy(string $lastModifiedBy) : Workbook{
+		$this->lastModifiedBy = $lastModifiedBy;
+		return $this;
+	}
+
+	/**
+	 * @return string - компания
+	 */
+	function getCompany() : string{
+		return $this->company;
+	}
+
+	/**
+	 * @param string $company - компания
+	 * @return Workbook - $this
+	 */
+	function setCompany(string $company) : Workbook{
+		$this->company = $company;
+		return $this;
+	}
+
+	/**
+	 * @return string|null - менеджер
+	 */
+	function getManager(){
+		return $this->manager;
+	}
+
+	/**
+	 * @param string|null $manager - менеджер
+	 * @return Workbook - $this
+	 */
+	function setManager(string $manager = null) : Workbook{
+		$this->manager = $manager;
+		return $this;
 	}
 
 	/**
@@ -124,36 +243,18 @@ class Workbook{
 		return $this->worksheets;
 	}
 
-	function getTempdir() : string{
-		return $this->tempdir;
-	}
-
-	function getCreator() : string{
-		return $this->creator;
-	}
-
-	function getLastModifiedBy() : string{
-		return $this->lastModifiedBy;
-	}
-
-	function getCreated() : DateTime{
-		return $this->created;
-	}
-
-	function getModified() : DateTime{
-		return $this->modified;
-	}
-
-	function getStyles() : StylesXml{
-		return $this->stylesXml;
-	}
-
+	/**
+	 * @return bool - зафиксированы ли изменения
+	 */
 	function isCommitted() : bool{
 		return $this->committed;
 	}
 
+	/**
+	 * Зафиксировать изменения workbook. Используйте для создания xlsx файла.
+	 */
 	function commit(){
-		if ($this->isCommitted() || !count($this->worksheets)) return;
+		if ($this->committed || !count($this->worksheets)) return;
 		$this->committed = true;
 
 		$zip = new ZipArchive();
@@ -189,6 +290,36 @@ class Workbook{
 		$this->unlinkTempFiles();
 	}
 
+	/**
+	 * Удалить все временные файлы
+	 */
+	function unlinkTempFiles(){
+		foreach ($this->tempFilenames as $tempFilename) if (file_exists($tempFilename)) unlink($tempFilename);
+	}
+
+	/**
+	 * @return StylesXml - менеджер стилей
+	 */
+	function getStyles() : StylesXml{
+		return $this->stylesXml;
+	}
+
+	/**
+	 * @return string - имя временного файла
+	 */
+	function genTempFilename(){
+		$filename = $this->tempdir . '/xlsxcreator_' . base64_encode(rand()) . '.xml';
+		if (file_exists($filename)) $filename = $this->genTempFilename();
+
+		$this->tempFilenames[] = $filename;
+		return $filename;
+	}
+
+	/**
+	 * Генерирует связи между файлами для workbook. Подготавивает worksheets к коммиту workbook.
+	 *
+	 * @return array - связи между файлами
+	 */
 	private function genRelationships() : array{
 		$count = 1;
 
@@ -210,6 +341,9 @@ class Workbook{
 		return $relationships;
 	}
 
+	/**
+	 * @return array - массив моделей worksheets
+	 */
 	private function getWorksheetsModels() : array{
 		return array_map(
 			function($worksheet){
@@ -219,6 +353,9 @@ class Workbook{
 		);
 	}
 
+	/**
+	 * @return array - модель workbook
+	 */
 	private function getModel(){
 		return [
 			'creator' => $this->creator,
@@ -226,17 +363,5 @@ class Workbook{
 			'created' => $this->created,
 			'modified' => $this->modified
 		];
-	}
-
-	function unlinkTempFiles(){
-		foreach ($this->tempFilenames as $tempFilename) if (file_exists($tempFilename)) unlink($tempFilename);
-	}
-
-	function genTempFilename(){
-		$filename = $this->tempdir . '/xlsxcreator_' . base64_encode(rand()) . '.xml';
-		if (file_exists($filename)) $filename = $this->genTempFilename();
-
-		$this->tempFilenames[] = $filename;
-		return $filename;
 	}
 }
