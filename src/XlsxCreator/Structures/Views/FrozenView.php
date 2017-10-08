@@ -1,8 +1,7 @@
 <?php
 
-namespace XlsxCreator\XlsxCreator\Structures\Views;
+namespace XlsxCreator\Structures\Views;
 
-use XlsxCreator\Structures\Views\View;
 use XlsxCreator\Validator;
 
 class FrozenView extends View{
