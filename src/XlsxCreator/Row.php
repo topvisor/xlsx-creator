@@ -122,6 +122,14 @@ class Row{
 		return $this;
 	}
 
+	function getCell(int $col) : Cell{
+		if (count($this->cells) < $col)
+			for ($i = count($this->cells); $i < $col; $i++)
+				$this->cells[$i] = new Cell($this, $i + 1);
+
+		return $this->cells[$col - 1];
+	}
+
 	/**
 	 * Заменяет все ячеки строки на $values
 	 *
@@ -199,7 +207,7 @@ class Row{
 	}
 
 	/**
-	 * Устанавливает значение ячейки
+	 * Устанавливает значение ячейки. Функция НЕ ПРОВЕРЯЕТ (!!!) наличие предыдущих ячеек
 	 *
 	 * @param $value - значение ячейки
 	 * @param int $col - колонка ячейки
