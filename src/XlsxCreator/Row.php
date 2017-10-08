@@ -2,6 +2,9 @@
 
 namespace XlsxCreator;
 
+use XlsxCreator\Exceptions\InvalidValueException;
+use XlsxCreator\Structures\Values\Value;
+
 /**
  * Class Row. Содержит методы для работы со строкой.
  *
@@ -66,7 +69,7 @@ class Row{
 	 * @param array $style - стили
 	 * @return Row - $this
 	 */
-	function setStyle(array $style) : Row{
+	function setStyle(array $style) : self{
 		$this->style = $style;
 		return $this;
 	}
@@ -82,7 +85,7 @@ class Row{
 	 * @param int|null $height - высота строки
 	 * @return Row - $this
 	 */
-	function setHeight(int $height = null) : Row{
+	function setHeight(int $height = null) : self{
 		$this->height = $height;
 		return $this;
 	}
@@ -98,7 +101,7 @@ class Row{
 	 * @param bool $hidden - скрыть строку
 	 * @return Row - $this
 	 */
-	function setHidden(bool $hidden) : Row{
+	function setHidden(bool $hidden) : self{
 		$this->hidden = $hidden;
 		return $this;
 	}
@@ -114,32 +117,44 @@ class Row{
 	 * @param int $outlineLevel - row outline level
 	 * @return Row - $this
 	 */
-	function setOutlineLevel(int $outlineLevel) : Row{
+	function setOutlineLevel(int $outlineLevel) : self{
 		$this->outlineLevel = $outlineLevel;
 		return $this;
 	}
 
 	/**
+	 * Заменяет все ячеки строки на $values
+	 *
 	 * @param array|null $values - значения ячеек строки
 	 * @return Row - $this
+	 * @throws InvalidValueException
 	 */
-	function setValues(array $values = null) : Row{
+	function setCells(array $values = null) : self{
 		$this->cells = [];
 
-		if ($values) foreach ($values as $index => $value) {
-			$cell = new Cell($this, $index + 1);
-			$this->cells[] = $cell;
-			if ($value) $cell->setValue($value);
-		}
+		if ($values)
+			foreach ($values as $index => $value)
+				$this->setCell($value, $index + 1);
 
 		return $this;
+	}
+
+	/**
+	 * Добавить ячейку в конец строки
+	 *
+	 * @param $value - значение ячейки
+	 * @return Cell - ячейка
+	 * @throws InvalidValueException
+	 */
+	function addCell($value) : Cell{
+		return $this->setCell($value, count($this->cells) + 1);
 	}
 
 	/**
 	 * @return bool - есть ли в строке ячейки
 	 */
 	function hasValues(){
-		foreach ($this->cells as $cell) if ($cell->getType() !== Cell::TYPE_NULL) return true;
+		foreach ($this->cells as $cell) if ($cell->getType() !== Value::TYPE_NULL) return true;
 		return false;
 	}
 
@@ -147,19 +162,19 @@ class Row{
 	 *	Зафиксировать строку (и предыдущие).
 	 */
 	function commit(){
-		$this->worksheet->commitRow($this);
+		$this->worksheet->commitRows($this);
 	}
 
 	/**
 	 * @return array|null - модель строки
 	 */
-	function genModel(){
+	function getModel(){
 		$cellsModels = [];
 		$min = 0;
 		$max = 0;
 
 		foreach ($this->cells as $cell) {
-			$cellsModels[] = $cell->genModel();
+			$cellsModels[] = $cell->getModel();
 
 			$cellCol = $cell->getCol();
 			if (!$min || $min > $cellCol) $min = $cellCol;
@@ -181,5 +196,20 @@ class Row{
 			'outlineLevel' => $this->outlineLevel,
 			'collapsed' => $collapsed
 		] : null;
+	}
+
+	/**
+	 * Устанавливает значение ячейки
+	 *
+	 * @param $value - значение ячейки
+	 * @param int $col - колонка ячейки
+	 * @return Cell - ячейка
+	 */
+	private function setCell($value, int $col) : Cell{
+		$cell = new Cell($this, $col);
+		$cell->setValue($value);
+		$this->cells[$col] = $cell;
+
+		return $cell;
 	}
 }

@@ -2,6 +2,7 @@
 
 namespace XlsxCreator;
 
+use XlsxCreator\Structures\Color;
 use XlsxCreator\Xml\ListXml;
 use XlsxCreator\Xml\Sheet\HyperlinkXml;
 use XlsxCreator\Xml\Sheet\PageMargins;
@@ -120,17 +121,17 @@ class Worksheet{
 	}
 
 	/**
-	 * @return string|null - цвет вкладки
+	 * @return Color|null - цвет вкладки
 	 */
 	function getTabColor(){
 		return $this->tabColor;
 	}
 
 	/**
-	 * @param string|null $tabColor - цвет вкладки в формате 'FF00FF00'
+	 * @param Color|null $tabColor - цвет вкладки в формате 'FF00FF00'
 	 * @return Worksheet - $this
 	 */
-	function setTabColor(string $tabColor = null) : Worksheet{
+	function setTabColor(Color $tabColor = null) : Worksheet{
 		$this->tabColor = $tabColor;
 		return $this;
 	}
@@ -362,7 +363,7 @@ class Worksheet{
 		if ($this->isCommitted()) return;
 		$this->committed = true;
 
-		foreach ($this->rows as $row) (new RowXml())->render($this->xml, $row->genModel());
+		$this->commitRows();
 		unset($this->rows);
 
 		$this->endWorksheet();
@@ -371,19 +372,19 @@ class Worksheet{
 	/**
 	 * Зафиксировать строки таблицы.
 	 *
-	 * @param Row $lastRow - последняя фиксируемая строка
+	 * @param Row|null $lastRow - последняя фиксируемая строка
 	 */
-	function commitRow(Row $lastRow){
-		if ($this->isCommitted()) return;
-
+	function commitRows(Row $lastRow = null){
+		$lastRow = $lastRow ?? $this->rows[count($this->rows) - 1];
+		$lastRowNumber = $lastRow->getNumber();
 		$rowXml = new RowXml();
 
 		$found = false;
 		while (count($this->rows) && !$found) {
 			$row = array_shift($this->rows);
-			$found = (bool) ($row->getNumber() == $lastRow->getNumber());
+			$found = (bool) ($row->getNumber() == $lastRowNumber);
 
-			$rowXml->render($this->xml, $row->genModel());
+			$rowXml->render($this->xml, $row->getModel());
 			$this->lastUncommittedRow++;
 		}
 	}
@@ -418,7 +419,7 @@ class Worksheet{
 		$this->xml->writeAttribute('xmlns:x14ac', 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac');
 
 		(new SheetPropertiesXml())->render($this->xml, [
-			'tabColor' => $this->tabColor,
+			'tabColor' => $this->tabColor ? $this->tabColor->getModel() : null,
 			'pageSetup' => $this->pageSetup
 		]);
 

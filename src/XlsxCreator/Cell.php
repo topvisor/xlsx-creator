@@ -4,6 +4,9 @@ namespace XlsxCreator;
 
 use DateTime;
 use Exception;
+use XlsxCreator\Exceptions\InvalidValueException;
+use XlsxCreator\Structures\Values\HyperlinkValue;
+use XlsxCreator\Structures\Values\Value;
 
 /**
  * Class Cell. Содержит методы для работы c ячейкой.
@@ -28,7 +31,7 @@ class Cell{
 	private $style;
 
 	private $value;
-	private $type;
+	private $merged;
 	private $master;
 
 	/**
@@ -42,9 +45,12 @@ class Cell{
 		$this->col = $col;
 		$this->style = [];
 
-		$this->value = null;
-		$this->type = Cell::TYPE_NULL;
+		$this->value = Value::parse(null);
+
+		$this->merged = false;
 		$this->master = null;
+
+		$this->committed = false;
 	}
 
 	function __destruct(){
@@ -54,15 +60,27 @@ class Cell{
 	}
 
 	/**
-	 * @param $value - значение ячейки
+	 * @return Value - значение ячейки
 	 */
-	function setValue($value){
-		if ($this->type === Cell::TYPE_MERGE && !is_null($this->master)) {
+	function getValue() : Value{
+		return $this->value;
+	}
+
+	/**
+	 * @param $value - значение ячейки
+	 * @throws InvalidValueException
+	 * @return Cell - $this
+	 */
+	function setValue($value) : self{
+		if (!($value instanceof Value)) $value = Value::parse($value);
+
+		if ($this->merged && $this->master) {
 			$this->master->setValue($value);
 		} else {
 			$this->value = $value;
-			$this->type = Cell::genValueType($value);
 		}
+
+		return $this;
 	}
 
 	/**
@@ -103,52 +121,52 @@ class Cell{
 	 * @return int - тип значения ячейки
 	 */
 	function getType() : int{
-		return $this->type;
+		return $this->value->getType();
 	}
 
 	/**
 	 * @return array - модель ячейки
 	 */
-	function genModel() : array{
+	function getModel() : array{
 		$model = [
 			'address' => $this->getAddress(),
-			'type' => $this->type,
+			'value' => $this->value->getValue(),
+			'type' => $this->value->getType(),
 			'style' => $this->style,
 			'styleId' => $this->row->getWorksheet()->getWorkbook()->getStyles()->addStyle($this->style),
 		];
 
-		switch ($this->type) {
-			case Cell::TYPE_NUMBER:
-			case Cell::TYPE_STRING:
-			case Cell::TYPE_DATE:
-			case Cell::TYPE_RICH_TEXT:
-			case Cell::TYPE_BOOL:
-			case Cell::TYPE_ERROR:
-				$model['value'] = $this->value;
-				break;
+		if ($this->merged && $this->master) $model['master'] = $this->master->getModel();
+		if ($this->value instanceof HyperlinkValue) $this->row->getWorksheet()->getSheetRels()->addHyperlink(
+			$model['value']['hyperlink'], $model['address']
+		);
 
-			case Cell::TYPE_HYPERLINK:
-				$model['text'] = $this->value['text'] ?? '';
-				$model['hyperlink'] = $this->value['hyperlink'] ?? '';
-
-				$this->row->getWorksheet()->getSheetRels()->addHyperlink($model['hyperlink'], $model['address']);
-				break;
-
-			case Cell::TYPE_MERGE:
-				$model['master'] = $this->master;
-				break;
-
-			case Cell::TYPE_FORMULA:
-				$model['formula'] = $this->value['formula'] ?? null;
-				$model['result'] = $this->value['result'] ?? null;
-				break;
-
-			case Cell::TYPE_JSON:
-				$model['type'] = Cell::TYPE_STRING;
-				$model['value'] = json_encode($this->value);
-				$model['rawValue'] = $this->value;
-				break;
-		}
+//		switch ($this->type) {
+//			case Value::TYPE_NUMBER:
+//			case Value::TYPE_STRING:
+//			case Value::TYPE_DATE:
+////			case Value::TYPE_RICH_TEXT:
+//			case Value::TYPE_BOOL:
+//			case Value::TYPE_ERROR:
+//				$model['value'] = $this->value;
+//				break;
+//
+//			case Value::TYPE_HYPERLINK:
+//				$model['text'] = $this->value['text'] ?? '';
+//				$model['hyperlink'] = $this->value['hyperlink'] ?? '';
+//
+//				$this->row->getWorksheet()->getSheetRels()->addHyperlink($model['hyperlink'], $model['address']);
+//				break;
+//
+////			case Value::TYPE_MERGE:
+////				$model['master'] = $this->master;
+////				break;
+//
+//			case Value::TYPE_FORMULA:
+//				$model['formula'] = $this->value['formula'] ?? null;
+//				$model['result'] = $this->value['result'] ?? null;
+//				break;
+//		}
 
 		return $model;
 	}
@@ -206,26 +224,26 @@ class Cell{
 		return self::genColStr($col) . $row;
 	}
 
-	/**
-	 * @param $value - значение ячейки
-	 * @return int - тип значения ячейки
-	 */
-	private static function genValueType($value) : int{
-		switch (true) {
-			case is_null($value): return Cell::TYPE_NULL;
-			case is_string($value): return Cell::TYPE_STRING;
-			case is_numeric($value): return Cell::TYPE_NUMBER;
-			case is_bool($value): return Cell::TYPE_BOOL;
-			case ($value instanceof DateTime): return Cell::TYPE_DATE;
-			case is_array($value):
-				switch (true) {
-					case (($value['text'] ?? false) && ($value['hyperlink'] ?? false)): return Cell::TYPE_HYPERLINK;
-					case ($value['formula'] ?? false): return Cell::TYPE_FORMULA;
-					case ($value['richText'] ?? false): return Cell::TYPE_RICH_TEXT;
-					case ($value['error'] ?? false): return Cell::TYPE_ERROR;
-				}
-		}
-
-		return Cell::TYPE_JSON;
-	}
+//	/**
+//	 * @param $value - значение ячейки
+//	 * @return int - тип значения ячейки
+//	 */
+//	static function genValueType($value) : int{
+//		switch (true) {
+//			case is_null($value): return Value::TYPE_NULL;
+//			case is_string($value): return Value::TYPE_STRING;
+//			case is_numeric($value): return Value::TYPE_NUMBER;
+//			case is_bool($value): return Value::TYPE_BOOL;
+//			case ($value instanceof DateTime): return Value::TYPE_DATE;
+//			case is_array($value):
+//				switch (true) {
+//					case (($value['text'] ?? false) && ($value['hyperlink'] ?? false)): return Value::TYPE_HYPERLINK;
+//					case ($value['formula'] ?? false): return Value::TYPE_FORMULA;
+//					case ($value['richText'] ?? false): return Value::TYPE_RICH_TEXT;
+//					case ($value['error'] ?? false): return Value::TYPE_ERROR;
+//				}
+//		}
+//
+//		return Value::TYPE_JSON;
+//	}
 }

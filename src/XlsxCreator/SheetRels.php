@@ -12,6 +12,7 @@ use XMLWriter;
 class SheetRels{
 	private $worksheet;
 
+	private $indexes;
 	private $hyperlinks;
 	private $committed;
 
@@ -25,6 +26,7 @@ class SheetRels{
 	function __construct(Worksheet $worksheet){
 		$this->worksheet = $worksheet;
 
+		$this->indexes = [];
 		$this->hyperlinks = [];
 		$this->committed = false;
 	}
@@ -61,7 +63,12 @@ class SheetRels{
 	 * @param string $address - ячейка таблицы ('A1', 'B5')
 	 */
 	function addHyperlink(string $target, string $address){
-		$this->hyperlinks = [
+		$index = ['target' => $target, 'address' => $address];
+		if (in_array($index, $this->indexes)) return;
+
+		$this->indexes[] = $index;
+
+		$this->hyperlinks[] = [
 			'address' => $address,
 			'rId' => $this->writeRelationship('http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink', $target, 'External')
 		];

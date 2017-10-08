@@ -2,7 +2,7 @@
 
 namespace XlsxCreator\Xml\Styles;
 
-use XlsxCreator\Cell;
+use XlsxCreator\Structures\Values\Value;
 use XlsxCreator\Xml\BaseXml;
 use XlsxCreator\Xml\ListXml;
 use XlsxCreator\Xml\Styles\Border\BorderXml;
@@ -63,15 +63,15 @@ class StylesXml extends BaseXml{
 	function addStyle(array $model, int $cellType = null) : int{
 		if (!$model) return 0;
 
-		$cellType = $cellType ?? Cell::TYPE_NUMBER;
+		$cellType = $cellType ?? Value::TYPE_NUMBER;
 		$styleModel = [];
 
 		if ($model['numFmt'] ?? false) {
 			$styleModel['numFmtId'] = $this->numFmtIndex->addIndex($styleModel['numFmt']);
 		} else {
 			switch ($cellType) {
-				case Cell::TYPE_NUMBER: $styleModel['numFmtId'] = $this->numFmtIndex->addIndex('General'); break;
-				case Cell::TYPE_DATE: $styleModel['numFmtId'] = $this->numFmtIndex->addIndex('mm-dd-yy'); break;
+				case Value::TYPE_NUMBER: $styleModel['numFmtId'] = $this->numFmtIndex->addIndex('General'); break;
+				case Value::TYPE_DATE: $styleModel['numFmtId'] = $this->numFmtIndex->addIndex('mm-dd-yy'); break;
 			}
 		}
 
