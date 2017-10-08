@@ -61,20 +61,17 @@ class StylesXml extends BaseXml{
 	}
 
 	function addStyle(array $model, int $cellType = null) : int{
-		if (!$model) return 0;
-
-		$cellType = $cellType ?? Value::TYPE_NUMBER;
-		$styleModel = [];
-
-		if ($model['numFmt'] ?? false) {
-			$styleModel['numFmtId'] = $this->numFmtIndex->addIndex($styleModel['numFmt']);
-		} else {
-			switch ($cellType) {
-				case Value::TYPE_NUMBER: $styleModel['numFmtId'] = $this->numFmtIndex->addIndex('General'); break;
-				case Value::TYPE_DATE: $styleModel['numFmtId'] = $this->numFmtIndex->addIndex('mm-dd-yy'); break;
-			}
+		switch ($cellType) {
+			case null:
+			case Value::TYPE_NUMBER: $model['numFmt'] = 'General'; break;
+			case Value::TYPE_DATE: $model['numFmt'] = 'mm-dd-yy'; break;
 		}
 
+		if (!$model) return 0;
+
+		$styleModel = [];
+
+		if ($model['numFmt'] ?? false) $styleModel['numFmtId'] = $this->numFmtIndex->addIndex($styleModel['numFmt']);
 		if ($model['font'] ?? false) $styleModel['fontId'] = $this->fontIndex->addIndex($model['font']);
 		if ($model['fill'] ?? false) $styleModel['fillId'] = $this->fillIndex->addIndex($model['fill']);
 		if ($model['border'] ?? false) $styleModel['borderId'] = $this->fillIndex->addIndex($model['border']);
