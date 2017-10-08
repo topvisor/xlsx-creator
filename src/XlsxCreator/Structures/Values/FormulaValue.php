@@ -12,13 +12,9 @@ class FormulaValue extends Value{
 	 * FormulaValue constructor.
 	 *
 	 * @param string $formula - формула
-	 * @param string|null $result - результат вычисления формулы (если известен)
 	 */
-	function __construct(string $formula, string $result = null){
-		$value = ['formula' => $formula];
-		if (!is_null($result)) $value['result'] = $result;
-
-		parent::__construct($value, parent::TYPE_FORMULA);
+	function __construct(string $formula){
+		parent::__construct($formula, parent::TYPE_FORMULA);
 	}
 
 	/**
@@ -26,6 +22,6 @@ class FormulaValue extends Value{
 	 * @return Value - значение ячейки
 	 */
 	static function parse($model): Value{
-		return new self($model['formula'], $model['result'] ?? null);
+		return new self($model);
 	}
 }

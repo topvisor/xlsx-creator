@@ -45,7 +45,8 @@ class CellXml extends BaseXml{
 				break;
 
 			case Value::TYPE_FORMULA:
-
+				$xml->writeElement('f', $model['value']);
+				break;
 		}
 
 		$xml->endElement();

@@ -14,18 +14,6 @@ use XlsxCreator\Structures\Values\Value;
  * @package XlsxCreator
  */
 class Cell{
-	const TYPE_NULL = 0;
-	const TYPE_MERGE = 1;
-	const TYPE_NUMBER = 2;
-	const TYPE_STRING = 3;
-	const TYPE_DATE = 4;
-	const TYPE_HYPERLINK = 5;
-	const TYPE_FORMULA = 6;
-	const TYPE_RICH_TEXT = 8;
-	const TYPE_BOOL = 9;
-	const TYPE_ERROR = 10;
-	const TYPE_JSON = 11;
-
 	private $row;
 	private $col;
 	private $style;
@@ -137,36 +125,11 @@ class Cell{
 		];
 
 		if ($this->merged && $this->master) $model['master'] = $this->master->getModel();
-		if ($this->value instanceof HyperlinkValue) $this->row->getWorksheet()->getSheetRels()->addHyperlink(
-			$model['value']['hyperlink'], $model['address']
-		);
 
-//		switch ($this->type) {
-//			case Value::TYPE_NUMBER:
-//			case Value::TYPE_STRING:
-//			case Value::TYPE_DATE:
-////			case Value::TYPE_RICH_TEXT:
-//			case Value::TYPE_BOOL:
-//			case Value::TYPE_ERROR:
-//				$model['value'] = $this->value;
-//				break;
-//
-//			case Value::TYPE_HYPERLINK:
-//				$model['text'] = $this->value['text'] ?? '';
-//				$model['hyperlink'] = $this->value['hyperlink'] ?? '';
-//
-//				$this->row->getWorksheet()->getSheetRels()->addHyperlink($model['hyperlink'], $model['address']);
-//				break;
-//
-////			case Value::TYPE_MERGE:
-////				$model['master'] = $this->master;
-////				break;
-//
-//			case Value::TYPE_FORMULA:
-//				$model['formula'] = $this->value['formula'] ?? null;
-//				$model['result'] = $this->value['result'] ?? null;
-//				break;
-//		}
+		if ($this->value instanceof HyperlinkValue) $this->row->getWorksheet()->getSheetRels()->addHyperlink(
+			$model['value']['hyperlink'],
+			$model['address']
+		);
 
 		return $model;
 	}
@@ -223,27 +186,4 @@ class Cell{
 		if ($row < 1 || $col > 1048576) throw new Exception("$row is out of bounds. Excel supports rows from 1 to 1048576");
 		return self::genColStr($col) . $row;
 	}
-
-//	/**
-//	 * @param $value - значение ячейки
-//	 * @return int - тип значения ячейки
-//	 */
-//	static function genValueType($value) : int{
-//		switch (true) {
-//			case is_null($value): return Value::TYPE_NULL;
-//			case is_string($value): return Value::TYPE_STRING;
-//			case is_numeric($value): return Value::TYPE_NUMBER;
-//			case is_bool($value): return Value::TYPE_BOOL;
-//			case ($value instanceof DateTime): return Value::TYPE_DATE;
-//			case is_array($value):
-//				switch (true) {
-//					case (($value['text'] ?? false) && ($value['hyperlink'] ?? false)): return Value::TYPE_HYPERLINK;
-//					case ($value['formula'] ?? false): return Value::TYPE_FORMULA;
-//					case ($value['richText'] ?? false): return Value::TYPE_RICH_TEXT;
-//					case ($value['error'] ?? false): return Value::TYPE_ERROR;
-//				}
-//		}
-//
-//		return Value::TYPE_JSON;
-//	}
 }
