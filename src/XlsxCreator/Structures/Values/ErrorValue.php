@@ -2,6 +2,7 @@
 
 namespace XlsxCreator\Structures\Values;
 use XlsxCreator\Exceptions\InvalidValueException;
+use XlsxCreator\Validator;
 
 /**
  * Class ErrorValue. Используется для задания значения ячейки (ошибка).
@@ -26,8 +27,7 @@ class ErrorValue extends Value{
 	 * @throws InvalidValueException
 	 */
 	function __construct(string $error){
-		if (!in_array($error, self::VALID_ERRORS))
-			throw new InvalidValueException('$error must be in [\'' . implode("','",self::VALID_ERRORS) . "']");
+		Validator::validate($error, '$error', self::VALID_ERRORS);
 
 		parent::__construct($error, parent::TYPE_ERROR);
 	}

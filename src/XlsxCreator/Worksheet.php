@@ -3,6 +3,7 @@
 namespace XlsxCreator;
 
 use XlsxCreator\Structures\Color;
+use XlsxCreator\Structures\Views\View;
 use XlsxCreator\Xml\ListXml;
 use XlsxCreator\Xml\Sheet\HyperlinkXml;
 use XlsxCreator\Xml\Sheet\PageMargins;
@@ -185,47 +186,17 @@ class Worksheet{
 	}
 
 	/**
-	 * @see Worksheet::setView() Параметры view
-	 *
-	 * @return array|null - представление worksheet
+	 * @return View|null - представление worksheet
 	 */
 	function getView(){
 		return $this->view;
 	}
 
 	/**
-	 * Параметры массива $view
-	 *
-	 * $view['state']				string Состояние представления ('normal', 'split', 'frozen').
-	 *
-	 * Параметры, общие для всех состояний представления
-	 * $view
-	 * 		['rightToLeft']			bool Ориентация справа на лево
-	 * 		['activeCell']			string Текущая выбранная ячейка (например, 'A1', 'B10', и т.д.)
-	 * 		['showRuler']			bool Показывать линейку в макете страницы
-	 * 		['showRowColHeaders']	bool Показывать заголовки строк и столбцов (например, A1, B1 вверху и 1,2,3 слева)
-	 * 		['showGridLines']		bool Показывать линии сетки
-	 * 		['zoomScale']			int Процент увеличения
-	 * 		['zoomScaleNormal']		int Нормальное увеличение
-	 * 		['view']				string Стиль отображения ('pageBreakPreview', 'pageLayout')
-	 *
-	 * Параметры frozen представления ("замораживает" несколько строк/столбцов)
-	 * $view
-	 * 		['xSplit']				int Сколько столбцов "заморожено"
-	 * 		['ySplit']				int Сколько строк "заморожено"
-	 * 		['topLeftCell']			string Левая-верхняя ячейка в "незамороженной" панели (например, 'D4', 'G15', и т.д.)
-	 *
-	 * Параметры split представления (делит экран на 2/4 части)
-	 * $view
-	 * 		['xSplit']				int Количество точек слева до границы
-	 * 		['ySplit']				int Количество точек сверху до границы
-	 * 		['topLeftCell']			string Левая-верхняя ячейка в нижней правой панели (например, 'A1', 'B10', и т.д.)
-	 * 		['activePane']			string Активная панель ('topLeft', 'topRight', 'bottomLeft', 'bottomRight')
-	 *
-	 * @param array|null $view - представление worksheet
+	 * @param View|null $view - представление worksheet
 	 * @return Worksheet - $this
 	 */
-	function setView(array $view = null) : Worksheet{
+	function setView(View $view = null) : Worksheet{
 		$this->view = $view;
 		return $this;
 	}

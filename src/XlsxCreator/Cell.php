@@ -146,10 +146,10 @@ class Cell{
 	 *
 	 * @param int $col - номер колонки
 	 * @return string - строка колонки
-	 * @throws Exception - ошибочный номер колонки
+	 * @throws InvalidValueException - ошибочный номер колонки
 	 */
 	static function genColStr(int $col) : string{
-		if ($col < 1 || $col > 16384) throw new Exception("$col is out of bounds. Excel supports columns from 1 to 16384");
+		if ($col < 1 || $col > 16384) throw new InvalidValueException("$col is out of bounds. Excel supports columns from 1 to 16384");
 		if ($col > 26) return Cell::genColStr(($col - 1) / 26) . chr(($col % 26 ? $col % 26 : 26) + 64);
 		return chr($col + 64);
 	}
@@ -159,16 +159,16 @@ class Cell{
 	 *
 	 * @param string $col - строка колонки
 	 * @return int - номер колонки
-	 * @throws Exception - ошибочная строка колонки
+	 * @throws InvalidValueException - ошибочная строка колонки
 	 */
 	static function genColNum(string $col) : int{
 		$len = strlen($col);
-		if ($len < 1 || $len > 3) throw new Exception("Out of bounds. Invalid column $col");
+		if ($len < 1 || $len > 3) throw new InvalidValueException("Out of bounds. Invalid column $col");
 
 		$result = 0;
 		for ($i = 0; $i < $len; $i++){
 			$charCode = ord(substr($col, -$i - 1, 1));
-			if ($charCode < 65 || $charCode > 90) throw new Exception("Out of bounds. Invalid column $col");
+			if ($charCode < 65 || $charCode > 90) throw new InvalidValueException("Out of bounds. Invalid column $col");
 
 			$result += ($charCode - 64) * pow(26, $i);
 		}
@@ -180,10 +180,10 @@ class Cell{
 	 * @param int $col - номер колонки
 	 * @param int $row - номер строки
 	 * @return string - адрес ячейки ('A1', 'D23')
-	 * @throws Exception - ошибочный номер колонки/строки
+	 * @throws InvalidValueException - ошибочный номер колонки/строки
 	 */
 	static function genAddress(int $col, int $row) : string{
-		if ($row < 1 || $col > 1048576) throw new Exception("$row is out of bounds. Excel supports rows from 1 to 1048576");
+		if ($row < 1 || $row > 1048576) throw new InvalidValueException("$row is out of bounds. Excel supports rows from 1 to 1048576");
 		return self::genColStr($col) . $row;
 	}
 }
