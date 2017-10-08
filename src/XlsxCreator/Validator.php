@@ -25,7 +25,7 @@ class Validator{
 	 * @throws InvalidValueException
 	 */
 	static function validateAddress(string $address){
-		if (!preg_match('^[A-Z]{1,3}(\d{1,5})$', $address, $matches)) throw new InvalidValueException('Unavailable address format');
+		if (!preg_match('/^[A-Z]{1,3}(\d{1,5})$/', $address, $matches)) throw new InvalidValueException('Unavailable address format');
 		if ($matches[1] < 1 || $matches[1] > 1048576) throw new InvalidValueException('Row is out of bounds. Excel supports rows from 1 to 1048576');
 	}
 
