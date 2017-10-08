@@ -11,6 +11,7 @@ use XlsxCreator\Xml\Sheet\PageSetupXml;
 use XlsxCreator\Xml\Sheet\RowXml;
 use XlsxCreator\Xml\Sheet\SheetFormatPropertiesXml;
 use XlsxCreator\Xml\Sheet\SheetPropertiesXml;
+use XlsxCreator\Xml\Sheet\SheetViewsXml;
 use XMLWriter;
 
 /**
@@ -395,6 +396,8 @@ class Worksheet{
 			'tabColor' => $this->tabColor ? $this->tabColor->getModel() : null,
 			'pageSetup' => $this->pageSetup
 		]);
+
+		if ($this->view) (new SheetViewsXml())->render($this->xml, $this->view->getModel());
 
 		(new SheetFormatPropertiesXml())->render($this->xml, [
 			'defaultRowHeight' => $this->defaultRowHeight,

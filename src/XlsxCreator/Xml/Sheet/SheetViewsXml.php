@@ -6,10 +6,11 @@ use XlsxCreator\Cell;
 use XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class SheetViewXml extends BaseXml{
+class SheetViewsXml extends BaseXml{
 	function render(XMLWriter $xml, array $model = null){
-		if (is_null($model)) return;
+		if (!$model) return;
 
+		$xml->startElement('sheetViews');
 		$xml->startElement('sheetView');
 
 		$xml->writeAttribute('workbookViewId', $model['workbookViewId'] ?? 0);
@@ -77,6 +78,7 @@ class SheetViewXml extends BaseXml{
 			$xml->writeAttribute('sqref', $activeCell);
 		}
 
+		$xml->endElement();
 		$xml->endElement();
 		$xml->endElement();
 	}
