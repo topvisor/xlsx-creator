@@ -375,6 +375,8 @@ class Worksheet{
 	 * @param Row|null $lastRow - последняя фиксируемая строка
 	 */
 	function commitRows(Row $lastRow = null){
+		if (!$this->rows) return;
+
 		$lastRow = $lastRow ?? $this->rows[count($this->rows) - 1];
 		$lastRowNumber = $lastRow->getNumber();
 		$rowXml = new RowXml();
