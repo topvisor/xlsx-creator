@@ -139,7 +139,7 @@ $row = $worksheet->addRow($values);
 
 ```php
 // array|null $values - значения ячеек строки 
-$row->setValues($values);
+$row->setCells($values);
 ```
 
 ## Фиксация изменений

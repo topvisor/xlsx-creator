@@ -349,7 +349,7 @@ class Worksheet{
 		if (!$this->xml) $this->startWorksheet();
 
 		$row = new Row($this, count($this->rows) + $this->lastUncommittedRow);
-		if (!is_null($values)) $row->setValues($values);
+		if (!is_null($values)) $row->setCells($values);
 
 		$this->rows[] = $row;
 
