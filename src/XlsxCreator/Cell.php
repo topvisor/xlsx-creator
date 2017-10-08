@@ -133,7 +133,7 @@ class Cell{
 			'value' => $this->value->getValue(),
 			'type' => $this->value->getType(),
 			'style' => $this->style,
-			'styleId' => $this->row->getWorksheet()->getWorkbook()->getStyles()->addStyle($this->style),
+			'styleId' => $this->row->getWorksheet()->getWorkbook()->getStyles()->addStyle($this->style, $this->getType()),
 		];
 
 		if ($this->merged && $this->master) $model['master'] = $this->master->getModel();
