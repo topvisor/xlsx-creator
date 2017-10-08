@@ -13,7 +13,7 @@ class FrozenView extends View{
 	 * @return int|null - Сколько столбцов "заморожено"
 	 */
 	function getXSplit(){
-		return $model['xSplit'] ?? null;
+		return $this->model['xSplit'] ?? null;
 	}
 
 	/**
@@ -23,7 +23,7 @@ class FrozenView extends View{
 	function setXSplit(int $xSplit = null) : self{
 		if (!is_null($xSplit)) Validator::validateInRange($xSplit, 1, 16384, '$xSplit');
 
-		$model['xSplit'] = $xSplit;
+		$this->model['xSplit'] = $xSplit;
 		return $this;
 	}
 
@@ -31,7 +31,7 @@ class FrozenView extends View{
 	 * @return int|null - Сколько строк "заморожено"
 	 */
 	function getYSplit(){
-		return $model['ySplit'] ?? null;
+		return $this->model['ySplit'] ?? null;
 	}
 
 	/**
@@ -41,7 +41,7 @@ class FrozenView extends View{
 	function setYSplit(int $ySplit = null) : self{
 		if (!is_null($ySplit)) Validator::validateInRange($ySplit, 1, 1048576, '$ySplit');
 
-		$model['ySplit'] = $ySplit;
+		$this->model['ySplit'] = $ySplit;
 		return $this;
 	}
 
@@ -49,7 +49,7 @@ class FrozenView extends View{
 	 * @return string|null - Левая-верхняя ячейка в "незамороженной" панели
 	 */
 	function getTopLeftCell(){
-		return $model['topLeftCell'] ?? null;
+		return $this->model['topLeftCell'] ?? null;
 	}
 
 	/**
@@ -59,7 +59,7 @@ class FrozenView extends View{
 	function setTopLeftCell(string $topLeftCell = null) : self{
 		if (!is_null($topLeftCell)) Validator::validateAddress($topLeftCell);
 
-		$model['topLeftCell'] = $topLeftCell;
+		$this->model['topLeftCell'] = $topLeftCell;
 		return $this;
 	}
 }

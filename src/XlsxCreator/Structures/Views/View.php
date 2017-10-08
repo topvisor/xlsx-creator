@@ -13,7 +13,7 @@ abstract class View{
 	 * @return bool - ориентация справа на лево
 	 */
 	function getRightToLeft() : bool{
-		return $model['rightToLeft'] ?? false;
+		return $this->model['rightToLeft'] ?? false;
 	}
 
 	/**
@@ -21,7 +21,7 @@ abstract class View{
 	 * @return View - $this
 	 */
 	function setRightToLeft(bool $rightToLeft) : self{
-		$model['rightToLeft'] = $rightToLeft;
+		$this->model['rightToLeft'] = $rightToLeft;
 		return $this;
 	}
 
@@ -29,7 +29,7 @@ abstract class View{
 	 * @return string|null - Адрес выбраной ячейки
 	 */
 	function getActiveCell(){
-		return $model['activeCell'] ?? null;
+		return $this->model['activeCell'] ?? null;
 	}
 
 	/**
@@ -39,7 +39,7 @@ abstract class View{
 	function setActiveCell(string $activeCell = null) : self{
 		if (!is_null($activeCell)) Validator::validateAddress($activeCell);
 
-		$model['activeCell'] = $activeCell;
+		$this->model['activeCell'] = $activeCell;
 		return $this;
 	}
 
@@ -47,7 +47,7 @@ abstract class View{
 	 * @return bool - показывать линейку в макете страницы
 	 */
 	function getShowRuler() : bool{
-		return $model['showRuler'] ?? false;
+		return $this->model['showRuler'] ?? false;
 	}
 
 	/**
@@ -55,7 +55,7 @@ abstract class View{
 	 * @return View - $this
 	 */
 	function setShowRuler(bool $showRuler) : self{
-		$model['showRuler'] = $showRuler;
+		$this->model['showRuler'] = $showRuler;
 		return $this;
 	}
 
@@ -63,7 +63,7 @@ abstract class View{
 	 * @return bool - показывать заголовки строк и столбцов
 	 */
 	function getShowRowColHeaders() : bool{
-		return $model['showRowColHeaders'] ?? false;
+		return $this->model['showRowColHeaders'] ?? false;
 	}
 
 	/**
@@ -71,7 +71,7 @@ abstract class View{
 	 * @return View - $this
 	 */
 	function setShowRowColHeaders(bool $showRowColHeaders) : self{
-		$model['showRowColHeaders'] = $showRowColHeaders;
+		$this->model['showRowColHeaders'] = $showRowColHeaders;
 		return $this;
 	}
 
@@ -79,7 +79,7 @@ abstract class View{
 	 * @return bool - показывать линии сетки
 	 */
 	function getShowGridLines() : bool{
-		return $model['showGridLines'] ?? false;
+		return $this->model['showGridLines'] ?? false;
 	}
 
 	/**
@@ -87,7 +87,7 @@ abstract class View{
 	 * @return View - $this
 	 */
 	function setShowGridLines(bool $showGridLines) : self{
-		$model['showGridLines'] = $showGridLines;
+		$this->model['showGridLines'] = $showGridLines;
 		return $this;
 	}
 
@@ -95,7 +95,7 @@ abstract class View{
 	 * @return int|null - процент увеличения
 	 */
 	function getZoomScale(){
-		return $model['zoomScale'] ?? null;
+		return $this->model['zoomScale'] ?? null;
 	}
 
 	/**
@@ -105,7 +105,7 @@ abstract class View{
 	function setZoomScale(int $zoomScale = null) : self{
 		if (!is_null($zoomScale)) Validator::validatePositive($zoomScale, '$zoomScale');
 
-		$model['zoomScale'] = $zoomScale;
+		$this->model['zoomScale'] = $zoomScale;
 		return $this;
 	}
 
@@ -113,7 +113,7 @@ abstract class View{
 	 * @return int|null - нормальное увеличение
 	 */
 	function getZoomScaleNormal(){
-		return $model['zoomScaleNormal'] ?? null;
+		return $this->model['zoomScaleNormal'] ?? null;
 	}
 
 	/**
@@ -123,7 +123,7 @@ abstract class View{
 	function setZoomScaleNormal(int $zoomScaleNormal = null) : self{
 		if (!is_null($zoomScaleNormal)) Validator::validatePositive($zoomScaleNormal, '$zoomScaleNormal');
 
-		$model['zoomScaleNormal'] = $zoomScaleNormal;
+		$this->model['zoomScaleNormal'] = $zoomScaleNormal;
 		return $this;
 	}
 
@@ -131,7 +131,7 @@ abstract class View{
 	 * @return string|null - cтиль отображения
 	 */
 	function getView(){
-		return $model['view'] ?? null;
+		return $this->model['view'] ?? null;
 	}
 
 	/**
@@ -141,7 +141,7 @@ abstract class View{
 	function setView(string $view = null) : self{
 		if (!is_null($view)) Validator::validate($view, '$view', self::VALID_VIEW);
 
-		$model['view'] = $view;
+		$this->model['view'] = $view;
 		return $this;
 	}
 

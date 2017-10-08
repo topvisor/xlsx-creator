@@ -14,7 +14,7 @@ class SplitView extends View{
 	 * @return int|null - Количество точек слева до границы
 	 */
 	function getXSplit(){
-		return $model['xSplit'] ?? null;
+		return $this->model['xSplit'] ?? null;
 	}
 
 	/**
@@ -24,7 +24,7 @@ class SplitView extends View{
 	function setXSplit(int $xSplit = null) : self{
 		if (!is_null($xSplit)) Validator::validatePositive($xSplit, '$xSplit');
 
-		$model['xSplit'] = $xSplit;
+		$this->model['xSplit'] = $xSplit;
 		return $this;
 	}
 
@@ -32,7 +32,7 @@ class SplitView extends View{
 	 * @return int|null - Количество точек сверху до границы
 	 */
 	function getYSplit(){
-		return $model['ySplit'] ?? null;
+		return $this->model['ySplit'] ?? null;
 	}
 
 	/**
@@ -42,7 +42,7 @@ class SplitView extends View{
 	function setYSplit(int $ySplit = null) : self{
 		if (!is_null($ySplit)) Validator::validatePositive($ySplit, '$ySplit');
 
-		$model['ySplit'] = $ySplit;
+		$this->model['ySplit'] = $ySplit;
 		return $this;
 	}
 
@@ -50,7 +50,7 @@ class SplitView extends View{
 	 * @return string|null - Левая-верхняя ячейка в нижней правой панели
 	 */
 	function getTopLeftCell(){
-		return $model['topLeftCell'] ?? null;
+		return $this->model['topLeftCell'] ?? null;
 	}
 
 	/**
@@ -60,7 +60,7 @@ class SplitView extends View{
 	function setTopLeftCell(string $topLeftCell = null) : self{
 		if (!is_null($topLeftCell)) Validator::validateAddress($topLeftCell);
 
-		$model['topLeftCell'] = $topLeftCell;
+		$this->model['topLeftCell'] = $topLeftCell;
 		return $this;
 	}
 
@@ -68,7 +68,7 @@ class SplitView extends View{
 	 * @return string|null - Левая-верхняя ячейка в нижней правой панели
 	 */
 	function getActivePane(){
-		return $model['activePane'] ?? null;
+		return $this->model['activePane'] ?? null;
 	}
 
 	/**
@@ -78,7 +78,7 @@ class SplitView extends View{
 	function setActivePane(string $activePane = null) : self{
 		if (!is_null($activePane)) Validator::validateAddress($activePane);
 
-		$model['activePane'] = $activePane;
+		$this->model['activePane'] = $activePane;
 		return $this;
 	}
 }
