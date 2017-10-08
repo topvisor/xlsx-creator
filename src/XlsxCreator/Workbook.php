@@ -281,7 +281,7 @@ class Workbook{
 			'manager' => $this->manager
 		]));
 		$zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
-		$zip->addFromString('xl/styles.xml', (new StylesXml())->toXml());
+		$zip->addFromString('xl/styles.xml', $this->stylesXml->toXml());
 		$zip->addFromString('xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
 		$zip->addFromString('xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
 
