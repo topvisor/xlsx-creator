@@ -71,7 +71,7 @@ class StylesXml extends BaseXml{
 
 		$styleModel = [];
 
-		if ($model['numFmt'] ?? false) $styleModel['numFmtId'] = $this->numFmtIndex->addIndex($styleModel['numFmt']);
+		if ($model['numFmt'] ?? false) $styleModel['numFmtId'] = $this->numFmtIndex->addIndex($model['numFmt']);
 		if ($model['font'] ?? false) $styleModel['fontId'] = $this->fontIndex->addIndex($model['font']);
 		if ($model['fill'] ?? false) $styleModel['fillId'] = $this->fillIndex->addIndex($model['fill']);
 		if ($model['border'] ?? false) $styleModel['borderId'] = $this->fillIndex->addIndex($model['border']);
