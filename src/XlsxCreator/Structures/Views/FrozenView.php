@@ -4,6 +4,11 @@ namespace XlsxCreator\Structures\Views;
 
 use XlsxCreator\Validator;
 
+/**
+ * Class FrozenView. Несколько строк и/или столбцов этого представления заморожено на месте.
+ *
+ * @package XlsxCreator\Structures\Views
+ */
 class FrozenView extends View{
 	public function __construct(){
 		$this->model['state'] = 'frozen';

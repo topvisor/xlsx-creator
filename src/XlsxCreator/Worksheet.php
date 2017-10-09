@@ -3,6 +3,7 @@
 namespace XlsxCreator;
 
 use XlsxCreator\Structures\Color;
+use XlsxCreator\Structures\PageSetup;
 use XlsxCreator\Structures\Views\View;
 use XlsxCreator\Xml\ListXml;
 use XlsxCreator\Xml\Sheet\HyperlinkXml;
@@ -62,25 +63,7 @@ class Worksheet{
 		$this->outlineLevelRow = 0;
 		$this->defaultRowHeight = 15;
 		$this->view = null;
-		$this->pageSetup = [
-			'margins' => ['left' => 0.7, 'right' => 0.7, 'top' => 0.75, 'bottom' => 0.75, 'header' => 0.3, 'footer' => 0.3],
-			'orientation' => 'portrait',
-			'horizontalDpi' => 4294967295,
-			'verticalDpi' => 4294967295,
-			'fitToPage' => false,
-			'blackAndWhite' => false,
-			'draft' => false,
-			'scale' => 100,
-			'fitToWidth' => 1,
-			'fitToHeight' => 1,
-			'paperSize' => null,
-			'showRowColHeaders' => false,
-			'showGridLines' => false,
-			'horizontalCentered' => false,
-			'verticalCentered' => false,
-			'rowBreaks' => null,
-			'colBreaks' => null
-		];
+		$this->pageSetup = new PageSetup();
 		$this->autoFilter = null;
 
 		$this->committed = false;
@@ -203,53 +186,18 @@ class Worksheet{
 	}
 
 	/**
-	 * @see Worksheet::setPageSetup() Параметры pageSetup
-	 *
-	 * @return array|null - параметры печати
+	 * @return PageSetup - параметры печати
 	 */
-	function getPageSetup() : array{
+	function getPageSetup() : PageSetup{
 		return $this->pageSetup;
 	}
 
 	/**
-	 * Параметры печати
-	 *
-	 * $pageSetup
-	 * 		['margins']				array Пробелы на границах страницы (в дюймах)
-	 * 			['left']			float
-	 * 			['right']			float
-	 * 			['top']				float
-	 * 			['bottom']			float
-	 * 			['header']			float
-	 * 			['footer']			float
-	 * 		['orientation']			string Ориентация страницы ('portrait', 'landscape')
-	 * 		['horizontalDpi']		int Точек на дюйм по горизонтали
-	 * 		['verticalDpi']			int Точек на дюйм по вертикали
-	 * 		['pageOrder']			string Порядок печати страниц ('downThenOver', 'overThenDown')
-	 * 		['blackAndWhite']		bool Печать без цвета
-	 * 		['draft']				bool Печать с меньшим качеством (и чернилами)
-	 * 		['cellComments']		string Где разместить комментарии ('atEnd', 'asDisplayed', 'None')
-	 * 		['errors']				string Где показывать ошибки ('dash', 'blank', 'NA', 'displayed')
-	 * 		['scale']				int Процент увеличения/уменьшения размеров печати
-	 * 		['fitToWidth']			int Сколько страниц должно помещаться на листе по ширине (активно если нет scale)
-	 * 		['fitToHeight']			int Сколько страниц должно помещаться на листе по высоте (активно если нет scale)
-	 * 		['paperSize']			int Какой размер бумаги использовать (9 - А4)
-	 * 		['showRowColHeaders']	bool Показывать номера строк и столбцов
-	 * 		['firstPageNumber']		int Какой номер использовать для первой страницы
-	 *
-	 * @param array $pageSetup - свойства, влияющие на печать таблицы
+	 * @param PageSetup $pageSetup - параметры печати
 	 * @return Worksheet - $this
 	 */
-	function setPageSetup(array $pageSetup) : Worksheet{
-		$this->pageSetup = array_merge($this->pageSetup, $pageSetup);
-
-		$this->pageSetup['fitToPage'] = (bool) (
-			$this->pageSetup
-			&& (($this->pageSetup['fitToWidth'] ?? false)
-				|| ($this->pageSetup['fitToHeight'] ?? false))
-			&& !($this->pageSetup['scale'] ?? false)
-		);
-
+	function setPageSetup(PageSetup $pageSetup) : Worksheet{
+		$this->pageSetup = $pageSetup;
 		return $this;
 	}
 
@@ -394,7 +342,7 @@ class Worksheet{
 
 		(new SheetPropertiesXml())->render($this->xml, [
 			'tabColor' => $this->tabColor ? $this->tabColor->getModel() : null,
-			'pageSetup' => $this->pageSetup
+			'pageSetup' => $this->pageSetup->getModel()
 		]);
 
 		if ($this->view) (new SheetViewsXml())->render($this->xml, $this->view->getModel());
@@ -421,8 +369,8 @@ class Worksheet{
 		// MergeCells
 
 		(new ListXml('hyperlinks', new HyperlinkXml()))->render($this->xml, $this->sheetRels->getHyperlinks());
-		(new PageMargins())->render($this->xml, $this->pageSetup['margins'] ?? null);
-		(new PageSetupXml())->render($this->xml, $this->pageSetup);
+		(new PageMargins())->render($this->xml, $this->pageSetup->getModel()['margins'] ?? null);
+		(new PageSetupXml())->render($this->xml, $this->pageSetup->getModel());
 
 		$this->xml->endElement();
 		$this->xml->endDocument();

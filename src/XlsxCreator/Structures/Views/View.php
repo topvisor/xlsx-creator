@@ -4,6 +4,11 @@ namespace XlsxCreator\Structures\Views;
 
 use XlsxCreator\Validator;
 
+/**
+ * Class View. Описывает представление worksheet.
+ *
+ * @package XlsxCreator\Structures\Views
+ */
 abstract class View{
 	const VALID_VIEW = ['pageBreakPreview', 'pageLayout'];
 

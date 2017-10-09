@@ -5,6 +5,11 @@ namespace XlsxCreator\Structures\Views;
 use XlsxCreator\Structures\Views\View;
 use XlsxCreator\Validator;
 
+/**
+ * Class SplitView. Представление разделено на 4 секции с независимой прокруткой.
+ *
+ * @package XlsxCreator\Structures\Views
+ */
 class SplitView extends View{
 	public function __construct(){
 		$this->model['state'] = 'split';
