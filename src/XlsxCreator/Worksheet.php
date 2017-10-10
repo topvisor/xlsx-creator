@@ -2,6 +2,7 @@
 
 namespace XlsxCreator;
 
+use OutOfBoundsException;
 use XlsxCreator\Exceptions\InvalidValueException;
 use XlsxCreator\Exceptions\ObjectCommittedException;
 use XlsxCreator\Structures\Color;
@@ -308,6 +309,20 @@ class Worksheet{
 	 */
 	function getSheetRels() : SheetRels{
 		return $this->sheetRels;
+	}
+
+	/**
+	 * @param int $row - номер строки
+	 * @return Row - строка
+	 * @throws ObjectCommittedException
+	 * @throws InvalidValueException
+	 */
+	function getRow(int $row) : Row{
+		Validator::validateInRange($row, 1, 1048576,'$row');
+		if ($row < $this->lastUncommittedRow) throw new ObjectCommittedException('Row is committed');
+		if ($row >= $this->lastUncommittedRow + count($this->rows)) throw new OutOfBoundsException();
+
+		return $this->rows[$row - $this->lastUncommittedRow];
 	}
 
 	/**
