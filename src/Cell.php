@@ -9,7 +9,7 @@ use Topvisor\XlsxCreator\Structures\Values\Value;
 /**
  * Class Cell. Содержит методы для работы c ячейкой.
  *
- * @package XlsxCreator
+ * @package  Topvisor\XlsxCreator
  */
 class Cell{
 	private $row;

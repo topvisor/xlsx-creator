@@ -5,7 +5,7 @@ namespace Topvisor\XlsxCreator\Xml\Styles\Index;
 /**
  * Class StylesNumFmtIndex. Индексирует модели NumFmtsXml, учитывая значения по умолчанию.
  *
- * @package XlsxCreator\Xml\Styles\Index
+ * @package  Topvisor\XlsxCreator\Xml\Styles\Index
  */
 class StylesNumFmtIndex extends StylesIndex{
 	const DEFAULT_NUM_FMT = [

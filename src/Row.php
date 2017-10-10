@@ -8,7 +8,7 @@ use Topvisor\XlsxCreator\Structures\Values\Value;
 /**
  * Class Row. Содержит методы для работы со строкой.
  *
- * @package XlsxCreator
+ * @package  Topvisor\XlsxCreator
  */
 class Row{
 	private $worksheet;

@@ -23,7 +23,7 @@ use XMLWriter;
 /**
  * Class Worksheet. Содержит методы для работы с таблицей.
  *
- * @package XlsxCreator
+ * @package  Topvisor\XlsxCreator
  */
 class Worksheet{
 	const DY_DESCENT = 55;
@@ -120,7 +120,7 @@ class Worksheet{
 	}
 
 	/**
-	 * @param Color|null $tabColor - цвет вкладки в формате 'FF00FF00'
+	 * @param Color|null $tabColor - цвет вкладки
 	 * @return Worksheet - $this
 	 * @throws ObjectCommittedException
 	 */

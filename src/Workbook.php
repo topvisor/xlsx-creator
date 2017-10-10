@@ -23,7 +23,7 @@ use ZipArchive;
 /**
  * Class Workbook. Используйте его для создания xlsx файла.
  *
- * @package XlsxCreator
+ * @package  Topvisor\XlsxCreator
  */
 class Workbook{
 	private $filename;

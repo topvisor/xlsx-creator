@@ -7,7 +7,7 @@ use Topvisor\XlsxCreator\Validator;
 /**
  * Class FrozenView. Несколько строк и/или столбцов этого представления заморожено на месте.
  *
- * @package XlsxCreator\Structures\Views
+ * @package  Topvisor\XlsxCreator\Structures\Views
  */
 class FrozenView extends View{
 	public function __construct(int $xSplit, int $ySplit){

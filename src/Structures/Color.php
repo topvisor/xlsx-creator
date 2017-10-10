@@ -7,7 +7,7 @@ use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 /**
  * Class Color. Используется для задания цвета.
  *
- * @package XlsxCreator
+ * @package  Topvisor\XlsxCreator
  */
 class Color{
 	private $model;
