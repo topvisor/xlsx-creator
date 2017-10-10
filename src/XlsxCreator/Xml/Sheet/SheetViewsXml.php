@@ -8,7 +8,7 @@ use XMLWriter;
 
 class SheetViewsXml extends BaseXml{
 	function render(XMLWriter $xml, array $model = null){
-		if (!$model) return;
+		if (!$model || count($model) === 1 && ($model['state'] ?? '') == 'normal') return;
 
 		$xml->startElement('sheetViews');
 		$xml->startElement('sheetView');

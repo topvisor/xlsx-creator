@@ -4,6 +4,7 @@ namespace XlsxCreator;
 
 use XlsxCreator\Structures\Color;
 use XlsxCreator\Structures\PageSetup;
+use XlsxCreator\Structures\Views\NormalView;
 use XlsxCreator\Structures\Views\View;
 use XlsxCreator\Xml\ListXml;
 use XlsxCreator\Xml\Sheet\HyperlinkXml;
@@ -62,7 +63,7 @@ class Worksheet{
 		$this->outlineLevelCol = 0;
 		$this->outlineLevelRow = 0;
 		$this->defaultRowHeight = 15;
-		$this->view = null;
+		$this->view = new NormalView();
 		$this->pageSetup = new PageSetup();
 		$this->autoFilter = null;
 
@@ -76,6 +77,8 @@ class Worksheet{
 
 	function __destruct(){
 		unset($this->workbook);
+		unset($this->view);
+		unset($this->pageSetup);
 		unset($this->rows);
 		unset($this->merges);
 		unset($this->sheetRels);
@@ -170,17 +173,19 @@ class Worksheet{
 	}
 
 	/**
-	 * @return View|null - представление worksheet
+	 * @return View - представление worksheet
 	 */
-	function getView(){
+	function getView() : View{
 		return $this->view;
 	}
 
 	/**
-	 * @param View|null $view - представление worksheet
+	 * @param View $view - представление worksheet
 	 * @return Worksheet - $this
 	 */
-	function setView(View $view = null) : Worksheet{
+	function setView(View $view) : Worksheet{
+		if (!is_null($view)) Validator::validateView($view);
+
 		$this->view = $view;
 		return $this;
 	}
@@ -213,6 +218,8 @@ class Worksheet{
 	 * @return Worksheet - $this
 	 */
 	function setAutoFilter(string $autoFilter = null) : Worksheet{
+		if (!is_null($autoFilter)) Validator::validateCellsRange($autoFilter);
+
 		$this->autoFilter = $autoFilter;
 		return $this;
 	}
@@ -345,7 +352,7 @@ class Worksheet{
 			'pageSetup' => $this->pageSetup->getModel()
 		]);
 
-		if ($this->view) (new SheetViewsXml())->render($this->xml, $this->view->getModel());
+		(new SheetViewsXml())->render($this->xml, $this->view->getModel());
 
 		(new SheetFormatPropertiesXml())->render($this->xml, [
 			'defaultRowHeight' => $this->defaultRowHeight,

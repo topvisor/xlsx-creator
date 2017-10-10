@@ -2,8 +2,10 @@
 
 namespace XlsxCreator;
 
-use Exception;
 use XlsxCreator\Exceptions\InvalidValueException;
+use XlsxCreator\Structures\Views\FrozenView;
+use XlsxCreator\Structures\Views\SplitView;
+use XlsxCreator\Structures\Views\View;
 
 class Validator{
 	/**
@@ -51,6 +53,41 @@ class Validator{
 	 */
 	static function validateInRange($numeric, $from, $to, string $varName){
 		if ($numeric < $from || $numeric > $to) throw new InvalidValueException("$varName must be in [$from;$to]");
+	}
+
+	/**
+	 * Пороверка View
+	 *
+	 * @param View $view
+	 * @throws InvalidValueException
+	 */
+	static function validateView(View $view){
+		$viewName = 'View';
+		$needCheckSplits = false;
+
+		switch (true) {
+			case ($view instanceof SplitView):
+				$viewName = 'SplitView';
+				$needCheckSplits = true;
+				break;
+
+			case ($view instanceof FrozenView):
+				$viewName = 'FrozenView';
+				$needCheckSplits = true;
+				break;
+		}
+
+		if ($needCheckSplits && $view->getXSplit() < 1 && $view->getYSplit() < 1)
+			throw new InvalidValueException("Invalid \$view. $viewName's splitX or splitY must be greater than 1");
+	}
+
+	static function validateCellsRange(string $range){
+		$addresses = explode(':', $range);
+
+		if (count($addresses) !== 2) throw new InvalidValueException("Unavailable cell's range");
+
+		Validator::validateAddress($addresses[0]);
+		Validator::validateAddress($addresses[1]);
 	}
 
 	/**

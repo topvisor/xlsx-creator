@@ -2,7 +2,6 @@
 
 namespace XlsxCreator\Structures\Views;
 
-use XlsxCreator\Structures\Views\View;
 use XlsxCreator\Validator;
 
 /**
@@ -11,41 +10,44 @@ use XlsxCreator\Validator;
  * @package XlsxCreator\Structures\Views
  */
 class SplitView extends View{
-	public function __construct(){
+	public function __construct(int $xSplit, int $ySplit){
 		$this->model['state'] = 'split';
+
+		$this->model['xSplit'] = $xSplit;
+		$this->model['ySplit'] = $ySplit;
 	}
 
 	/**
-	 * @return int|null - Количество точек слева до границы
+	 * @return int - Количество точек слева до границы
 	 */
-	function getXSplit(){
-		return $this->model['xSplit'] ?? null;
+	function getXSplit() : int{
+		return $this->model['xSplit'];
 	}
 
 	/**
-	 * @param int|null $xSplit - Количество точек слева до границы
+	 * @param int $xSplit - Количество точек слева до границы
 	 * @return SplitView - $this
 	 */
-	function setXSplit(int $xSplit = null) : self{
-		if (!is_null($xSplit)) Validator::validatePositive($xSplit, '$xSplit');
+	function setXSplit(int $xSplit) : self{
+		Validator::validatePositive($xSplit, '$xSplit');
 
 		$this->model['xSplit'] = $xSplit;
 		return $this;
 	}
 
 	/**
-	 * @return int|null - Количество точек сверху до границы
+	 * @return int - Количество точек сверху до границы
 	 */
-	function getYSplit(){
-		return $this->model['ySplit'] ?? null;
+	function getYSplit() : int{
+		return $this->model['ySplit'];
 	}
 
 	/**
-	 * @param int|null $ySplit - Количество точек сверху до границы
+	 * @param int $ySplit - Количество точек сверху до границы
 	 * @return SplitView - $this
 	 */
-	function setYSplit(int $ySplit = null) : self{
-		if (!is_null($ySplit)) Validator::validatePositive($ySplit, '$ySplit');
+	function setYSplit(int $ySplit) : self{
+		Validator::validatePositive($ySplit, '$ySplit');
 
 		$this->model['ySplit'] = $ySplit;
 		return $this;

@@ -10,41 +10,44 @@ use XlsxCreator\Validator;
  * @package XlsxCreator\Structures\Views
  */
 class FrozenView extends View{
-	public function __construct(){
+	public function __construct(int $xSplit, int $ySplit){
 		$this->model['state'] = 'frozen';
+
+		$this->model['xSplit'] = $xSplit;
+		$this->model['ySplit'] = $ySplit;
 	}
 
 	/**
-	 * @return int|null - Сколько столбцов "заморожено"
+	 * @return int - Сколько столбцов "заморожено"
 	 */
 	function getXSplit(){
-		return $this->model['xSplit'] ?? null;
+		return $this->model['xSplit'];
 	}
 
 	/**
-	 * @param int|null $xSplit - Сколько столбцов "заморожено"
+	 * @param int $xSplit - Сколько столбцов "заморожено"
 	 * @return FrozenView - $this
 	 */
-	function setXSplit(int $xSplit = null) : self{
-		if (!is_null($xSplit)) Validator::validateInRange($xSplit, 1, 16384, '$xSplit');
+	function setXSplit(int $xSplit) : self{
+		Validator::validateInRange($xSplit, 1, 16384, '$xSplit');
 
 		$this->model['xSplit'] = $xSplit;
 		return $this;
 	}
 
 	/**
-	 * @return int|null - Сколько строк "заморожено"
+	 * @return int - Сколько строк "заморожено"
 	 */
 	function getYSplit(){
-		return $this->model['ySplit'] ?? null;
+		return $this->model['ySplit'];
 	}
 
 	/**
 	 * @param int|null $ySplit - Сколько строк "заморожено"
 	 * @return FrozenView - $this
 	 */
-	function setYSplit(int $ySplit = null) : self{
-		if (!is_null($ySplit)) Validator::validateInRange($ySplit, 1, 1048576, '$ySplit');
+	function setYSplit(int $ySplit) : self{
+		Validator::validateInRange($ySplit, 1, 1048576, '$ySplit');
 
 		$this->model['ySplit'] = $ySplit;
 		return $this;
