@@ -294,7 +294,7 @@ class Workbook{
 		$zip->open($this->filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
 		foreach ($this->worksheets as $worksheet){
-			$worksheet->commit();
+			if (!$worksheet->isCommitted()) $worksheet->commit();
 			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
 
 			$sheetRelsFilename = $worksheet->getSheetRels()->getFilename();
