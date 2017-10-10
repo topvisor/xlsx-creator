@@ -10,9 +10,8 @@
 namespace XlsxCreator;
 
 use DateTime;
-use Exception;
 use XlsxCreator\Exceptions\ObjectCommittedException;
-use XlsxCreator\XlsxCreator\Exceptions\EmptyObjectException;
+use XlsxCreator\Exceptions\EmptyObjectException;
 use XlsxCreator\Xml\Book\WorkbookXml;
 use XlsxCreator\Xml\Core\App\AppXml;
 use XlsxCreator\Xml\Core\ContentTypesXml;

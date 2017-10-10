@@ -8,7 +8,7 @@ use XlsxCreator\Structures\Color;
 use XlsxCreator\Structures\PageSetup;
 use XlsxCreator\Structures\Views\NormalView;
 use XlsxCreator\Structures\Views\View;
-use XlsxCreator\XlsxCreator\Exceptions\EmptyObjectException;
+use XlsxCreator\Exceptions\EmptyObjectException;
 use XlsxCreator\Xml\ListXml;
 use XlsxCreator\Xml\Sheet\HyperlinkXml;
 use XlsxCreator\Xml\Sheet\PageMargins;
