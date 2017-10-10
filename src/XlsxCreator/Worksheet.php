@@ -76,11 +76,6 @@ class Worksheet{
 		$this->merges = [];
 		$this->lastUncommittedRow = 1;
 		$this->sheetRels = new SheetRels($this);
-
-		$this->filename = null;
-		$this->xml = null;
-
-		$this->rId = null;
 	}
 
 	function __destruct(){
