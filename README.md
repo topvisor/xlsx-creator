@@ -16,7 +16,7 @@ composer.json
         }
     ],
     "require": {
-        "decaseal/XlsxCreator": "v0.1-alpha"
+        "topvisor/XlsxCreator": "v0.2-dev"
     }
 }
 ```

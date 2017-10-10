@@ -1,5 +1,5 @@
 {
-	"name": "decaseal/XlsxCreator",
+	"name": "topvisor/XlsxCreator",
 	"description": "Library for creating xlsx files for Topvisor",
 	"keywords": ["PHP","Excel","OpenXML","xlsx","xls","spreadsheet"],
 	"license": "MIT",
@@ -18,8 +18,8 @@
 		"ext-mbstring": "*"
 	},
 	"autoload": {
-		"psr-0": {
-			"XlsxCreator\\": "src/"
+		"psr-4": {
+			"Topvisor\\XlsxCreator\\": "src/"
 		}
 	}
 }
