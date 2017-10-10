@@ -16,7 +16,7 @@ composer.json
         }
     ],
     "require": {
-        "topvisor/XlsxCreator": "v0.2-dev"
+        "topvisor/XlsxCreator": "v0.2-alpha"
     }
 }
 ```
