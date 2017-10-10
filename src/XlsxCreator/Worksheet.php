@@ -2,10 +2,13 @@
 
 namespace XlsxCreator;
 
+use XlsxCreator\Exceptions\InvalidValueException;
+use XlsxCreator\Exceptions\ObjectCommittedException;
 use XlsxCreator\Structures\Color;
 use XlsxCreator\Structures\PageSetup;
 use XlsxCreator\Structures\Views\NormalView;
 use XlsxCreator\Structures\Views\View;
+use XlsxCreator\XlsxCreator\Exceptions\EmptyObjectException;
 use XlsxCreator\Xml\ListXml;
 use XlsxCreator\Xml\Sheet\HyperlinkXml;
 use XlsxCreator\Xml\Sheet\PageMargins;
@@ -118,8 +121,12 @@ class Worksheet{
 	/**
 	 * @param Color|null $tabColor - цвет вкладки в формате 'FF00FF00'
 	 * @return Worksheet - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setTabColor(Color $tabColor = null) : Worksheet{
+		$this->checkCommitted();
+		$this->checkStarted();
+
 		$this->tabColor = $tabColor;
 		return $this;
 	}
@@ -134,8 +141,15 @@ class Worksheet{
 	/**
 	 * @param int $outlineLevelCol - worksheet column outline level
 	 * @return Worksheet - $this
+	 * @throws ObjectCommittedException
+	 * @throws InvalidValueException
 	 */
 	function setOutlineLevelCol(int $outlineLevelCol) : Worksheet{
+		$this->checkCommitted();
+		$this->checkStarted();
+
+		Validator::validatePositive($outlineLevelCol, '$outlineLevelCol');
+
 		$this->outlineLevelCol = $outlineLevelCol;
 		return $this;
 	}
@@ -150,8 +164,15 @@ class Worksheet{
 	/**
 	 * @param int $outlineLevelRow - worksheet row outline level
 	 * @return Worksheet - $this
+	 * @throws ObjectCommittedException
+	 * @throws InvalidValueException
 	 */
 	function setOutlineLevelRow(int $outlineLevelRow) : Worksheet{
+		$this->checkCommitted();
+		$this->checkStarted();
+
+		Validator::validatePositive($outlineLevelRow, '$outlineLevelRow');
+
 		$this->outlineLevelRow = $outlineLevelRow;
 		return $this;
 	}
@@ -166,8 +187,15 @@ class Worksheet{
 	/**
 	 * @param int $defaultRowHeight - высота строк по умолчанию
 	 * @return Worksheet - $this
+	 * @throws ObjectCommittedException
+	 * @throws InvalidValueException
 	 */
 	function setDefaultRowHeight(int $defaultRowHeight) : Worksheet{
+		$this->checkCommitted();
+		$this->checkStarted();
+
+		Validator::validatePositive($defaultRowHeight, '$defaultRowHeight');
+
 		$this->defaultRowHeight = $defaultRowHeight;
 		return $this;
 	}
@@ -182,8 +210,13 @@ class Worksheet{
 	/**
 	 * @param View $view - представление worksheet
 	 * @return Worksheet - $this
+	 * @throws ObjectCommittedException
+	 * @throws InvalidValueException
 	 */
 	function setView(View $view) : Worksheet{
+		$this->checkCommitted();
+		$this->checkStarted();
+
 		if (!is_null($view)) Validator::validateView($view);
 
 		$this->view = $view;
@@ -200,8 +233,12 @@ class Worksheet{
 	/**
 	 * @param PageSetup $pageSetup - параметры печати
 	 * @return Worksheet - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setPageSetup(PageSetup $pageSetup) : Worksheet{
+		$this->checkCommitted();
+		$this->checkStarted();
+
 		$this->pageSetup = $pageSetup;
 		return $this;
 	}
@@ -216,8 +253,13 @@ class Worksheet{
 	/**
 	 * @param string|null $autoFilter - автоматический фильтр ('A1:A5')
 	 * @return Worksheet - $this
+	 * @throws ObjectCommittedException
+	 * @throws InvalidValueException
 	 */
 	function setAutoFilter(string $autoFilter = null) : Worksheet{
+		$this->checkCommitted();
+		$this->checkStarted();
+
 		if (!is_null($autoFilter)) Validator::validateCellsRange($autoFilter);
 
 		$this->autoFilter = $autoFilter;
@@ -273,6 +315,8 @@ class Worksheet{
 	 * @return Row - строка таблицы
 	 */
 	function addRow(array $values = null) : Row{
+		$this->checkCommitted();
+
 		if (!$this->xml) $this->startWorksheet();
 
 		$row = new Row($this, count($this->rows) + $this->lastUncommittedRow);
@@ -285,13 +329,16 @@ class Worksheet{
 
 	/**
 	 *	Зафиксировать файл таблицы.
+	 *
+	 * 	@throws ObjectCommittedException
 	 */
 	function commit(){
-		if ($this->isCommitted()) return;
-		$this->committed = true;
+		if (!$this->xml) throw new EmptyObjectException('Worksheet is empty');
 
 		$this->commitRows();
 		unset($this->rows);
+
+		$this->committed = true;
 
 		$this->endWorksheet();
 	}
@@ -300,8 +347,10 @@ class Worksheet{
 	 * Зафиксировать строки таблицы.
 	 *
 	 * @param Row|null $lastRow - последняя фиксируемая строка
+	 * @throws ObjectCommittedException
 	 */
 	function commitRows(Row $lastRow = null){
+		$this->checkCommitted();
 		if (!$this->rows) return;
 
 		$lastRow = $lastRow ?? $this->rows[count($this->rows) - 1];
@@ -388,7 +437,24 @@ class Worksheet{
 		$this->sheetRels->commit();
 	}
 
+	/**
+	 *	Записать описание колонок в файл
+	 */
 	private function writeColumns(){
 		// Реализовать
+	}
+
+	/**
+	 * @throws ObjectCommittedException
+	 */
+	private function checkCommitted(){
+		if ($this->committed) throw new ObjectCommittedException('Worksheet is committed');
+	}
+
+	/**
+	 * @throws ObjectCommittedException
+	 */
+	private function checkStarted(){
+		if ($this->rows) throw new ObjectCommittedException('Worksheet properties is committed');
 	}
 }

@@ -10,6 +10,9 @@
 namespace XlsxCreator;
 
 use DateTime;
+use Exception;
+use XlsxCreator\Exceptions\ObjectCommittedException;
+use XlsxCreator\XlsxCreator\Exceptions\EmptyObjectException;
 use XlsxCreator\Xml\Book\WorkbookXml;
 use XlsxCreator\Xml\Core\App\AppXml;
 use XlsxCreator\Xml\Core\ContentTypesXml;
@@ -80,8 +83,11 @@ class Workbook{
 	/**
 	 * @param string $filename - путь к xlsx файлу
 	 * @return Workbook - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setFilename(string $filename) : Workbook{
+		$this->checkCommitted();
+
 		$this->filename = $filename;
 		return $this;
 	}
@@ -96,8 +102,11 @@ class Workbook{
 	/**
 	 * @param string $tempdir - путь к директории для хранения временных файлов
 	 * @return Workbook - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setTempdir(string $tempdir) : Workbook{
+		$this->checkCommitted();
+
 		$this->tempdir = $tempdir;
 		return $this;
 	}
@@ -112,8 +121,11 @@ class Workbook{
 	/**
 	 * @param DateTime $created - время создания файла
 	 * @return Workbook - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setCreated(DateTime $created) : Workbook{
+		$this->checkCommitted();
+
 		$this->created = $created;
 		return $this;
 	}
@@ -128,8 +140,11 @@ class Workbook{
 	/**
 	 * @param DateTime $modified - время изменения файла
 	 * @return Workbook - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setModified(DateTime $modified) : Workbook{
+		$this->checkCommitted();
+
 		$this->modified = $modified;
 		return $this;
 	}
@@ -144,8 +159,11 @@ class Workbook{
 	/**
 	 * @param string $creator - автор файла
 	 * @return Workbook - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setCreator(string $creator) : Workbook{
+		$this->checkCommitted();
+
 		$this->creator = $creator;
 		return $this;
 	}
@@ -160,8 +178,11 @@ class Workbook{
 	/**
 	 * @param string $lastModifiedBy - автор последнего изменения файла
 	 * @return Workbook - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setLastModifiedBy(string $lastModifiedBy) : Workbook{
+		$this->checkCommitted();
+
 		$this->lastModifiedBy = $lastModifiedBy;
 		return $this;
 	}
@@ -176,8 +197,11 @@ class Workbook{
 	/**
 	 * @param string $company - компания
 	 * @return Workbook - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setCompany(string $company) : Workbook{
+		$this->checkCommitted();
+
 		$this->company = $company;
 		return $this;
 	}
@@ -192,8 +216,11 @@ class Workbook{
 	/**
 	 * @param string|null $manager - менеджер
 	 * @return Workbook - $this
+	 * @throws ObjectCommittedException
 	 */
 	function setManager(string $manager = null) : Workbook{
+		$this->checkCommitted();
+
 		$this->manager = $manager;
 		return $this;
 	}
@@ -203,8 +230,11 @@ class Workbook{
 	 *
 	 * @param string $name - имя таблицы
 	 * @return Worksheet - таблица
+	 * @throws ObjectCommittedException
 	 */
 	function addWorksheet(string $name) : Worksheet{
+		$this->checkCommitted();
+
 		$id = count($this->worksheets) + 1;
 		$this->worksheetsIds[$name] = $id;
 
@@ -252,9 +282,13 @@ class Workbook{
 
 	/**
 	 * Зафиксировать файл workbook. Используйте для создания xlsx файла.
+	 * @throws EmptyObjectException
+	 * @throws ObjectCommittedException
 	 */
 	function commit(){
-		if ($this->committed || !count($this->worksheets)) return;
+		$this->checkCommitted();
+		if (!count($this->worksheets)) throw new EmptyObjectException('Workbook is empty');
+
 		$this->committed = true;
 
 		$zip = new ZipArchive();
@@ -363,5 +397,12 @@ class Workbook{
 			'created' => $this->created,
 			'modified' => $this->modified
 		];
+	}
+
+	/**
+	 * @throws ObjectCommittedException
+	 */
+	private function checkCommitted(){
+		if ($this->committed) throw new ObjectCommittedException("Workbook is committed");
 	}
 }
