@@ -12,6 +12,7 @@ use Topvisor\XlsxCreator\Validator;
  */
 class Font{
 	const VALID_UNDERLINE = ['single', 'double', 'singleAccounting', 'doubleAccounting'];
+	const VALID_SCHEME = ['minor', 'major', 'none'];
 
 	private $model = [];
 	private $color;
@@ -48,7 +49,7 @@ class Font{
 	 * @return Font - $this
 	 */
 	function setSize(int $size = null) : self{
-		Validator::validateInRange($size, 1, 409, '$size');
+		if (!is_null($size)) Validator::validateInRange($size, 1, 409, '$size');
 
 		$this->model['sz'] = $size;
 		return $this;
@@ -118,6 +119,24 @@ class Font{
 		if (!is_null($underline)) Validator::validate($underline, '$underline', self::VALID_UNDERLINE);
 
 		$this->model['u'] = $underline;
+		return $this;
+	}
+
+	/**
+	 * @return string|null - надстрочный/подстрочный
+	 */
+	function getScheme(){
+		return $this->model['scheme'] ?? null;
+	}
+
+	/**
+	 * @param string|null $scheme - надстрочный/подстрочный
+	 * @return Font - $this
+	 */
+	function setScheme(string $scheme = null) : self{
+		if (!is_null($scheme)) Validator::validate($scheme, '$scheme', self::VALID_SCHEME);
+
+		$this->model['scheme'] = $scheme;
 		return $this;
 	}
 
