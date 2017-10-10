@@ -17,7 +17,7 @@ class EdgeXml extends BaseXml {
 
 	function render(XMLWriter $xml, array $model = null){
 		$colorXml = new ColorXml();
-		$colorModel = $model || $this->defaultColor;
+		$colorModel = $model['color'] || $this->defaultColor;
 
 		$xml->startElement($this->tag);
 

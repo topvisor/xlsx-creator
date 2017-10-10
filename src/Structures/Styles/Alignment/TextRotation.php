@@ -1,6 +1,6 @@
 <?php
 
-namespace Topvisor\XlsxCreator\Structures\Styles;
+namespace Topvisor\XlsxCreator\Structures\Styles\Alignment;
 
 use Topvisor\XlsxCreator\Validator;
 
