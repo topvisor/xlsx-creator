@@ -1,6 +1,6 @@
 <?php
 
-namespace XlsxCreator\XlsxCreator\Exceptions;
+namespace XlsxCreator\Exceptions;
 
 use Exception;
 
