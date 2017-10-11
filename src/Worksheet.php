@@ -15,6 +15,7 @@ use Topvisor\XlsxCreator\Xml\ListXml;
 use Topvisor\XlsxCreator\Xml\Sheet\AutoFilterXml;
 use Topvisor\XlsxCreator\Xml\Sheet\ColumnXml;
 use Topvisor\XlsxCreator\Xml\Sheet\HyperlinkXml;
+use Topvisor\XlsxCreator\Xml\Sheet\MergeXml;
 use Topvisor\XlsxCreator\Xml\Sheet\PageMargins;
 use Topvisor\XlsxCreator\Xml\Sheet\PageSetupXml;
 use Topvisor\XlsxCreator\Xml\Sheet\RowXml;
@@ -410,7 +411,7 @@ class Worksheet{
 		$this->getCell($range->getBottom(), $range->getRight());
 
 		foreach ($this->merges as $merge)
-			if ($range->intersection($merge))
+			if ($range->intersection(Range::fromString($merge)))
 				throw new InvalidValueException('Merge intersect');
 
 		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
@@ -421,6 +422,8 @@ class Worksheet{
 				else $cell->setMaster($master);
 			}
 		}
+
+		$this->merges[] = (string) $range;
 	}
 
 	/**
@@ -436,9 +439,12 @@ class Worksheet{
 		$this->getCell($range->getBottom(), $range->getRight());
 
 		$found = false;
-		foreach ($this->merges as $merge)
-			if ($merge == $range)
-				$found = true;
+		foreach ($this->merges as $mergeIndex => $merge) {
+			if ($merge == (string) $range) {
+				$found = $mergeIndex;
+				break;
+			}
+		}
 
 		if (!$found) throw new InvalidValueException('Merge not found');
 
@@ -447,6 +453,8 @@ class Worksheet{
 			for ($j = $range->getLeft(); $j <= $range->getRight(); $j++)
 				$row->getCell($j)->setMaster(null);
 		}
+
+		unset($this->merges[$found]);
 	}
 
 	/**
@@ -546,7 +554,7 @@ class Worksheet{
 		$this->xml->endElement();
 
 //		(new AutoFilterXml())->render($this->xml, [$this->autoFilter]);
-		// MergeCells
+		(new ListXml('mergeCells', new MergeXml(), [], false, true))->render($this->xml, $this->merges);
 
 		(new ListXml('hyperlinks', new HyperlinkXml()))->render($this->xml, $this->sheetRels->getHyperlinks());
 		(new PageMargins())->render($this->xml, $this->pageSetup->getModel()['margins'] ?? null);

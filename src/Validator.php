@@ -81,14 +81,14 @@ class Validator{
 			throw new InvalidValueException("Invalid \$view. $viewName's splitX or splitY must be greater than 1");
 	}
 
-	static function validateCellsRange(string $range){
-		$addresses = explode(':', $range);
-
-		if (count($addresses) !== 2) throw new InvalidValueException("Unavailable cell's range");
-
-		Validator::validateAddress($addresses[0]);
-		Validator::validateAddress($addresses[1]);
-	}
+//	static function validateCellsRange(string $range){
+//		$addresses = explode(':', $range);
+//
+//		if (count($addresses) !== 2) throw new InvalidValueException("Unavailable cell's range");
+//
+//		Validator::validateAddress($addresses[0]);
+//		Validator::validateAddress($addresses[1]);
+//	}
 
 	/**
 	 * @param string $var - название переменной
