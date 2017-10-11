@@ -3,6 +3,11 @@
 namespace Topvisor\XlsxCreator;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
+use Topvisor\XlsxCreator\Structures\Color;
+use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
+use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
+use Topvisor\XlsxCreator\Structures\Styles\Font;
+use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\Value;
 
 /**
@@ -11,9 +16,17 @@ use Topvisor\XlsxCreator\Structures\Values\Value;
  * @package  Topvisor\XlsxCreator
  */
 class Row{
+	use StyleManager {
+		StyleManager::__destruct as styleManagerDestruct;
+		StyleManager::setNumFmt as styleManagerSetNumFmt;
+		StyleManager::setFont as styleManagerSetFont;
+		StyleManager::setFill as styleManagerSetFill;
+		StyleManager::setBorders as styleManagerSetBorders;
+		StyleManager::setAlignment as styleManagerSetAlignment;
+	}
+
 	private $worksheet;
 	private $number;
-	private $style;
 	private $height;
 	private $hidden;
 	private $outlineLevel;
@@ -30,7 +43,6 @@ class Row{
 		$this->worksheet = $worksheet;
 		$this->number = $number;
 
-		$this->style = [];
 		$this->height = null;
 		$this->hidden = false;
 		$this->outlineLevel = 0;
@@ -39,6 +51,8 @@ class Row{
 	}
 
 	function __destruct(){
+		$this->styleManagerDestruct();
+
 		unset($this->worksheet);
 	}
 
@@ -57,20 +71,57 @@ class Row{
 	}
 
 	/**
-	 * @see Row::setStyle() Параметры $style
-	 *
-	 * @return array - стили
+	 * @param string|null $numFmt - формат чисел ячейки
+	 * @return Row - $this
 	 */
-	function getStyle() : array{
-		return $this->style;
+	function setNumFmt(string $numFmt = null) : self{
+		$this->styleManagerSetNumFmt($numFmt);
+		foreach ($this->cells as $cell) $cell->setNumFmt($numFmt);
+
+		return $this;
 	}
 
 	/**
-	 * @param array $style - стили
+	 * @param Font|null $font - шрифт
 	 * @return Row - $this
 	 */
-	function setStyle(array $style) : self{
-		$this->style = $style;
+	function setFont(Font $font = null) : self{
+		$this->styleManagerSetFont($font);
+		foreach ($this->cells as $cell) $cell->setFont($font);
+
+		return $this;
+	}
+
+	/**
+	 * @param Color|null $color - заливка ячейки
+	 * @return Row - $this
+	 */
+	function setFill(Color $color = null) : self{
+		$this->styleManagerSetFill($color);
+		foreach ($this->cells as $cell) $cell->setFill($color);
+
+		return $this;
+	}
+
+	/**
+	 * @param Borders|null $borders - границы ячейки
+	 * @return Row - $this
+	 */
+	function setBorders(Borders $borders = null) : self{
+		$this->styleManagerSetBorders($borders);
+		foreach ($this->cells as $cell) $cell->setBorders($borders);
+
+		return $this;
+	}
+
+	/**
+	 * @param Alignment|null $alignment - выравнивание текста
+	 * @return Row - $this
+	 */
+	function setAlignment(Alignment $alignment = null) : self{
+		$this->styleManagerSetAlignment($alignment);
+		foreach ($this->cells as $cell) $cell->setAlignment($alignment);
+
 		return $this;
 	}
 
@@ -189,20 +240,15 @@ class Row{
 			if ($max < $cellCol) $max = $cellCol;
 		}
 
-		$styleId = $this->worksheet->getWorkbook()->getStyles()->addStyle($this->style);
-		$collapsed = (bool) ($this->outlineLevel && $this->outlineLevel >= $this->worksheet->getOutlineLevelRow());
-
 		return ($cellsModels || $this->height) ? [
 			'cells' => $cellsModels,
 			'number' => $this->number,
 			'min' => $min,
 			'max' => $max,
 			'height' => $this->height,
-			'style' => $this->style,
-			'styleId' => $styleId,
 			'hidden' => $this->hidden,
 			'outlineLevel' => $this->outlineLevel,
-			'collapsed' => $collapsed
+			'collapsed' => (bool) ($this->outlineLevel && $this->outlineLevel >= $this->worksheet->getOutlineLevelRow())
 		] : null;
 	}
 

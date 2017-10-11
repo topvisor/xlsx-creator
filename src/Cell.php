@@ -12,6 +12,10 @@ use Topvisor\XlsxCreator\Structures\Values\Value;
  * @package  Topvisor\XlsxCreator
  */
 class Cell{
+	use StyleManager {
+		StyleManager::__destruct as styleManagerDestruct;
+	}
+
 	private $row;
 	private $col;
 	private $style;
@@ -35,11 +39,11 @@ class Cell{
 
 		$this->merged = false;
 		$this->master = null;
-
-		$this->committed = false;
 	}
 
 	function __destruct(){
+		$this->styleManagerDestruct();
+
 		unset($this->row);
 		unset($this->value);
 		unset($this->master);
@@ -84,26 +88,6 @@ class Cell{
 	}
 
 	/**
-	 * @see Row::setStyle() Параметры $style
-	 *
-	 * @return array - стили
-	 */
-	function getStyle() : array{
-		return $this->style;
-	}
-
-	/**
-	 * @see Row::setStyle() Параметры $style
-	 *
-	 * @param array $style - стили
-	 * @return Cell - $this
-	 */
-	function setStyle(array $style) : Cell{
-		$this->style = $style;
-		return $this;
-	}
-
-	/**
 	 * @return int - тип значения ячейки
 	 */
 	function getType() : int{
@@ -114,12 +98,14 @@ class Cell{
 	 * @return array - модель ячейки
 	 */
 	function getModel() : array{
+		$style = $this->getStyleModel();
+
 		$model = [
 			'address' => $this->getAddress(),
 			'value' => $this->value->getValue(),
 			'type' => $this->value->getType(),
-			'style' => $this->style,
-			'styleId' => $this->row->getWorksheet()->getWorkbook()->getStyles()->addStyle($this->style, $this->getType()),
+			'style' => $style,
+			'styleId' => $this->row->getWorksheet()->getWorkbook()->getStyles()->addStyle($style, $this->getType()),
 		];
 
 		if ($this->merged && $this->master) $model['master'] = $this->master->getModel();
