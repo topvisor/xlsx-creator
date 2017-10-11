@@ -11,7 +11,7 @@ class NumFmtXml extends BaseXml{
 
 		$xml->startElement('numFmt');
 
-		$xml->writeAttribute('id', $model['id']);
+		$xml->writeAttribute('numFmtId', $model['id']);
 		$xml->writeAttribute('formatCode', $model['formatCode']);
 
 		$xml->endElement();
