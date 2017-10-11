@@ -5,6 +5,11 @@ namespace Topvisor\XlsxCreator\Structures\Styles\Borders;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Validator;
 
+/**
+ * Class Border. Описывает стиль границы ячейки.
+ *
+ * @package Topvisor\XlsxCreator\Structures\Styles\Borders
+ */
 class Border{
 	const VALID_STYLE = [
 		'thin', 'dotted', 'dashDot', 'hair', 'dashDotDot', 'slantDashDot', 'mediumDashed',
