@@ -275,6 +275,9 @@ class Worksheet{
 	function getColumn(int $col) : Column{
 		Validator::validateInRange($col, 1, 16384, '$col');
 
+		$this->checkCommitted();
+		$this->checkStarted();
+
 		if ($col > count($this->columns))
 			for ($i = count($this->columns) + 1; $i <= $col; $i++)
 				$this->columns[] = new Column($this, $i);
