@@ -245,6 +245,8 @@ class Row{
 			'number' => $this->number,
 			'min' => $min,
 			'max' => $max,
+			'style' => [],
+			'styleId' => 0,
 			'height' => $this->height,
 			'hidden' => $this->hidden,
 			'outlineLevel' => $this->outlineLevel,
