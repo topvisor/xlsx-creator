@@ -277,7 +277,7 @@ class Row{
 		$cell->setBorders($this->borders);
 		$cell->setAlignment($this->alignment);
 
-		$this->cells[$col] = $cell;
+		$this->cells[$col - 1] = $cell;
 
 		return $cell;
 	}
