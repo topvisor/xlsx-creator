@@ -137,6 +137,8 @@ class Row{
 	 * @return Row - $this
 	 */
 	function setHeight(int $height = null) : self{
+		Validator::validateInRange($height, 0, 409, '$height');
+
 		$this->height = $height;
 		return $this;
 	}
@@ -169,6 +171,8 @@ class Row{
 	 * @return Row - $this
 	 */
 	function setOutlineLevel(int $outlineLevel) : self{
+		Validator::validateInRange($outlineLevel, 0, 409, '$outlineLevel');
+
 		$this->outlineLevel = $outlineLevel;
 		return $this;
 	}
