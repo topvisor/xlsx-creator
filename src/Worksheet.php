@@ -39,7 +39,7 @@ class Worksheet{
 	private $defaultRowHeight;
 	private $view;
 	private $pageSetup;
-	private $autoFilter;
+//	private $autoFilter;
 
 	private $committed;
 	private $lastUncommittedRow;
@@ -71,7 +71,7 @@ class Worksheet{
 		$this->defaultRowHeight = 15;
 		$this->view = new NormalView();
 		$this->pageSetup = new PageSetup();
-		$this->autoFilter = null;
+//		$this->autoFilter = null;
 
 		$this->committed = false;
 		$this->columns = [];
@@ -246,28 +246,28 @@ class Worksheet{
 		return $this;
 	}
 
-	/**
-	 * @return string|null - автоматический фильтр
-	 */
-	function getAutoFilter(){
-		return $this->autoFilter;
-	}
-
-	/**
-	 * @param string|null $autoFilter - автоматический фильтр ('A1:A5')
-	 * @return Worksheet - $this
-	 * @throws ObjectCommittedException
-	 * @throws InvalidValueException
-	 */
-	function setAutoFilter(string $autoFilter = null) : Worksheet{
-		$this->checkCommitted();
-		$this->checkStarted();
-
-		if (!is_null($autoFilter)) Validator::validateCellsRange($autoFilter);
-
-		$this->autoFilter = $autoFilter;
-		return $this;
-	}
+//	/**
+//	 * @return string|null - автоматический фильтр
+//	 */
+//	function getAutoFilter(){
+//		return $this->autoFilter;
+//	}
+//
+//	/**
+//	 * @param string|null $autoFilter - автоматический фильтр ('A1:A5')
+//	 * @return Worksheet - $this
+//	 * @throws ObjectCommittedException
+//	 * @throws InvalidValueException
+//	 */
+//	function setAutoFilter(string $autoFilter = null) : Worksheet{
+//		$this->checkCommitted();
+//		$this->checkStarted();
+//
+//		if (!is_null($autoFilter)) Validator::validateCellsRange($autoFilter);
+//
+//		$this->autoFilter = $autoFilter;
+//		return $this;
+//	}
 
 	/**
 	 * @param int $col - номер колонки
@@ -457,7 +457,7 @@ class Worksheet{
 	private function endWorksheet(){
 		$this->xml->endElement();
 
-		(new AutoFilterXml())->render($this->xml, [$this->autoFilter]);
+//		(new AutoFilterXml())->render($this->xml, [$this->autoFilter]);
 		// MergeCells
 
 		(new ListXml('hyperlinks', new HyperlinkXml()))->render($this->xml, $this->sheetRels->getHyperlinks());
