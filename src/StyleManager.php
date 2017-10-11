@@ -109,6 +109,8 @@ trait StyleManager{
 	 * @return array - модель
 	 */
 	private function getStyleModel() : array{
+		if (!$this->numFmt && !$this->font && !$this->fill && !$this->borders && !$this->alignment) return [];
+		
 		return [
 			'numFmt' => $this->numFmt,
 			'font' => $this->font ? $this->font->getModel() : null,

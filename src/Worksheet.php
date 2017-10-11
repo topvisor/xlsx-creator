@@ -11,6 +11,7 @@ use Topvisor\XlsxCreator\Structures\Views\NormalView;
 use Topvisor\XlsxCreator\Structures\Views\View;
 use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Xml\ListXml;
+use Topvisor\XlsxCreator\Xml\Sheet\ColumnXml;
 use Topvisor\XlsxCreator\Xml\Sheet\HyperlinkXml;
 use Topvisor\XlsxCreator\Xml\Sheet\PageMargins;
 use Topvisor\XlsxCreator\Xml\Sheet\PageSetupXml;
@@ -38,11 +39,11 @@ class Worksheet{
 	private $view;
 	private $pageSetup;
 	private $autoFilter;
-	private $columns;
 
 	private $committed;
 	private $lastUncommittedRow;
 	private $rows;
+	private $columns;
 	private $merges;
 	private $sheetRels;
 
@@ -268,6 +269,26 @@ class Worksheet{
 	}
 
 	/**
+	 * @param int $col - номер колонки
+	 * @return Column - колонка
+	 */
+	function getColumn(int $col) : Column{
+		return $this->columns[$col];
+	}
+
+	/**
+	 * @return Column - колонка
+	 */
+	function addColumn() : Column{
+		$this->checkCommitted();
+		$this->checkStarted();
+
+		$column = new Column($this, count($this->columns) + 1);
+		$this->columns[] = $column;
+		return $column;
+	}
+
+	/**
 	 * @return bool - зафиксированы ли изменения
 	 */
 	function isCommitted() : bool{
@@ -425,7 +446,9 @@ class Worksheet{
 			'dyDescent' => Worksheet::DY_DESCENT
 		]);
 
-		$this->writeColumns();
+		(new ListXml('cols', new ColumnXml()))->render($this->xml, array_map(function($column){
+			return $column->getModel();
+		}, $this->columns));
 
 		$this->xml->startElement('sheetData');
 	}
@@ -450,13 +473,6 @@ class Worksheet{
 		unset($this->xml);
 
 		$this->sheetRels->commit();
-	}
-
-	/**
-	 *	Записать описание колонок в файл
-	 */
-	private function writeColumns(){
-		// Реализовать
 	}
 
 	/**

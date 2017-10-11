@@ -244,7 +244,7 @@ class Row{
 			if ($max < $cellCol) $max = $cellCol;
 		}
 
-		return ($cellsModels || $this->height) ? [
+		return ($this->isDefault()) ? null : [
 			'cells' => $cellsModels,
 			'number' => $this->number,
 			'min' => $min,
@@ -255,7 +255,7 @@ class Row{
 			'hidden' => $this->hidden,
 			'outlineLevel' => $this->outlineLevel,
 			'collapsed' => (bool) ($this->outlineLevel && $this->outlineLevel >= $this->worksheet->getOutlineLevelRow())
-		] : null;
+		];
 	}
 
 	/**
@@ -278,5 +278,18 @@ class Row{
 		$this->cells[$col] = $cell;
 
 		return $cell;
+	}
+
+	/**
+	 * @return bool - является ли строка не измененной
+	 */
+	private function isDefault() : bool{
+		if ($this->cells) return false;
+		if ($this->height) return false;
+		if ($this->hidden) return false;
+		if ($this->outlineLevel) return false;
+		if ($this->getStyleModel()) return false;
+
+		return true;
 	}
 }
