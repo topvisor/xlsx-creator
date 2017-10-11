@@ -273,19 +273,13 @@ class Worksheet{
 	 * @return Column - колонка
 	 */
 	function getColumn(int $col) : Column{
-		return $this->columns[$col];
-	}
+		Validator::validateInRange($col, 1, 16384, '$col');
 
-	/**
-	 * @return Column - колонка
-	 */
-	function addColumn() : Column{
-		$this->checkCommitted();
-		$this->checkStarted();
+		if ($col > count($this->columns))
+			for ($i = count($this->columns) + 1; $i <= $col; $i++)
+				$this->columns[] = new Column($this, $i);
 
-		$column = new Column($this, count($this->columns) + 1);
-		$this->columns[] = $column;
-		return $column;
+		return $this->columns[$col - 1];
 	}
 
 	/**
