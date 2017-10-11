@@ -14,12 +14,12 @@ class ColumnXml extends BaseXml {
 		$xml->writeAttribute('min', $model['min']);
 		$xml->writeAttribute('max', $model['max']);
 
-		if ($model['width']) $xml->writeAttribute('width', $model['width']);
-		if ($model['styleId']) $xml->writeAttribute('style', $model['styleId']);
-		if ($model['hidden']) $xml->writeAttribute('hidden', 1);
-		if ($model['bestFit']) $xml->writeAttribute('bestFit', 1);
-		if ($model['outlineLevel']) $xml->writeAttribute('outlineLevel', $model['outlineLevel']);
-		if ($model['collapsed']) $xml->writeAttribute('collapsed', 1);
+		if ($model['width'] ?? false) $xml->writeAttribute('width', $model['width']);
+		if ($model['styleId'] ?? false) $xml->writeAttribute('style', $model['styleId']);
+		if ($model['hidden'] ?? false) $xml->writeAttribute('hidden', 1);
+		if ($model['bestFit'] ?? false) $xml->writeAttribute('bestFit', 1);
+		if ($model['outlineLevel'] ?? false) $xml->writeAttribute('outlineLevel', $model['outlineLevel']);
+		if ($model['collapsed'] ?? false) $xml->writeAttribute('collapsed', 1);
 
 		$xml->writeAttribute('customWidth', 1);
 
