@@ -141,14 +141,14 @@ class Borders{
 	}
 
 	/**
-	 * @return bool - показывать диагональную границу (из левого нижнего угла)
+	 * @return bool - показывать диагональную границу (в левый нижний угол)
 	 */
 	function getDiagonalDown() : bool{
 		return $this->diagonalDown ?? false;
 	}
 
 	/**
-	 * @param bool $diagonalDown - показывать диагональную границу (из левого нижнего угла)
+	 * @param bool $diagonalDown - показывать диагональную границу (в правый нижний угол)
 	 * @return Borders - $this
 	 */
 	function setDiagonalDown(bool $diagonalDown) : self{
