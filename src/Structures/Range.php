@@ -16,6 +16,15 @@ class Range{
 	private $bottom;
 	private $right;
 
+	/**
+	 * Range constructor.
+	 *
+	 * @param int $row1 - номер первой строки
+	 * @param int $col1 - номер первого столбца
+	 * @param int $row2 - номер второй строки
+	 * @param int $col2 - номер второго столбца
+	 * @throws InvalidValueException
+	 */
 	function __construct(int $row1, int $col1, int $row2, int $col2){
 		if ($row1 == $row2 && $col1 == $col2) throw new InvalidValueException("It's not range");
 
