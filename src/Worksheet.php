@@ -411,7 +411,7 @@ class Worksheet{
 		$this->getCell($range->getBottom(), $range->getRight());
 
 		foreach ($this->merges as $merge)
-			if ($range->intersection(Range::fromString($merge)))
+			if ($range->intersection(Range::fromString($merge[0])))
 				throw new InvalidValueException('Merge intersect');
 
 		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
@@ -423,7 +423,7 @@ class Worksheet{
 			}
 		}
 
-		$this->merges[] = (string) $range;
+		$this->merges[] = [(string) $range];
 	}
 
 	/**
@@ -440,13 +440,13 @@ class Worksheet{
 
 		$found = false;
 		foreach ($this->merges as $mergeIndex => $merge) {
-			if ($merge == (string) $range) {
+			if ($merge[0] == (string) $range) {
 				$found = $mergeIndex;
 				break;
 			}
 		}
 
-		if (!$found) throw new InvalidValueException('Merge not found');
+		if ($found === false) throw new InvalidValueException('Merge not found');
 
 		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
 			$row = $this->getRow($i);
