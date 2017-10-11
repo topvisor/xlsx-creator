@@ -98,4 +98,14 @@ class Validator{
 	static function genMustBeInErrorMessage(string $var, array $in) : string{
 		return "$var must be in ['" . implode("','", $in) . "']";
 	}
+
+	/**
+	 * @param string $hex - проверяемое значение
+	 * @param string $varName - название параметра
+	 * @throws InvalidValueException
+	 */
+	static function validateHex(string $hex, string $varName){
+		if (preg_match('/[^\dA-F]/i', $hex, $matches))
+			throw new InvalidValueException("Invalid character '$matches[0]' in $varName: $varName must be hex");
+	}
 }
