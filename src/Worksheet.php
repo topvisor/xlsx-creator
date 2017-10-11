@@ -270,23 +270,6 @@ class Worksheet{
 //	}
 
 	/**
-	 * @param int $col - номер колонки
-	 * @return Column - колонка
-	 */
-	function getColumn(int $col) : Column{
-		Validator::validateInRange($col, 1, 16384, '$col');
-
-		$this->checkCommitted();
-		$this->checkStarted();
-
-		if ($col > count($this->columns))
-			for ($i = count($this->columns) + 1; $i <= $col; $i++)
-				$this->columns[] = new Column($this, $i);
-
-		return $this->columns[$col - 1];
-	}
-
-	/**
 	 * @return bool - зафиксированы ли изменения
 	 */
 	function isCommitted() : bool{
@@ -331,15 +314,51 @@ class Worksheet{
 	}
 
 	/**
+	 * @param int $col - номер колонки
+	 * @return Column - колонка
+	 */
+	function getColumn(int $col) : Column{
+		Validator::validateInRange($col, 1, 16384, '$col');
+
+		$this->checkCommitted();
+		$this->checkStarted();
+
+		if ($col > count($this->columns))
+			for ($i = count($this->columns) + 1; $i <= $col; $i++)
+				$this->columns[] = new Column($this, $i);
+
+		return $this->columns[$col - 1];
+	}
+
+	/**
+	 * @return Column - колонка
+	 */
+	function addColumn() : Column{
+		$this->checkCommitted();
+		$this->checkStarted();
+		if (count($this->columns) >= 16384) throw new OutOfBoundsException('Excel supports columns from 1 to 16384');
+
+		$column = new Column($this, count($this->columns) + 1);
+		$this->columns[] = $column;
+
+		return $column;
+	}
+
+	/**
 	 * @param int $row - номер строки
 	 * @return Row - строка
 	 * @throws ObjectCommittedException
 	 * @throws InvalidValueException
 	 */
 	function getRow(int $row) : Row{
+		$this->checkCommitted();
+
 		Validator::validateInRange($row, 1, 1048576,'$row');
 		if ($row < $this->lastUncommittedRow) throw new ObjectCommittedException('Row is committed');
-		if ($row >= $this->lastUncommittedRow + count($this->rows)) throw new OutOfBoundsException();
+
+		if ($row >= $this->lastUncommittedRow + count($this->rows))
+			for ($i = $this->lastUncommittedRow + count($this->rows); $i <= $row; $i++)
+				$this->rows[] = new Row($this, $i);
 
 		return $this->rows[$row - $this->lastUncommittedRow];
 	}
@@ -350,6 +369,7 @@ class Worksheet{
 	 */
 	function addRow(array $values = null) : Row{
 		$this->checkCommitted();
+		if ($this->lastUncommittedRow + count($this->rows) > 1048576) throw new OutOfBoundsException('Excel supports rows from 1 to 1048576');
 
 		if (!$this->xml) $this->startWorksheet();
 
@@ -359,6 +379,17 @@ class Worksheet{
 		$this->rows[] = $row;
 
 		return $row;
+	}
+
+	/**
+	 * @param int $row - номер строки
+	 * @param int $col - номер колонки
+	 * @return Cell - ячейка
+	 */
+	function getCell(int $row, int $col) : Cell{
+		$this->checkCommitted();
+
+		return $this->getRow($row)->getCell($col);
 	}
 
 	/**

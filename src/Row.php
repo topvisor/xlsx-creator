@@ -178,6 +178,8 @@ class Row{
 	}
 
 	function getCell(int $col) : Cell{
+		Validator::validateInRange($col, 1, 16384, '$col');
+
 		if (count($this->cells) < $col)
 			for ($i = count($this->cells); $i < $col; $i++)
 				$this->cells[$i] = new Cell($this, $i + 1);
