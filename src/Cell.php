@@ -9,15 +9,18 @@ use Topvisor\XlsxCreator\Structures\Values\Value;
 /**
  * Class Cell. Содержит методы для работы c ячейкой.
  *
- * @package XlsxCreator
+ * @package  Topvisor\XlsxCreator
  */
 class Cell{
+	use StyleManager {
+		StyleManager::__destruct as styleManagerDestruct;
+	}
+
 	private $row;
 	private $col;
 	private $style;
 
 	private $value;
-	private $merged;
 	private $master;
 
 	/**
@@ -32,14 +35,11 @@ class Cell{
 		$this->style = [];
 
 		$this->value = Value::parse(null);
-
-		$this->merged = false;
-		$this->master = null;
-
-		$this->committed = false;
 	}
 
 	function __destruct(){
+		$this->styleManagerDestruct();
+
 		unset($this->row);
 		unset($this->value);
 		unset($this->master);
@@ -60,7 +60,7 @@ class Cell{
 	function setValue($value) : self{
 		if (!($value instanceof Value)) $value = Value::parse($value);
 
-		if ($this->merged && $this->master) {
+		if ($this->master) {
 			$this->master->setValue($value);
 		} else {
 			$this->value = $value;
@@ -84,26 +84,6 @@ class Cell{
 	}
 
 	/**
-	 * @see Row::setStyle() Параметры $style
-	 *
-	 * @return array - стили
-	 */
-	function getStyle() : array{
-		return $this->style;
-	}
-
-	/**
-	 * @see Row::setStyle() Параметры $style
-	 *
-	 * @param array $style - стили
-	 * @return Cell - $this
-	 */
-	function setStyle(array $style) : Cell{
-		$this->style = $style;
-		return $this;
-	}
-
-	/**
 	 * @return int - тип значения ячейки
 	 */
 	function getType() : int{
@@ -114,15 +94,17 @@ class Cell{
 	 * @return array - модель ячейки
 	 */
 	function getModel() : array{
+		$style = $this->getStyleModel();
+
 		$model = [
 			'address' => $this->getAddress(),
 			'value' => $this->value->getValue(),
 			'type' => $this->value->getType(),
-			'style' => $this->style,
-			'styleId' => $this->row->getWorksheet()->getWorkbook()->getStyles()->addStyle($this->style, $this->getType()),
+			'style' => $style,
+			'styleId' => $this->row->getWorksheet()->getWorkbook()->getStyles()->addStyle($style, $this->getType()),
 		];
 
-		if ($this->merged && $this->master) $model['master'] = $this->master->getModel();
+		if ($this->master) $model['master'] = $this->master->getModel();
 
 		if ($this->value instanceof HyperlinkValue) $this->row->getWorksheet()->getSheetRels()->addHyperlink(
 			$model['value']['hyperlink'],
@@ -137,6 +119,15 @@ class Cell{
 	 */
 	function getAddress() : string{
 		return Cell::genAddress($this->col, $this->row->getNumber());
+	}
+
+	/**
+	 * Внутренняя функция. Назначает главную ячейку
+	 *
+	 * @param Cell|null $master - главная ячейка
+	 */
+	function setMaster(Cell $master = null){
+		$this->master = $master;
 	}
 
 	/**

@@ -5,7 +5,7 @@ namespace Topvisor\XlsxCreator\Structures\Values;
 /**
  * Class FormulaValue. Используется для задания значения ячейки (формула).
  *
- * @package XlsxCreator\Structures\Values
+ * @package  Topvisor\XlsxCreator\Structures\Values
  */
 class FormulaValue extends Value{
 	/**

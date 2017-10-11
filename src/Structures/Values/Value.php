@@ -8,7 +8,7 @@ use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 /**
  * Class Value. Используется для задания значения ячейки.
  *
- * @package XlsxCreator\Structures\Values
+ * @package  Topvisor\XlsxCreator\Structures\Values
  */
 class Value{
 	// Типы значений ячеек

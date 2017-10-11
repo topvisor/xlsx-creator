@@ -5,7 +5,7 @@ namespace Topvisor\XlsxCreator\Xml\Styles\Index;
 /**
  * Class StylesNumFmtIndex. Индексирует модели NumFmtsXml, учитывая значения по умолчанию.
  *
- * @package XlsxCreator\Xml\Styles\Index
+ * @package  Topvisor\XlsxCreator\Xml\Styles\Index
  */
 class StylesNumFmtIndex extends StylesIndex{
 	const DEFAULT_NUM_FMT = [
@@ -46,6 +46,7 @@ class StylesNumFmtIndex extends StylesIndex{
 		if (isset($this->indexes[$model])) return $this->indexes[$model];
 
 		$index = StylesNumFmtIndex::NUM_FMT_START_INDEX + count($this->xmls);
+		$this->indexes[$model] = $index;
 		$this->xmls[] = $this->baseXml->toXml(['id' => $index, 'formatCode' => $model]);
 
 		return $index;

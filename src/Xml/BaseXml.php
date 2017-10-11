@@ -7,7 +7,7 @@ use XMLWriter;
 /**
  * Class BaseXml. Класс, и все наследующиеся от него, являются оберткой для создания xml кода.
  *
- * @package XlsxCreator\Xml
+ * @package  Topvisor\XlsxCreator\Xml
  */
 abstract class BaseXml{
 	/**

@@ -7,7 +7,7 @@ use Topvisor\XlsxCreator\Xml\BaseXml;
 /**
  * Class StylesIndex. Индексирует модели стилей.
  *
- * @package XlsxCreator\Xml\Styles\Index
+ * @package  Topvisor\XlsxCreator\Xml\Styles\Index
  */
 class StylesIndex{
 	protected $baseXml;

@@ -7,7 +7,7 @@ use Topvisor\XlsxCreator\Validator;
 /**
  * Class PageSetup. Параметры печати.
  *
- * @package XlsxCreator\Structures
+ * @package  Topvisor\XlsxCreator\Structures
  */
 class PageSetup{
     const VALID_ORIENTATION = ['portrait', 'landscape'];

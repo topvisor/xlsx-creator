@@ -7,7 +7,7 @@ use XMLWriter;
 /**
  * Class Worksheet. Служит для добавления связей в таблицу.
  *
- * @package XlsxCreator
+ * @package  Topvisor\XlsxCreator
  */
 class SheetRels{
 	private $worksheet;

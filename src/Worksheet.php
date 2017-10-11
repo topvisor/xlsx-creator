@@ -7,11 +7,15 @@ use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\PageSetup;
+use Topvisor\XlsxCreator\Structures\Range;
 use Topvisor\XlsxCreator\Structures\Views\NormalView;
 use Topvisor\XlsxCreator\Structures\Views\View;
 use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Xml\ListXml;
+//use Topvisor\XlsxCreator\Xml\Sheet\AutoFilterXml;
+use Topvisor\XlsxCreator\Xml\Sheet\ColumnXml;
 use Topvisor\XlsxCreator\Xml\Sheet\HyperlinkXml;
+use Topvisor\XlsxCreator\Xml\Sheet\MergeXml;
 use Topvisor\XlsxCreator\Xml\Sheet\PageMargins;
 use Topvisor\XlsxCreator\Xml\Sheet\PageSetupXml;
 use Topvisor\XlsxCreator\Xml\Sheet\RowXml;
@@ -23,7 +27,7 @@ use XMLWriter;
 /**
  * Class Worksheet. Содержит методы для работы с таблицей.
  *
- * @package XlsxCreator
+ * @package  Topvisor\XlsxCreator
  */
 class Worksheet{
 	const DY_DESCENT = 55;
@@ -37,12 +41,12 @@ class Worksheet{
 	private $defaultRowHeight;
 	private $view;
 	private $pageSetup;
-	private $autoFilter;
-	private $columns;
+//	private $autoFilter;
 
 	private $committed;
 	private $lastUncommittedRow;
 	private $rows;
+	private $columns;
 	private $merges;
 	private $sheetRels;
 
@@ -69,7 +73,7 @@ class Worksheet{
 		$this->defaultRowHeight = 15;
 		$this->view = new NormalView();
 		$this->pageSetup = new PageSetup();
-		$this->autoFilter = null;
+//		$this->autoFilter = null;
 
 		$this->committed = false;
 		$this->columns = [];
@@ -120,7 +124,7 @@ class Worksheet{
 	}
 
 	/**
-	 * @param Color|null $tabColor - цвет вкладки в формате 'FF00FF00'
+	 * @param Color|null $tabColor - цвет вкладки
 	 * @return Worksheet - $this
 	 * @throws ObjectCommittedException
 	 */
@@ -244,28 +248,28 @@ class Worksheet{
 		return $this;
 	}
 
-	/**
-	 * @return string|null - автоматический фильтр
-	 */
-	function getAutoFilter(){
-		return $this->autoFilter;
-	}
-
-	/**
-	 * @param string|null $autoFilter - автоматический фильтр ('A1:A5')
-	 * @return Worksheet - $this
-	 * @throws ObjectCommittedException
-	 * @throws InvalidValueException
-	 */
-	function setAutoFilter(string $autoFilter = null) : Worksheet{
-		$this->checkCommitted();
-		$this->checkStarted();
-
-		if (!is_null($autoFilter)) Validator::validateCellsRange($autoFilter);
-
-		$this->autoFilter = $autoFilter;
-		return $this;
-	}
+//	/**
+//	 * @return string|null - автоматический фильтр
+//	 */
+//	function getAutoFilter(){
+//		return $this->autoFilter;
+//	}
+//
+//	/**
+//	 * @param string|null $autoFilter - автоматический фильтр ('A1:A5')
+//	 * @return Worksheet - $this
+//	 * @throws ObjectCommittedException
+//	 * @throws InvalidValueException
+//	 */
+//	function setAutoFilter(string $autoFilter = null) : Worksheet{
+//		$this->checkCommitted();
+//		$this->checkStarted();
+//
+//		if (!is_null($autoFilter)) Validator::validateCellsRange($autoFilter);
+//
+//		$this->autoFilter = $autoFilter;
+//		return $this;
+//	}
 
 	/**
 	 * @return bool - зафиксированы ли изменения
@@ -289,6 +293,8 @@ class Worksheet{
 	}
 
 	/**
+	 * Внутреняя функция. Возвращает id связи.
+	 *
 	 * @return string - id связи файла таблицы
 	 */
 	function getRId() : string{
@@ -296,6 +302,8 @@ class Worksheet{
 	}
 
 	/**
+	 * Внутреняя функция. Назначает id связи.
+	 *
 	 * @param string $rId - id связи файла таблицы
 	 * @return Worksheet - $this
 	 */
@@ -312,15 +320,51 @@ class Worksheet{
 	}
 
 	/**
+	 * @param int $col - номер колонки
+	 * @return Column - колонка
+	 */
+	function getColumn(int $col) : Column{
+		Validator::validateInRange($col, 1, 16384, '$col');
+
+		$this->checkCommitted();
+		$this->checkStarted();
+
+		if ($col > count($this->columns))
+			for ($i = count($this->columns) + 1; $i <= $col; $i++)
+				$this->columns[] = new Column($this, $i);
+
+		return $this->columns[$col - 1];
+	}
+
+	/**
+	 * @return Column - колонка
+	 */
+	function addColumn() : Column{
+		$this->checkCommitted();
+		$this->checkStarted();
+		if (count($this->columns) >= 16384) throw new OutOfBoundsException('Excel supports columns from 1 to 16384');
+
+		$column = new Column($this, count($this->columns) + 1);
+		$this->columns[] = $column;
+
+		return $column;
+	}
+
+	/**
 	 * @param int $row - номер строки
 	 * @return Row - строка
 	 * @throws ObjectCommittedException
 	 * @throws InvalidValueException
 	 */
 	function getRow(int $row) : Row{
+		$this->checkCommitted();
+
 		Validator::validateInRange($row, 1, 1048576,'$row');
 		if ($row < $this->lastUncommittedRow) throw new ObjectCommittedException('Row is committed');
-		if ($row >= $this->lastUncommittedRow + count($this->rows)) throw new OutOfBoundsException();
+
+		if ($row >= $this->lastUncommittedRow + count($this->rows))
+			for ($i = $this->lastUncommittedRow + count($this->rows); $i <= $row; $i++)
+				$this->rows[] = new Row($this, $i);
 
 		return $this->rows[$row - $this->lastUncommittedRow];
 	}
@@ -331,6 +375,7 @@ class Worksheet{
 	 */
 	function addRow(array $values = null) : Row{
 		$this->checkCommitted();
+		if ($this->lastUncommittedRow + count($this->rows) > 1048576) throw new OutOfBoundsException('Excel supports rows from 1 to 1048576');
 
 		if (!$this->xml) $this->startWorksheet();
 
@@ -340,6 +385,76 @@ class Worksheet{
 		$this->rows[] = $row;
 
 		return $row;
+	}
+
+	/**
+	 * @param int $row - номер строки
+	 * @param int $col - номер колонки
+	 * @return Cell - ячейка
+	 */
+	function getCell(int $row, int $col) : Cell{
+		$this->checkCommitted();
+
+		return $this->getRow($row)->getCell($col);
+	}
+
+	/**
+	 * Соединить ячейки в одну
+	 *
+	 * @param Range $range - диапазон ячеек
+	 * @throws InvalidValueException
+	 */
+	function mergeCells(Range $range) {
+		$this->checkCommitted();
+
+		$master = $this->getCell($range->getTop(), $range->getLeft());
+		$this->getCell($range->getBottom(), $range->getRight());
+
+		foreach ($this->merges as $merge)
+			if ($range->intersection(Range::fromString($merge[0])))
+				throw new InvalidValueException('Merge intersect');
+
+		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
+			$row = $this->getRow($i);
+			for ($j = $range->getLeft(); $j <= $range->getRight(); $j++) {
+				$cell = $row->getCell($j);
+				if ($cell === $master) continue;
+				else $cell->setMaster($master);
+			}
+		}
+
+		$this->merges[] = [(string) $range];
+	}
+
+	/**
+	 * Разъединить ячейки
+	 *
+	 * @param Range $range - диапазон ячеек
+	 * @throws InvalidValueException
+	 */
+	function unMergeCells(Range $range) {
+		$this->checkCommitted();
+
+		$this->getCell($range->getTop(), $range->getLeft());
+		$this->getCell($range->getBottom(), $range->getRight());
+
+		$found = false;
+		foreach ($this->merges as $mergeIndex => $merge) {
+			if ($merge[0] == (string) $range) {
+				$found = $mergeIndex;
+				break;
+			}
+		}
+
+		if ($found === false) throw new InvalidValueException('Merge not found');
+
+		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
+			$row = $this->getRow($i);
+			for ($j = $range->getLeft(); $j <= $range->getRight(); $j++)
+				$row->getCell($j)->setMaster(null);
+		}
+
+		unset($this->merges[$found]);
 	}
 
 	/**
@@ -425,7 +540,9 @@ class Worksheet{
 			'dyDescent' => Worksheet::DY_DESCENT
 		]);
 
-		$this->writeColumns();
+		(new ListXml('cols', new ColumnXml()))->render($this->xml, array_map(function($column){
+			return $column->getModel();
+		}, $this->columns));
 
 		$this->xml->startElement('sheetData');
 	}
@@ -436,8 +553,8 @@ class Worksheet{
 	private function endWorksheet(){
 		$this->xml->endElement();
 
-		// AutoFilter
-		// MergeCells
+//		(new AutoFilterXml())->render($this->xml, [$this->autoFilter]);
+		(new ListXml('mergeCells', new MergeXml(), [], false, true))->render($this->xml, $this->merges);
 
 		(new ListXml('hyperlinks', new HyperlinkXml()))->render($this->xml, $this->sheetRels->getHyperlinks());
 		(new PageMargins())->render($this->xml, $this->pageSetup->getModel()['margins'] ?? null);
@@ -450,13 +567,6 @@ class Worksheet{
 		unset($this->xml);
 
 		$this->sheetRels->commit();
-	}
-
-	/**
-	 *	Записать описание колонок в файл
-	 */
-	private function writeColumns(){
-		// Реализовать
 	}
 
 	/**

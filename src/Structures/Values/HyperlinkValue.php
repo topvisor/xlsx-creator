@@ -5,7 +5,7 @@ namespace Topvisor\XlsxCreator\Structures\Values;
 /**
  * Class HyperlinkValue. Используется для задания значения ячейки (гиперссылка).
  *
- * @package XlsxCreator\Structures\Values
+ * @package  Topvisor\XlsxCreator\Structures\Values
  */
 class HyperlinkValue extends Value{
 	/**

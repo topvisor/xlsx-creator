@@ -3,11 +3,12 @@
 namespace Topvisor\XlsxCreator\Structures;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
+use Topvisor\XlsxCreator\Validator;
 
 /**
  * Class Color. Используется для задания цвета.
  *
- * @package XlsxCreator
+ * @package  Topvisor\XlsxCreator
  */
 class Color{
 	private $model;
@@ -36,8 +37,8 @@ class Color{
 		}
 
 		if (mb_strlen($a) !== 2) throw new InvalidValueException('The length $a must be 2');
-		self::validateHex($rgb, '$rgb');
-		self::validateHex($a, '$a');
+		Validator::validateHex($rgb, '$rgb');
+		Validator::validateHex($a, '$a');
 
 		return new self(['argb' => mb_strtoupper($a) . mb_strtoupper($rgb)]);
 	}
@@ -53,10 +54,10 @@ class Color{
 	 * @throws InvalidValueException
 	 */
 	static function fromInt(int $r = 0, int $g = 0, int $b = 0, int $a = 255) : self{
-		self::validateInt($r, '$r');
-		self::validateInt($g, '$g');
-		self::validateInt($b, '$b');
-		self::validateInt($a, '$a');
+		Validator::validateInRange($r, 0, 255, '$r');
+		Validator::validateInRange($g, 0, 255, '$g');
+		Validator::validateInRange($b, 0, 255, '$b');
+		Validator::validateInRange($a, 0, 255, '$a');
 
 		return new self(['argb' => dechex($a) . dechex($r) . dechex($g) . dechex($b)]);
 	}
@@ -66,24 +67,5 @@ class Color{
 	 */
 	function getModel(): array{
 		return $this->model;
-	}
-
-	/**
-	 * @param string $hex - проверяемое значение
-	 * @param string $varName - название параметра (для сообщения об ошибке)
-	 * @throws InvalidValueException
-	 */
-	private static function validateHex(string $hex, string $varName){
-		if (preg_match('/[^\dA-F]/i', $hex, $matches))
-			throw new InvalidValueException("Invalid character '$matches[0]' in $varName: $varName must be hex");
-	}
-
-	/**
-	 * @param int $int - проверяемое значение
-	 * @param string $varName - название параметра (для сообщения об ошибке)
-	 * @throws InvalidValueException
-	 */
-	private static function validateInt(int $int, string $varName){
-		if ($int < 0 || $int > 255)	throw new InvalidValueException("$varName must be in [0;255]");
 	}
 }

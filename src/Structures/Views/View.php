@@ -7,7 +7,7 @@ use Topvisor\XlsxCreator\Validator;
 /**
  * Class View. Описывает представление worksheet.
  *
- * @package XlsxCreator\Structures\Views
+ * @package  Topvisor\XlsxCreator\Structures\Views
  */
 abstract class View{
 	const VALID_VIEW = ['pageBreakPreview', 'pageLayout'];

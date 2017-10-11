@@ -7,7 +7,7 @@ use Topvisor\XlsxCreator\Validator;
 /**
  * Class SplitView. Представление разделено на 4 секции с независимой прокруткой.
  *
- * @package XlsxCreator\Structures\Views
+ * @package  Topvisor\XlsxCreator\Structures\Views
  */
 class SplitView extends View{
 	public function __construct(int $xSplit, int $ySplit){

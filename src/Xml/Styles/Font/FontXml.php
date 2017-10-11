@@ -25,7 +25,7 @@ class FontXml extends BaseXml{
 			(new BoolXml('i'))->render($xml, [$model['i'] ?? false]);
 			(new UnderlineXml())->render($xml, [$model['u'] ?? false]);
 			(new StringXml('charset', [], 'val'))->render($xml, [$model['charset'] ?? false]);
-			(new ColorXml())->render($xml, $model['color'] ?? false);
+			(new ColorXml())->render($xml, $model['color'] ?? null);
 			(new BoolXml('condense'))->render($xml, [$model['condense'] ?? false]);
 			(new BoolXml('extend'))->render($xml, [$model['extend'] ?? false]);
 			(new StringXml('family', [], 'val'))->render($xml, [$model['family'] ?? false]);

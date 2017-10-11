@@ -7,7 +7,7 @@ use Topvisor\XlsxCreator\Validator;
 /**
  * Class ErrorValue. Используется для задания значения ячейки (ошибка).
  *
- * @package XlsxCreator\Structures\Values
+ * @package  Topvisor\XlsxCreator\Structures\Values
  */
 class ErrorValue extends Value{
 	const VALID_ERRORS = [
