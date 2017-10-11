@@ -14,8 +14,14 @@ class Font{
 	const VALID_UNDERLINE = ['single', 'double', 'singleAccounting', 'doubleAccounting'];
 	const VALID_SCHEME = ['minor', 'major', 'none'];
 
-	private $model = [];
+	private $name;
+	private $size;
 	private $color;
+	private $bold;
+	private $italic;
+	private $underline;
+	private $scheme;
+	private $strike;
 
 	public function __destruct(){
 		unset($this->color);
@@ -25,7 +31,7 @@ class Font{
 	 * @return string|null - название
 	 */
 	function getName(){
-		return $this->model['name'] ?? null;
+		return $this->name;
 	}
 
 	/**
@@ -33,7 +39,7 @@ class Font{
 	 * @return Font - $this
 	 */
 	function setName(string $name = null) : self{
-		$this->model['name'] = $name;
+		$this->name = $name;
 		return $this;
 	}
 
@@ -41,7 +47,7 @@ class Font{
 	 * @return int|null - размер
 	 */
 	function getSize(){
-		return $this->model['sz'] ?? null;
+		return $this->size;
 	}
 
 	/**
@@ -51,7 +57,7 @@ class Font{
 	function setSize(int $size = null) : self{
 		if (!is_null($size)) Validator::validateInRange($size, 1, 409, '$size');
 
-		$this->model['sz'] = $size;
+		$this->size;
 		return $this;
 	}
 
@@ -68,7 +74,6 @@ class Font{
 	 */
 	function setColor(Color $color = null) : self{
 		$this->color = $color;
-		$this->model['color'] = $color ? $color->getModel() : null;
 		return $this;
 	}
 
@@ -76,7 +81,7 @@ class Font{
 	 * @return bool - жирный
 	 */
 	function getBold() : bool{
-		return $this->model['b'] ?? false;
+		return $this->bold ?? false;
 	}
 
 	/**
@@ -84,7 +89,7 @@ class Font{
 	 * @return Font -  $this
 	 */
 	function setBold(bool $bold) : self{
-		$this->model['b'] = $bold;
+		$this->bold = $bold;
 		return $this;
 	}
 
@@ -92,7 +97,7 @@ class Font{
 	 * @return bool - курсивный
 	 */
 	function getItalic() : bool{
-		return $this->model['i'] ?? false;
+		return $this->italic ?? false;
 	}
 
 	/**
@@ -100,7 +105,7 @@ class Font{
 	 * @return Font - $this
 	 */
 	function setItalic(bool $italic) : self{
-		$this->model['i'] = $italic;
+		$this->italic = $italic;
 		return $this;
 	}
 
@@ -108,7 +113,7 @@ class Font{
 	 * @return string|null - тип подчеркивания
 	 */
 	function getUnderline(){
-		return $this->model['u'] ?? null;
+		return $this->underline;
 	}
 
 	/**
@@ -118,7 +123,7 @@ class Font{
 	function setUnderline(string $underline = null) : self{
 		if (!is_null($underline)) Validator::validate($underline, '$underline', self::VALID_UNDERLINE);
 
-		$this->model['u'] = $underline;
+		$this->underline;
 		return $this;
 	}
 
@@ -126,7 +131,7 @@ class Font{
 	 * @return string|null - надстрочный/подстрочный
 	 */
 	function getScheme(){
-		return $this->model['scheme'] ?? null;
+		return $this->scheme ?? null;
 	}
 
 	/**
@@ -136,7 +141,7 @@ class Font{
 	function setScheme(string $scheme = null) : self{
 		if (!is_null($scheme)) Validator::validate($scheme, '$scheme', self::VALID_SCHEME);
 
-		$this->model['scheme'] = $scheme;
+		$this->scheme = $scheme;
 		return $this;
 	}
 
@@ -144,7 +149,7 @@ class Font{
 	 * @return bool - зачеркнутый
 	 */
 	function getStrike() : bool{
-		return $this->model['strike'] ?? false;
+		return $this->strike ?? false;
 	}
 
 	/**
@@ -152,7 +157,7 @@ class Font{
 	 * @return Font - $this
 	 */
 	function setStrike(bool $strike) : self{
-		$this->model['strike'] = $strike;
+		$this->strike = $strike;
 		return $this;
 	}
 
@@ -160,6 +165,15 @@ class Font{
 	 * @return array - модель
 	 */
 	function getModel(): array{
-		return $this->model;
+		return [
+			'b' => $this->bold,
+			'i' => $this->italic,
+			'u' => $this->underline,
+			'color' => $this->color ? $this->color->getModel() : null,
+			'scheme' => $this->scheme,
+			'strike' => $this->strike,
+			'sz' => $this->size,
+			'name' => $this->name
+ 		];
 	}
 }

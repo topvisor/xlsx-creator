@@ -2,24 +2,53 @@
 
 namespace Topvisor\XlsxCreator\Structures\Styles\Borders;
 
+use Topvisor\XlsxCreator\Structures\Color;
+
 /**
  * Class Borders. Описывает состояния и стили границ ячейки.
  *
  * @package Topvisor\XlsxCreator\Structures\Styles\Borders
  */
 class Borders{
-	private $model = [];
-	private $borders = [];
+	private $defaultColor;
+	private $left;
+	private $right;
+	private $top;
+	private $bottom;
+	private $diagonalStyle;
+	private $diagonalUp;
+	private $diagonalDown;
 
 	public function __destruct(){
-		unset($this->borders);
+		unset($this->defaultColor);
+		unset($this->left);
+		unset($this->right);
+		unset($this->bottom);
+		unset($this->top);
+		unset($this->diagonalStyle);
+	}
+
+	/**
+	 * @return Color|null - цвет границ по умолчанию
+	 */
+	function getDefaultColor(){
+		return $this->defaultColor;
+	}
+
+	/**
+	 * @param Color|null $color - цвет границ по умолчанию
+	 * @return Borders - $this
+	 */
+	function setDefaultColor(Color $color = null) : self{
+		$this->defaultColor = $color;
+		return $this;
 	}
 
 	/**
 	 * @return Border|null - левая граница
 	 */
 	function getLeft(){
-		return $this->borders['left'] ?? null;
+		return $this->left;
 	}
 
 	/**
@@ -27,8 +56,7 @@ class Borders{
 	 * @return Borders - $this
 	 */
 	function setLeft(Border $border = null) : self{
-		$this->borders['left'] = $border;
-		$this->model['left'] = $border->getModel();
+		$this->left = $border;
 		return $this;
 	}
 
@@ -36,7 +64,7 @@ class Borders{
 	 * @return Border|null - правая граница
 	 */
 	function getRight(){
-		return $this->borders['right'] ?? null;
+		return $this->right;
 	}
 
 	/**
@@ -44,8 +72,7 @@ class Borders{
 	 * @return Borders - $this
 	 */
 	function setRight(Border $border = null) : self{
-		$this->borders['right'] = $border;
-		$this->model['right'] = $border->getModel();
+		$this->right = $border;
 		return $this;
 	}
 
@@ -53,7 +80,7 @@ class Borders{
 	 * @return Border|null - верхняя граница
 	 */
 	function getTop(){
-		return $this->borders['top'] ?? null;
+		return $this->top ?? null;
 	}
 
 	/**
@@ -61,8 +88,7 @@ class Borders{
 	 * @return Borders - $this
 	 */
 	function setTop(Border $border = null) : self{
-		$this->borders['top'] = $border;
-		$this->model['top'] = $border->getModel();
+		$this->top = $border;
 		return $this;
 	}
 
@@ -70,7 +96,7 @@ class Borders{
 	 * @return Border|null - нижняя граница
 	 */
 	function getBottom(){
-		return $this->borders['bottom'] ?? null;
+		return $this->bottom ?? null;
 	}
 
 	/**
@@ -78,8 +104,7 @@ class Borders{
 	 * @return Borders - $this
 	 */
 	function setBottom(Border $border = null) : self{
-		$this->borders['bottom'] = $border;
-		$this->model['bottom'] = $border->getModel();
+		$this->bottom = $border;
 		return $this;
 	}
 
@@ -87,7 +112,7 @@ class Borders{
 	 * @return Border|null - стиль диагрнальных границ
 	 */
 	function getDiagonalStyle(){
-		return $this->borders['diagonal'] ?? null;
+		return $this->diagonalStyle ?? null;
 	}
 
 	/**
@@ -95,11 +120,7 @@ class Borders{
 	 * @return Borders - $this
 	 */
 	function setDiagonalStyle(Border $border = null) : self{
-		$this->borders['diagonal'] = $border;
-
-		if (!isset($this->model['diagonal'])) $this->model['diagonal'] = $border->getModel();
-		else $this->model['diagonal'] = array_merge($this->model['diagonal'], $border->getModel());
-
+		$this->diagonalStyle = $border;
 		return $this;
 	}
 
@@ -107,11 +128,7 @@ class Borders{
 	 * @return bool - показывать диагональную границу (из левого верхнего угла)
 	 */
 	function getDiagonalUp() : bool{
-		if ($this->model['diagonal']) {
-			return $this->model['diagonal']['up'] ?? false;
-		}
-
-		return false;
+		return $this->diagonalUp ?? false;
 	}
 
 	/**
@@ -119,9 +136,7 @@ class Borders{
 	 * @return Borders - $this
 	 */
 	function setDiagonalUp(bool $diagonalUp) : self{
-		if (!isset($this->model['diagonal'])) $this->model['diagonal'] = [];
-
-		$this->model['diagonal']['up'] = $diagonalUp;
+		$this->diagonalUp = $diagonalUp;
 		return $this;
 	}
 
@@ -129,11 +144,7 @@ class Borders{
 	 * @return bool - показывать диагональную границу (из левого нижнего угла)
 	 */
 	function getDiagonalDown() : bool{
-		if ($this->model['diagonal']) {
-			return $this->model['diagonal']['down'] ?? false;
-		}
-
-		return false;
+		return $this->diagonalDown ?? false;
 	}
 
 	/**
@@ -141,9 +152,7 @@ class Borders{
 	 * @return Borders - $this
 	 */
 	function setDiagonalDown(bool $diagonalDown) : self{
-		if (!isset($this->model['diagonal'])) $this->model['diagonal'] = [];
-
-		$this->model['diagonal']['down'] = $diagonalDown;
+		$this->diagonalDown = $diagonalDown;
 		return $this;
 	}
 
@@ -151,6 +160,18 @@ class Borders{
 	 * @return array - модель
 	 */
 	function getModel() : array{
-		return $this->model;
+		$diagonal = null;
+
+		if ($this->diagonalStyle && ($this->getDiagonalUp() || $this->diagonalDown))
+			$diagonal = array_merge($this->diagonalStyle->getModel(), ['up' => $this->diagonalUp, 'down' => $this->diagonalDown]);
+
+		return [
+			'color' => $this->defaultColor ? $this->defaultColor->getModel() : null,
+			'left' => $this->left ? $this->left->getModel() : null,
+			'right' => $this->right ? $this->right->getModel() : null,
+			'top' => $this->top ? $this->top->getModel() : null,
+			'bottom' => $this->bottom ? $this->bottom->getModel() : null,
+			'diagonal' => $diagonal,
+		];
 	}
 }

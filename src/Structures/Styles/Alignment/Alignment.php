@@ -14,7 +14,11 @@ class Alignment{
 	const VALID_VERTICAL = ['top', 'center', 'bottom', 'distributed', 'justify'];
 	const VALID_READING_ORDER = ['leftToRight', 'rightToLeft'];
 
-	private $model = [];
+	private $horizontal;
+	private $vertical;
+	private $wrapText;
+	private $indent;
+	private $readingOrder;
 	private $textRotation;
 
 	public function __destruct(){
@@ -25,7 +29,7 @@ class Alignment{
 	 * @return string|null - выравнивание по горизонтали
 	 */
 	function getHorizontal(){
-		return $this->model['horizontal'] ?? null;
+		return $this->horizontal;
 	}
 
 	/**
@@ -40,7 +44,7 @@ class Alignment{
 			if ($horizontal !== 'distributed') $this->setWrapText(false);
 		}
 
-		$this->model['horizontal'] = $horizontal;
+		$this->horizontal = $horizontal;
 		return $this;
 	}
 
@@ -48,7 +52,7 @@ class Alignment{
 	 * @return string|null - выравнивание по вертикали
 	 */
 	function getVertical(){
-		return $this->model['vertical'] ?? null;
+		return $this->vertical;
 	}
 
 	/**
@@ -58,7 +62,7 @@ class Alignment{
 	function setVertical(string $vertical = null) : self{
 		if (!is_null($vertical)) Validator::validate($vertical, '$vertical', self::VALID_VERTICAL);
 
-		$this->model['vertical'] = $vertical;
+		$this->vertical = $vertical;
 		return $this;
 	}
 
@@ -66,7 +70,7 @@ class Alignment{
 	 * @return bool - распределять по ширине
 	 */
 	function getWrapText() : bool{
-		return $this->model['wrapText'] ?? false;
+		return $this->wrapText ?? false;
 	}
 
 	/**
@@ -76,7 +80,7 @@ class Alignment{
 	function setWrapText(bool $wrapText) : self{
 		if ($wrapText) $this->setHorizontal('distributed');
 
-		$this->model['wrapText'] = $wrapText;
+		$this->wrapText = $wrapText;
 		return $this;
 	}
 
@@ -84,7 +88,7 @@ class Alignment{
 	 * @return int|null - отступ слева
 	 */
 	function getIndent(){
-		return $this->model['indent'] ?? null;
+		return $this->indent;
 	}
 
 	/**
@@ -97,7 +101,7 @@ class Alignment{
 			$this->setHorizontal(null);
 		}
 
-		$this->model['indent'] = $indent;
+		$this->indent = $indent;
 		return $this;
 	}
 
@@ -105,7 +109,7 @@ class Alignment{
 	 * @return string|null - направление чтения
 	 */
 	function getReadingOrder(){
-		return $this->model['readingOrder'] ?? null;
+		return $this->readingOrder;
 	}
 
 	/**
@@ -115,7 +119,7 @@ class Alignment{
 	function setReadingOrder(string $readingOrder = null) : self{
 		if (!is_null($readingOrder)) Validator::validate($readingOrder, '$readingOrder', self::VALID_READING_ORDER);
 
-		$this->model['readingOrder'] = $readingOrder;
+		$this->readingOrder = $readingOrder;
 		return $this;
 	}
 
@@ -123,7 +127,7 @@ class Alignment{
 	 * @return TextRotation|null - поворот текста
 	 */
 	function getTextRotation(){
-		return $this->textRotation ?? null;
+		return $this->textRotation;
 	}
 
 	/**
@@ -132,7 +136,6 @@ class Alignment{
 	 */
 	function setTextRotation(TextRotation $textRotation = null) : self{
 		$this->textRotation = $textRotation;
-		$this->model['textRotation'] = $textRotation->getModel();
 		return $this;
 	}
 
@@ -140,6 +143,13 @@ class Alignment{
 	 * @return array - модель
 	 */
 	function getModel(): array{
-		return $this->model;
+		return [
+			'horizontal' => $this->horizontal,
+			'vertical' => $this->vertical,
+			'wrapText' => $this->wrapText,
+			'indent' => $this->indent,
+			'readingOrder' => $this->readingOrder,
+			'textRotation' => $this->textRotation ? $this->textRotation->getModel() : null
+		];
 	}
 }

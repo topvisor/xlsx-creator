@@ -16,35 +16,37 @@ class Border{
 		'mediumDashDotDot', 'mediumDashDot', 'medium', 'double', 'thick'
 	];
 
-	private $model;
+	private $style;
+	private $color;
 
 	function __construct(string $style, Color $color = null){
 		Validator::validate($style, '$style', self::VALID_STYLE);
 
-		$this->model = [
-			'style' => $style,
-			'color' => $color
-		];
+		$this->style = $style;
+		$this->color = $color;
 	}
 
 	/**
 	 * @return string - стиль границы
 	 */
 	function getStyle() : string{
-		return $this->model['style'];
+		return $this->style;
 	}
 
 	/**
 	 * @return Color|null - цвет границы
 	 */
 	function getColor() : Color{
-		return $this->model['color'];
+		return $this->color;
 	}
 
 	/**
 	 * @return array - модель
 	 */
 	function getModel() : array{
-		return $this->model;
+		return [
+			'style' => $this->style,
+			'color' => $this->color
+		];
 	}
 }
