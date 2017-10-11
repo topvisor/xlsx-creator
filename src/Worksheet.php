@@ -7,6 +7,7 @@ use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\PageSetup;
+use Topvisor\XlsxCreator\Structures\Range;
 use Topvisor\XlsxCreator\Structures\Views\NormalView;
 use Topvisor\XlsxCreator\Structures\Views\View;
 use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
@@ -291,6 +292,8 @@ class Worksheet{
 	}
 
 	/**
+	 * Внутреняя функция. Возвращает id связи.
+	 *
 	 * @return string - id связи файла таблицы
 	 */
 	function getRId() : string{
@@ -298,6 +301,8 @@ class Worksheet{
 	}
 
 	/**
+	 * Внутреняя функция. Назначает id связи.
+	 *
 	 * @param string $rId - id связи файла таблицы
 	 * @return Worksheet - $this
 	 */
@@ -390,6 +395,46 @@ class Worksheet{
 		$this->checkCommitted();
 
 		return $this->getRow($row)->getCell($col);
+	}
+
+	function mergeCells(Range $range){
+		$this->checkCommitted();
+
+		$master = $this->getCell($range->getTop(), $range->getLeft());
+		$this->getCell($range->getBottom(), $range->getRight());
+
+		foreach ($this->merges as $merge)
+			if ($range->intersection($merge))
+				throw new InvalidValueException('Merge intersect');
+
+		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
+			$row = $this->getRow($i);
+			for ($j = $range->getLeft(); $j <= $range->getRight(); $j++) {
+				$cell = $row->getCell($j);
+				if ($cell === $master) continue;
+				else $cell->setMaster($master);
+			}
+		}
+	}
+
+	function unMergeCells(Range $range) {
+		$this->checkCommitted();
+
+		$master = $this->getCell($range->getTop(), $range->getLeft());
+		$this->getCell($range->getBottom(), $range->getRight());
+
+		$found = false;
+		foreach ($this->merges as $merge)
+			if ($merge == $range)
+				$found = true;
+
+		if (!$found) throw new InvalidValueException('Merge not found');
+
+		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
+			$row = $this->getRow($i);
+			for ($j = $range->getLeft(); $j <= $range->getRight(); $j++)
+				$row->getCell($j)->setMaster(null);
+		}
 	}
 
 	/**

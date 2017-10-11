@@ -21,7 +21,6 @@ class Cell{
 	private $style;
 
 	private $value;
-	private $merged;
 	private $master;
 
 	/**
@@ -36,9 +35,6 @@ class Cell{
 		$this->style = [];
 
 		$this->value = Value::parse(null);
-
-		$this->merged = false;
-		$this->master = null;
 	}
 
 	function __destruct(){
@@ -64,7 +60,7 @@ class Cell{
 	function setValue($value) : self{
 		if (!($value instanceof Value)) $value = Value::parse($value);
 
-		if ($this->merged && $this->master) {
+		if ($this->master) {
 			$this->master->setValue($value);
 		} else {
 			$this->value = $value;
@@ -108,7 +104,7 @@ class Cell{
 			'styleId' => $this->row->getWorksheet()->getWorkbook()->getStyles()->addStyle($style, $this->getType()),
 		];
 
-		if ($this->merged && $this->master) $model['master'] = $this->master->getModel();
+		if ($this->master) $model['master'] = $this->master->getModel();
 
 		if ($this->value instanceof HyperlinkValue) $this->row->getWorksheet()->getSheetRels()->addHyperlink(
 			$model['value']['hyperlink'],
@@ -123,6 +119,15 @@ class Cell{
 	 */
 	function getAddress() : string{
 		return Cell::genAddress($this->col, $this->row->getNumber());
+	}
+
+	/**
+	 * Внутренняя функция. Назначает главную ячейку
+	 *
+	 * @param Cell|null $master - главная ячейка
+	 */
+	function setMaster(Cell $master = null){
+		$this->master = $master;
 	}
 
 	/**
