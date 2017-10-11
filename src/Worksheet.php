@@ -11,6 +11,7 @@ use Topvisor\XlsxCreator\Structures\Views\NormalView;
 use Topvisor\XlsxCreator\Structures\Views\View;
 use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Xml\ListXml;
+use Topvisor\XlsxCreator\Xml\Sheet\AutoFilterXml;
 use Topvisor\XlsxCreator\Xml\Sheet\ColumnXml;
 use Topvisor\XlsxCreator\Xml\Sheet\HyperlinkXml;
 use Topvisor\XlsxCreator\Xml\Sheet\PageMargins;
@@ -456,7 +457,7 @@ class Worksheet{
 	private function endWorksheet(){
 		$this->xml->endElement();
 
-		// AutoFilter
+		(new AutoFilterXml())->render($this->xml, [$this->autoFilter]);
 		// MergeCells
 
 		(new ListXml('hyperlinks', new HyperlinkXml()))->render($this->xml, $this->sheetRels->getHyperlinks());
