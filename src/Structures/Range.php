@@ -12,8 +12,8 @@ use Topvisor\XlsxCreator\Validator;
  */
 class Range{
 	private $top;
-	private $bottom;
 	private $left;
+	private $bottom;
 	private $right;
 
 	function __construct(int $row1, int $col1, int $row2, int $col2){
@@ -76,7 +76,9 @@ class Range{
 	 * @return Range|null - пересечение
 	 */
 	function intersection(Range $range) {
-		if ($this->left <= $range->right && $this->top <= $range->bottom){
+		if ($range->right >= $this->left && $range->right <= $this->right
+			&& $range->bottom >= $this->top && $range->bottom <= $this->bottom){
+
 			$right = $range->right;
 			$bottom = $range->bottom;
 
@@ -85,7 +87,9 @@ class Range{
 
 			if ($this->top <= $range->top) $top = $range->top;
 			else $top = $this->top;
-		} elseif ($this->right >= $range->left && $this->bottom >= $range->top) {
+		} elseif ($range->left >= $this->left && $range->left <= $this->right
+			&& $range->top >= $this->top && $this->top <= $this->bottom) {
+
 			$left = $range->left;
 			$top = $range->bottom;
 
