@@ -61,10 +61,12 @@ class StylesXml extends BaseXml{
 	}
 
 	function addStyle(array $model, int $cellType = null) : int{
-		switch ($cellType) {
-			case null:
-			case Value::TYPE_NUMBER: $model['numFmt'] = 'General'; break;
-			case Value::TYPE_DATE: $model['numFmt'] = 'mm-dd-yy'; break;
+		if (!($model['numFmt'] ?? false)) {
+			switch ($cellType) {
+				case null:
+				case Value::TYPE_NUMBER: $model['numFmt'] = 'General'; break;
+				case Value::TYPE_DATE: $model['numFmt'] = 'mm-dd-yy'; break;
+			}
 		}
 
 		if (!$model) return 0;
