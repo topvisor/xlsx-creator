@@ -397,7 +397,13 @@ class Worksheet{
 		return $this->getRow($row)->getCell($col);
 	}
 
-	function mergeCells(Range $range){
+	/**
+	 * Соединить ячейки в одну
+	 *
+	 * @param Range $range - диапазон ячеек
+	 * @throws InvalidValueException
+	 */
+	function mergeCells(Range $range) {
 		$this->checkCommitted();
 
 		$master = $this->getCell($range->getTop(), $range->getLeft());
@@ -417,10 +423,16 @@ class Worksheet{
 		}
 	}
 
+	/**
+	 * Разъединить ячейки
+	 *
+	 * @param Range $range - диапазон ячеек
+	 * @throws InvalidValueException
+	 */
 	function unMergeCells(Range $range) {
 		$this->checkCommitted();
 
-		$master = $this->getCell($range->getTop(), $range->getLeft());
+		$this->getCell($range->getTop(), $range->getLeft());
 		$this->getCell($range->getBottom(), $range->getRight());
 
 		$found = false;
