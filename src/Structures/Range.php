@@ -17,6 +17,8 @@ class Range{
 	private $right;
 
 	function __construct(int $row1, int $col1, int $row2, int $col2){
+		if ($row1 == $row2 && $col1 == $col2) throw new InvalidValueException("It's not range");
+
 		Validator::validateInRange($row1, 1, 1048576, '$row1');
 		Validator::validateInRange($col1, 1, 16384, '$col1');
 		Validator::validateInRange($row2, 1, 1048576, '$row2');
