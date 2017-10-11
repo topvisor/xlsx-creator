@@ -263,7 +263,14 @@ class Row{
 	 */
 	private function setCell($value, int $col) : Cell{
 		$cell = new Cell($this, $col);
+
 		$cell->setValue($value);
+		$cell->setNumFmt($this->numFmt);
+		$cell->setFont($this->font);
+		$cell->setFill($this->fill);
+		$cell->setBorders($this->borders);
+		$cell->setAlignment($this->alignment);
+
 		$this->cells[$col] = $cell;
 
 		return $cell;
