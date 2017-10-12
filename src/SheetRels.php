@@ -2,6 +2,7 @@
 
 namespace Topvisor\XlsxCreator;
 
+use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use XMLWriter;
 
 /**
@@ -75,10 +76,11 @@ class SheetRels{
 	}
 
 	/**
-	 *	Зафиксировать файл связей.
+	 * Зафиксировать файл связей.
+	 * @throws ObjectCommittedException
 	 */
 	function commit() {
-		if (!$this->xml || $this->committed) return;
+		if (!$this->xml || $this->committed) throw new ObjectCommittedException();
 		$this->committed = true;
 
 		$this->endSheetRels();

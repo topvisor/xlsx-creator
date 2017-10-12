@@ -13,13 +13,13 @@ use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 class Value{
 	// Типы значений ячеек
 	const TYPE_NULL = 0;
-//	const TYPE_MERGE = 1;
-	const TYPE_NUMBER = 2;
-	const TYPE_STRING = 3;
-	const TYPE_DATE = 4;
-	const TYPE_HYPERLINK = 5;
-	const TYPE_FORMULA = 6;
-//	const TYPE_RICH_TEXT = 7;
+	const TYPE_NUMBER = 1;
+	const TYPE_STRING = 2;
+	const TYPE_DATE = 3;
+	const TYPE_HYPERLINK = 4;
+	const TYPE_FORMULA = 5;
+	const TYPE_SHARED_STRING = 6;
+	const TYPE_RICH_TEXT = 7;
 	const TYPE_BOOL = 8;
 	const TYPE_ERROR = 9;
 

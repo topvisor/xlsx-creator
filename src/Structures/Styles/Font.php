@@ -12,7 +12,7 @@ use Topvisor\XlsxCreator\Validator;
  */
 class Font{
 	const VALID_UNDERLINE = ['single', 'double', 'singleAccounting', 'doubleAccounting'];
-	const VALID_SCHEME = ['minor', 'major', 'none'];
+//	const VALID_SCHEME = ['minor', 'major', 'none'];
 
 	private $name;
 	private $size;
@@ -20,7 +20,7 @@ class Font{
 	private $bold;
 	private $italic;
 	private $underline;
-	private $scheme;
+//	private $scheme;
 	private $strike;
 
 	public function __destruct(){
@@ -127,23 +127,23 @@ class Font{
 		return $this;
 	}
 
-	/**
-	 * @return string|null - надстрочный/подстрочный
-	 */
-	function getScheme(){
-		return $this->scheme ?? null;
-	}
-
-	/**
-	 * @param string|null $scheme - надстрочный/подстрочный
-	 * @return Font - $this
-	 */
-	function setScheme(string $scheme = null) : self{
-		if (!is_null($scheme)) Validator::validate($scheme, '$scheme', self::VALID_SCHEME);
-
-		$this->scheme = $scheme;
-		return $this;
-	}
+//	/**
+//	 * @return string|null - надстрочный/подстрочный
+//	 */
+//	function getScheme(){
+//		return $this->scheme ?? null;
+//	}
+//
+//	/**
+//	 * @param string|null $scheme - надстрочный/подстрочный
+//	 * @return Font - $this
+//	 */
+//	function setScheme(string $scheme = null) : self{
+//		if (!is_null($scheme)) Validator::validate($scheme, '$scheme', self::VALID_SCHEME);
+//
+//		$this->scheme = $scheme;
+//		return $this;
+//	}
 
 	/**
 	 * @return bool - зачеркнутый
@@ -170,7 +170,7 @@ class Font{
 			'i' => $this->italic,
 			'u' => $this->underline,
 			'color' => $this->color ? $this->color->getModel() : null,
-			'scheme' => $this->scheme,
+//			'scheme' => $this->scheme,
 			'strike' => $this->strike,
 			'sz' => $this->size,
 			'name' => $this->name

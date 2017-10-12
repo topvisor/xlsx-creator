@@ -12,6 +12,7 @@ namespace Topvisor\XlsxCreator;
 use DateTime;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
+use Topvisor\XlsxCreator\Structures\Values\SharedStringValue;
 use Topvisor\XlsxCreator\Xml\Book\WorkbookXml;
 use Topvisor\XlsxCreator\Xml\Core\App\AppXml;
 use Topvisor\XlsxCreator\Xml\Core\ContentTypesXml;
@@ -35,6 +36,7 @@ class Workbook{
 	private $company;
 	private $manager;
 
+	private $sharedStrings;
 	private $stylesXml;
 	private $worksheets;
 	private $worksheetsIds;
@@ -45,8 +47,9 @@ class Workbook{
 	 * Workbook constructor.
 	 *
 	 * @param string $filename - путь к xlsx файлу
+	 * @param bool $useSharedStrings - проверять дубликаты значений
 	 */
-	function __construct(string $filename){
+	function __construct(string $filename, bool $useSharedStrings = false){
 		$this->filename = $filename;
 		$this->tempdir = sys_get_temp_dir();
 		$this->created = new DateTime();
@@ -56,6 +59,7 @@ class Workbook{
 		$this->company = '';
 		$this->manager = null;
 
+		$this->sharedStrings = new SharedStrings($this, $useSharedStrings);
 		$this->stylesXml = new StylesXml();
 		$this->worksheets = [];
 		$this->worksheetsIds = [];
@@ -222,6 +226,10 @@ class Workbook{
 
 		$this->manager = $manager;
 		return $this;
+	}
+
+	function addSharedString($value) : SharedStringValue{
+		return $this->sharedStrings->add($value);
 	}
 
 	/**
