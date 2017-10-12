@@ -301,7 +301,7 @@ class Workbook{
 			if ($sheetRelsFilename)	$zip->addFile($sheetRelsFilename, $worksheet->getSheetRels()->getLocalname());
 		}
 
-		$zip->addFile(dirname(__FILE__) . '/Xml/Static/theme1.xml', 'xl/theme/theme1.xml');
+//		$zip->addFile(dirname(__FILE__) . '/Xml/Static/theme1.xml', 'xl/theme/theme1.xml');
 		$zip->addFromString('_rels/.rels', (new RelationshipsXml())->toXml([
 			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
 			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
@@ -357,8 +357,8 @@ class Workbook{
 		$count = 1;
 
 		$relationships = [
-			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles', 'Target' => 'styles.xml'],
-			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme', 'Target' => 'theme/theme1.xml']
+			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles', 'Target' => 'styles.xml']
+//			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme', 'Target' => 'theme/theme1.xml']
 		];
 
 		foreach ($this->worksheets as $worksheet) {
