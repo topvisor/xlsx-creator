@@ -37,11 +37,6 @@ class ContentTypesXml extends BaseXml{
 		}
 
 		$xml->startElement('Override');
-		$xml->writeAttribute('PartName', '/xl/theme/theme1.xml');
-		$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.theme+xml');
-		$xml->endElement();
-
-		$xml->startElement('Override');
 		$xml->writeAttribute('PartName', '/xl/styles.xml');
 		$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml');
 		$xml->endElement();
