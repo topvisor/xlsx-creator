@@ -2,7 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Styles\Alignment;
 
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
  * Class Alignment. Описывает выравнивание текста.

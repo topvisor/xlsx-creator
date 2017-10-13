@@ -12,6 +12,7 @@ namespace Topvisor\XlsxCreator;
 use DateTime;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
+use Topvisor\XlsxCreator\Helpers\SharedStrings;
 use Topvisor\XlsxCreator\Structures\Values\SharedStringValue;
 use Topvisor\XlsxCreator\Xml\Book\WorkbookXml;
 use Topvisor\XlsxCreator\Xml\Core\App\AppXml;
@@ -28,6 +29,7 @@ use ZipArchive;
  */
 class Workbook{
 	private $filename;
+	private $useSharedStrings;
 	private $tempdir;
 	private $created;
 	private $modified;
@@ -47,10 +49,11 @@ class Workbook{
 	 * Workbook constructor.
 	 *
 	 * @param string $filename - путь к xlsx файлу
-	 * @param bool $useSharedStrings - проверять дубликаты значений
+	 * @param bool $useSharedStrings - принудительно записывать строки как общие. Проверять дубликаты
 	 */
 	function __construct(string $filename, bool $useSharedStrings = false){
 		$this->filename = $filename;
+		$this->useSharedStrings = $useSharedStrings;
 		$this->tempdir = sys_get_temp_dir();
 		$this->created = new DateTime();
 		$this->modified = $this->created;
@@ -59,7 +62,7 @@ class Workbook{
 		$this->company = '';
 		$this->manager = null;
 
-		$this->sharedStrings = new SharedStrings($this, $useSharedStrings);
+		$this->sharedStrings = new SharedStrings($this);
 		$this->stylesXml = new StylesXml();
 		$this->worksheets = [];
 		$this->worksheetsIds = [];
@@ -93,6 +96,13 @@ class Workbook{
 
 		$this->filename = $filename;
 		return $this;
+	}
+
+	/**
+	 * @return bool - принудительно записывать строки как общие. Проверять дубликаты
+	 */
+	function getUseSharedStrings() : bool{
+		return $this->useSharedStrings;
 	}
 
 	/**

@@ -3,7 +3,7 @@
 namespace Topvisor\XlsxCreator\Structures\Styles;
 
 use Topvisor\XlsxCreator\Structures\Color;
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
  * Class Font. Описывает стили шрифта.

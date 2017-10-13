@@ -1,9 +1,10 @@
 <?php
 
 namespace Topvisor\XlsxCreator\Structures;
+
 use Topvisor\XlsxCreator\Cell;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
  * Class Range. Диапазон.

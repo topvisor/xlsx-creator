@@ -1,8 +1,9 @@
 <?php
 
-namespace Topvisor\XlsxCreator;
+namespace Topvisor\XlsxCreator\Helpers;
 
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
+use Topvisor\XlsxCreator\Worksheet;
 use XMLWriter;
 
 /**

@@ -3,7 +3,7 @@
 namespace Topvisor\XlsxCreator\Structures;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
  * Class Color. Используется для задания цвета.

@@ -40,12 +40,22 @@ class CellXml extends BaseXml{
 				break;
 
 			case Value::TYPE_HYPERLINK:
-				$xml->writeAttribute('t', 'str');
-				$xml->writeElement('v', $model['value']['text']);
+				if (isset($model['value']['ssId'])) {
+					$xml->writeAttribute('t', 's');
+					$xml->writeElement('v', $model['value']['ssId']);
+				} else {
+					$xml->writeAttribute('t', 'str');
+					$xml->writeElement('v', $model['value']['text']);
+				}
 				break;
 
 			case Value::TYPE_FORMULA:
 				$xml->writeElement('f', $model['value']);
+				break;
+
+			case Value::TYPE_SHARED_STRING:
+				$xml->writeAttribute('t', 's');
+				$xml->writeElement('v', $model['value']);
 				break;
 		}
 

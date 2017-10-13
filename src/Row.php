@@ -3,6 +3,8 @@
 namespace Topvisor\XlsxCreator;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
+use Topvisor\XlsxCreator\Helpers\StyleSetters;
+use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
 use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
@@ -15,13 +17,13 @@ use Topvisor\XlsxCreator\Structures\Values\Value;
  * @package  Topvisor\XlsxCreator
  */
 class Row{
-	use StyleManager {
-		StyleManager::__destruct as styleManagerDestruct;
-		StyleManager::setNumFmt as styleManagerSetNumFmt;
-		StyleManager::setFont as styleManagerSetFont;
-		StyleManager::setFill as styleManagerSetFill;
-		StyleManager::setBorders as styleManagerSetBorders;
-		StyleManager::setAlignment as styleManagerSetAlignment;
+	use StyleSetters {
+		StyleSetters::__destruct as styleManagerDestruct;
+		StyleSetters::setNumFmt as styleManagerSetNumFmt;
+		StyleSetters::setFont as styleManagerSetFont;
+		StyleSetters::setFill as styleManagerSetFill;
+		StyleSetters::setBorders as styleManagerSetBorders;
+		StyleSetters::setAlignment as styleManagerSetAlignment;
 	}
 
 	private $worksheet;

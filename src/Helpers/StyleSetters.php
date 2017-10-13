@@ -1,6 +1,7 @@
 <?php
 
-namespace Topvisor\XlsxCreator;
+namespace Topvisor\XlsxCreator\Helpers;
+
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
 use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
@@ -11,7 +12,7 @@ use Topvisor\XlsxCreator\Structures\Styles\Font;
  *
  * @package Topvisor\XlsxCreator\Structures\Styles
  */
-trait StyleManager{
+trait StyleSetters{
 	private $numFmt;
 	private $font;
 	private $fill;
@@ -34,7 +35,7 @@ trait StyleManager{
 
 	/**
 	 * @param string|null $numFmt - формат чисел ячейки
-	 * @return StyleManager - $this
+	 * @return StyleSetters - $this
 	 */
 	function setNumFmt(string $numFmt = null) : self{
 		$this->numFmt = $numFmt;
@@ -50,7 +51,7 @@ trait StyleManager{
 
 	/**
 	 * @param Font|null $font - шрифт
-	 * @return StyleManager - $this
+	 * @return StyleSetters - $this
 	 */
 	function setFont(Font $font = null) : self{
 		$this->font = $font;
@@ -66,7 +67,7 @@ trait StyleManager{
 
 	/**
 	 * @param Color|null $color - заливка ячейки
-	 * @return StyleManager - $this
+	 * @return StyleSetters - $this
 	 */
 	function setFill(Color $color = null) : self{
 		$this->fill = $color;
@@ -82,7 +83,7 @@ trait StyleManager{
 
 	/**
 	 * @param Borders|null $borders - границы ячейки
-	 * @return StyleManager - $this
+	 * @return StyleSetters - $this
 	 */
 	function setBorders(Borders $borders = null) : self{
 		$this->borders = $borders;
@@ -98,7 +99,7 @@ trait StyleManager{
 
 	/**
 	 * @param Alignment|null $alignment - выравнивание текста
-	 * @return StyleManager - $this
+	 * @return StyleSetters - $this
 	 */
 	function setAlignment(Alignment $alignment = null) : self{
 		$this->alignment = $alignment;

@@ -12,10 +12,16 @@ class HyperlinkValue extends Value{
 	 * HyperlinkValue constructor.
 	 *
 	 * @param string $hyperlink - ссылка
-	 * @param string|null $text - текст ссылки
+	 * @param string|SharedStringValue|null $text - текст ссылки
 	 */
-	function __construct(string $hyperlink, string $text = null){
-		parent::__construct(['text' => $text ?? $hyperlink, 'hyperlink' => $hyperlink], parent::TYPE_HYPERLINK);
+	function __construct(string $hyperlink, $text = null){
+		$text = $text ?? $hyperlink;
+		$model = ['hyperlink' => $hyperlink];
+
+		if ($text instanceof SharedStringValue) $model['ssId'] = $text->value;
+		else $model['text'] = $text;
+
+		parent::__construct($model, parent::TYPE_HYPERLINK);
 	}
 
 	/**
@@ -23,6 +29,6 @@ class HyperlinkValue extends Value{
 	 * @return Value - значение ячейки
 	 */
 	static function parse($value): Value{
-		return new self($value['hyperlink'], $value['text']);
+		return new self($value['hyperlink'], $value['text'] ?? new SharedStringValue($value['ssId']));
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Views;
 
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
  * Class FrozenView. Несколько строк и/или столбцов этого представления заморожено на месте.

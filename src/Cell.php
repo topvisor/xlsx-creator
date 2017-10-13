@@ -3,6 +3,7 @@
 namespace Topvisor\XlsxCreator;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
+use Topvisor\XlsxCreator\Helpers\StyleSetters;
 use Topvisor\XlsxCreator\Structures\Values\HyperlinkValue;
 use Topvisor\XlsxCreator\Structures\Values\Value;
 
@@ -12,8 +13,8 @@ use Topvisor\XlsxCreator\Structures\Values\Value;
  * @package  Topvisor\XlsxCreator
  */
 class Cell{
-	use StyleManager {
-		StyleManager::__destruct as styleManagerDestruct;
+	use StyleSetters {
+		StyleSetters::__destruct as styleManagerDestruct;
 	}
 
 	private $row;
@@ -94,14 +95,32 @@ class Cell{
 	 * @return array - модель ячейки
 	 */
 	function getModel() : array{
+		$workbook = $this->row->getWorksheet()->getWorkbook();
+		$value = $this->value;
+
+		if ($workbook->getUseSharedStrings()){
+			switch ($value->getType()) {
+				case Value::TYPE_STRING:
+					$value = $workbook->addSharedString($value);
+					break;
+
+				case Value::TYPE_HYPERLINK:
+					$valueModel = $this->getValue();
+					if (!isset($valueModel['ssId']))
+						$value = new HyperlinkValue($valueModel['hyperlink'], $workbook->addSharedString($valueModel['text']));
+			}
+		}
+
+		if ($value->getType() === Value::TYPE_RICH_TEXT) $value = $workbook->addSharedString($value);
+
 		$style = $this->getStyleModel();
 
 		$model = [
 			'address' => $this->getAddress(),
-			'value' => $this->value->getValue(),
-			'type' => $this->value->getType(),
+			'value' => $value->getValue(),
+			'type' => $value->getType(),
 			'style' => $style,
-			'styleId' => $this->row->getWorksheet()->getWorkbook()->getStyles()->addStyle($style, $this->getType()),
+			'styleId' => $workbook->getStyles()->addStyle($style, $this->getType()),
 		];
 
 		if ($this->master) $model['master'] = $this->master->getModel();

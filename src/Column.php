@@ -2,14 +2,17 @@
 
 namespace Topvisor\XlsxCreator;
 
+use Topvisor\XlsxCreator\Helpers\StyleSetters;
+use Topvisor\XlsxCreator\Helpers\Validator;
+
 /**
  * Class Column. Содержит методы для работы с колонкой.
  *
  * @package Topvisor\XlsxCreator
  */
 class Column{
-	use StyleManager {
-		StyleManager::__destruct as styleManagerDestruct;
+	use StyleSetters {
+		StyleSetters::__destruct as styleManagerDestruct;
 	}
 
 	private $worksheet;

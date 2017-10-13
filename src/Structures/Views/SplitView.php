@@ -2,7 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Views;
 
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
  * Class SplitView. Представление разделено на 4 секции с независимой прокруткой.

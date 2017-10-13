@@ -1,8 +1,9 @@
 <?php
 
 namespace Topvisor\XlsxCreator\Structures\Values;
+
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
  * Class ErrorValue. Используется для задания значения ячейки (ошибка).

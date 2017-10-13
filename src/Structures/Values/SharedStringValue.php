@@ -2,7 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Values;
 
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 class SharedStringValue extends Value{
 	function __construct(int $id){

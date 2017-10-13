@@ -2,7 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures;
 
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
  * Class PageSetup. Параметры печати.

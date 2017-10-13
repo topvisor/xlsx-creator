@@ -1,12 +1,16 @@
 <?php
 
-namespace Topvisor\XlsxCreator;
+namespace Topvisor\XlsxCreator\Helpers;
 
+use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Structures\Values\SharedStringValue;
 use Topvisor\XlsxCreator\Structures\Values\Value;
+use Topvisor\XlsxCreator\Workbook;
+use Topvisor\XlsxCreator\Xml\Strings\SharedStringXml;
 use TypeError;
+use XMLWriter;
 
 class SharedStrings{
 	private $workbook;
@@ -18,15 +22,19 @@ class SharedStrings{
 	private $filename;
 	private $xml;
 
-	function __construct(Workbook $workbook, bool $checkDuplicate){
+	function __construct(Workbook $workbook){
 		$this->workbook = $workbook;
 
+		$this->committed = false;
 		$this->nextId = 0;
-		if ($checkDuplicate) $this->sharedStrings = [];
+		if ($workbook->getUseSharedStrings()) $this->sharedStrings = [];
 	}
 
 	public function __destruct(){
 		unset($this->workbook);
+		unset($this->xml);
+
+		if ($this->filename && file_exists($this->filename)) unlink($this->filename);
 	}
 
 	/**
@@ -62,12 +70,21 @@ class SharedStrings{
 		return new SharedStringValue($id);
 	}
 
+	function isCommitted() : bool{
+		return $this->committed;
+	}
+
+	function isEmpty() : bool{
+		return !$this->xml && !$this->committed;
+	}
+
 	/**
 	 * Зафиксировать файл общих строк.
 	 *
 	 * @throws ObjectCommittedException
 	 */
 	function commit() {
+		if (!$this->isEmpty()) throw new EmptyObjectException("Shared strings is empty");
 		$this->checkCommitted();
 		$this->committed = true;
 
@@ -75,20 +92,30 @@ class SharedStrings{
 	}
 
 	private function addToXml(Value $value) : int{
-		$id = $this->nextId++;
-
-		return $id;
+		(new SharedStringXml())->render($this->xml, ['type' => $value->getType(), 'value' => $value->getValue()]);
+		return $this->nextId++;
 	}
 
 	private function checkCommitted(){
-		if (!$this->xml || $this->committed) throw new ObjectCommittedException();
+		if ($this->committed) throw new ObjectCommittedException();
 	}
 
 	private function startSharedStrings(){
+		$this->filename = $this->workbook->genTempFilename();
 
+		$this->xml = new XMLWriter();
+		$this->xml->openURI($this->filename);
+
+		$this->xml->startDocument('1.0', 'UTF-8', 'yes');
+		$this->xml->startElement('sst');
+		$this->xml->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
 	}
 
 	private function endSharedStrings(){
+		$this->xml->endElement();
+		$this->xml->endDocument();
 
+		$this->xml->flush();
+		unset($this->xml);
 	}
 }

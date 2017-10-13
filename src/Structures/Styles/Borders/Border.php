@@ -3,7 +3,7 @@
 namespace Topvisor\XlsxCreator\Structures\Styles\Borders;
 
 use Topvisor\XlsxCreator\Structures\Color;
-use Topvisor\XlsxCreator\Validator;
+use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
  * Class Border. Описывает стиль границы ячейки.

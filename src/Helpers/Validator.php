@@ -1,6 +1,6 @@
 <?php
 
-namespace Topvisor\XlsxCreator;
+namespace Topvisor\XlsxCreator\Helpers;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Structures\Views\FrozenView;

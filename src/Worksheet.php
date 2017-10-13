@@ -5,6 +5,7 @@ namespace Topvisor\XlsxCreator;
 use OutOfBoundsException;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
+use Topvisor\XlsxCreator\Helpers\SheetRels;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\PageSetup;
 use Topvisor\XlsxCreator\Structures\Range;
@@ -22,6 +23,7 @@ use Topvisor\XlsxCreator\Xml\Sheet\RowXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetFormatPropertiesXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetPropertiesXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetViewsXml;
+use Topvisor\XlsxCreator\Helpers\Validator;
 use XMLWriter;
 
 /**
