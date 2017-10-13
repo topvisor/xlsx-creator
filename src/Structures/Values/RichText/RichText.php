@@ -25,6 +25,10 @@ class RichText{
 		$this->font = $font;
 	}
 
+	public function __destruct(){
+		unset($this->font);
+	}
+
 	/**
 	 * @return string - текст
 	 */
