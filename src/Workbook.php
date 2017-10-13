@@ -238,6 +238,10 @@ class Workbook{
 		return $this;
 	}
 
+	/**
+	 * @param  $value - значение
+	 * @return SharedStringValue - общая строка
+	 */
 	function addSharedString($value) : SharedStringValue{
 		return $this->sharedStrings->add($value);
 	}
