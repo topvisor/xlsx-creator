@@ -81,7 +81,7 @@ class SheetRels{
 	 * @throws ObjectCommittedException
 	 */
 	function commit() {
-		if (!$this->xml || $this->committed) throw new ObjectCommittedException();
+		if ($this->committed) throw new ObjectCommittedException();
 		$this->committed = true;
 
 		$this->endSheetRels();
@@ -105,6 +105,8 @@ class SheetRels{
 	 *	Завершить файл связей.
 	 */
 	private function endSheetRels(){
+		if (!$this->xml) return;
+
 		$this->xml->endElement();
 		$this->xml->endDocument();
 

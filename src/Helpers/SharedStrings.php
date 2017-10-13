@@ -74,17 +74,12 @@ class SharedStrings{
 		return $this->committed;
 	}
 
-	function isEmpty() : bool{
-		return !$this->xml && !$this->committed;
-	}
-
 	/**
 	 * Зафиксировать файл общих строк.
 	 *
 	 * @throws ObjectCommittedException
 	 */
 	function commit() {
-		if (!$this->isEmpty()) throw new EmptyObjectException("Shared strings is empty");
 		$this->checkCommitted();
 		$this->committed = true;
 
@@ -112,6 +107,8 @@ class SharedStrings{
 	}
 
 	private function endSharedStrings(){
+		if (!$this->xml) return;
+
 		$this->xml->endElement();
 		$this->xml->endDocument();
 
