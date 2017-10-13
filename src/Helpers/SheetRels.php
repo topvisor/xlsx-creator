@@ -17,6 +17,7 @@ class SheetRels{
 	private $indexes;
 	private $hyperlinks;
 	private $committed;
+	private $nextId;
 
 	private $filename;
 	private $xml;
@@ -31,6 +32,7 @@ class SheetRels{
 		$this->indexes = [];
 		$this->hyperlinks = [];
 		$this->committed = false;
+		$this->nextId = 1;
 	}
 
 	function __destruct(){
@@ -72,8 +74,28 @@ class SheetRels{
 
 		$this->hyperlinks[] = [
 			'address' => $address,
-			'rId' => $this->writeRelationship('http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink', $target, 'External')
+			'rId' => $this->writeRelationship(
+				'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink',
+				$target,
+				'External'
+			)
 		];
+	}
+
+	/**
+	 * Связать таблицу с файлом комментариев и его vml представлением
+	 * @return string - id связи с vml файлом
+	 */
+	function addComments() : string{
+		$this->writeRelationship(
+			'http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments',
+			'../comments' . $this->worksheet->getId() . '.xml'
+		);
+
+		return $this->writeRelationship(
+			'http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing',
+			'../drawings/vmlDrawing' . $this->worksheet->getId() . '.vml'
+		);
 	}
 
 	/**
@@ -125,7 +147,7 @@ class SheetRels{
 	private function writeRelationship(string $type, string $target, string $targetMode = null) : string{
 		if (!$this->xml) $this->startSheetRels();
 
-		$rId = 'rId' . (count($this->hyperlinks) + 1);
+		$rId = 'rId' . $this->nextId++;
 
 		$this->xml->startElement('Relationship');
 
