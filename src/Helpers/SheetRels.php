@@ -67,6 +67,8 @@ class SheetRels{
 	 * @param string $address - ячейка таблицы ('A1', 'B5')
 	 */
 	function addHyperlink(string $target, string $address){
+		$this->checkCommited();
+
 		$index = ['target' => $target, 'address' => $address];
 		if (in_array($index, $this->indexes)) return;
 
@@ -87,6 +89,8 @@ class SheetRels{
 	 * @return string - id связи с vml файлом
 	 */
 	function addComments() : string{
+		$this->checkCommited();
+
 		$this->writeRelationship(
 			'http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments',
 			'../comments' . $this->worksheet->getId() . '.xml'
@@ -103,7 +107,7 @@ class SheetRels{
 	 * @throws ObjectCommittedException
 	 */
 	function commit() {
-		if ($this->committed) throw new ObjectCommittedException();
+		$this->checkCommited();
 		$this->committed = true;
 
 		$this->endSheetRels();
@@ -159,5 +163,12 @@ class SheetRels{
 		$this->xml->endElement();
 
 		return $rId;
+	}
+
+	/**
+	 * @throws ObjectCommittedException
+	 */
+	private function checkCommited(){
+		if ($this->committed) throw new ObjectCommittedException();
 	}
 }

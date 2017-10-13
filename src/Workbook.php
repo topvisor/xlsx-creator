@@ -20,6 +20,7 @@ use Topvisor\XlsxCreator\Xml\Core\App\AppXml;
 use Topvisor\XlsxCreator\Xml\Core\ContentTypesXml;
 use Topvisor\XlsxCreator\Xml\Core\CoreXml;
 use Topvisor\XlsxCreator\Xml\Core\Relationships\RelationshipsXml;
+use Topvisor\XlsxCreator\Xml\Sheet\SheetRelsXml;
 use Topvisor\XlsxCreator\Xml\Styles\StylesXml;
 use ZipArchive;
 
@@ -322,6 +323,11 @@ class Workbook{
 
 			$sheetRelsFilename = $worksheet->getSheetRels()->getFilename();
 			if ($sheetRelsFilename)	$zip->addFile($sheetRelsFilename, $worksheet->getSheetRels()->getLocalname());
+
+			$comments = $worksheet->getComments();
+			if (!$comments->isEmpty()) {
+
+			}
 		}
 
 		if (!$this->sharedStrings->isCommitted()) $this->sharedStrings->commit();

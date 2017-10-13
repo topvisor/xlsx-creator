@@ -4,7 +4,9 @@ namespace Topvisor\XlsxCreator;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Helpers\StyleSetters;
+use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Values\HyperlinkValue;
+use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\Value;
 
 /**
@@ -21,6 +23,10 @@ class Cell{
 	private $col;
 	private $style;
 
+	private $comment;
+	private $commentWidth;
+	private $commentHeight;
+
 	private $value;
 	private $master;
 
@@ -34,6 +40,9 @@ class Cell{
 		$this->row = $row;
 		$this->col = $col;
 		$this->style = [];
+
+		$this->commentWidth = 1;
+		$this->commentHeight = 1;
 
 		$this->value = Value::parse(null);
 	}
@@ -61,11 +70,73 @@ class Cell{
 	function setValue($value) : self{
 		if (!($value instanceof Value)) $value = Value::parse($value);
 
-		if ($this->master) {
-			$this->master->setValue($value);
-		} else {
-			$this->value = $value;
+		if ($this->master) $this->master->setValue($value);
+		else $this->value = $value;
+
+		return $this;
+	}
+
+	/**
+	 * @return int - ширина комментария
+	 */
+	function getCommentWidth() : int{
+		return $this->commentWidth;
+	}
+
+	/**
+	 * @param int $width - ширина комментария
+	 * @return Cell - $this
+	 */
+	function setCommentWidth(int $width) : self{
+		Validator::validateInRange($width, 1, 409, '$width');
+
+		if ($this->master) $this->master->setCommentWidth($width);
+		else $this->commentWidth = $width;
+
+		return $this;
+	}
+
+	/**
+	 * @return int - высота комментария
+	 */
+	public function getCommentHeight(): int{
+		return $this->commentHeight;
+	}
+
+	/**
+	 * @param int $height - высота комментария
+	 * @return Cell - $this
+	 */
+	function setCommentHeight(int $height) : self{
+		Validator::validateInRange($height, 1, 409, '$height');
+
+		if ($this->master) $this->master->setCommentHeight($height);
+		else $this->commentHeight = $height;
+
+		return $this;
+	}
+
+	/**
+	 * @return Value|null - комментарий
+	 */
+	function getComment(){
+		return $this->comment;
+	}
+
+	/**
+	 * @param string|RichTextValue|null $comment - комментарий
+	 * @return Cell - $this
+	 * @throws InvalidValueException
+	 */
+	function setComment($comment) : self{
+		if (!is_null($comment) && !($comment instanceof Value)){
+			$comment = Value::parse($comment);
+			if ($comment->getType() !== Value::TYPE_STRING && $comment->getType() !== Value::TYPE_RICH_TEXT)
+				throw new InvalidValueException('$comment must be string or rich text');
 		}
+
+		if ($this->master) $this->master->setComment($comment);
+		else $this->comment = $comment;
 
 		return $this;
 	}
@@ -129,6 +200,11 @@ class Cell{
 			$model['value']['hyperlink'],
 			$model['address']
 		);
+
+		if ($this->comment) $this->row->getWorksheet()->getComments()->addComment([
+			'type' => $this->comment->getType(),
+			'value' => $this->comment->getValue()
+		], $model['address'], $this->commentWidth, $this->commentHeight);
 
 		return $model;
 	}

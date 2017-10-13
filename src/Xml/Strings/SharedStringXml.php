@@ -7,10 +7,16 @@ use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class SharedStringXml extends BaseXml{
+	private $tag;
+
+	function __construct(string $tag = 'si'){
+		$this->tag = $tag;
+	}
+
 	function render(XMLWriter $xml, array $model = null){
 		if (!$model) return;
 
-		$xml->startElement('si');
+		$xml->startElement($this->tag);
 
 		switch ($model['type']) {
 			case Value::TYPE_STRING: (new TextXml())->render($xml, $model); break;

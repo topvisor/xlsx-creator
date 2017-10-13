@@ -5,6 +5,7 @@ namespace Topvisor\XlsxCreator;
 use OutOfBoundsException;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
+use Topvisor\XlsxCreator\Helpers\Comments;
 use Topvisor\XlsxCreator\Helpers\SheetRels;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\PageSetup;
@@ -24,6 +25,7 @@ use Topvisor\XlsxCreator\Xml\Sheet\SheetFormatPropertiesXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetPropertiesXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetViewsXml;
 use Topvisor\XlsxCreator\Helpers\Validator;
+use Topvisor\XlsxCreator\Xml\Simple\StringXml;
 use XMLWriter;
 
 /**
@@ -50,6 +52,7 @@ class Worksheet{
 	private $rows;
 	private $columns;
 	private $merges;
+	private $comments;
 	private $sheetRels;
 
 	private $filename;
@@ -82,6 +85,7 @@ class Worksheet{
 		$this->rows = [];
 		$this->merges = [];
 		$this->lastUncommittedRow = 1;
+		$this->comments = new Comments();
 		$this->sheetRels = new SheetRels($this);
 	}
 
@@ -91,6 +95,7 @@ class Worksheet{
 		unset($this->pageSetup);
 		unset($this->rows);
 		unset($this->merges);
+		unset($this->comments);
 		unset($this->sheetRels);
 		unset($this->xml);
 
@@ -321,6 +326,15 @@ class Worksheet{
 		return $this->sheetRels;
 	}
 
+//	function add
+
+	/**
+	 * @return Comments - комментарии к ячейкам
+	 */
+	function getComments() : Comments{
+		return $this->comments;
+	}
+
 	/**
 	 * @param int $col - номер колонки
 	 * @return Column - колонка
@@ -507,7 +521,8 @@ class Worksheet{
 			'id' => $this->id,
 			'name' => $this->name,
 			'rId' => $this->rId ?? '',
-			'partName' => $this->getLocalname()
+			'partName' => $this->getLocalname(),
+			'useComments' => !$this->comments->isEmpty()
 		];
 	}
 
@@ -559,6 +574,10 @@ class Worksheet{
 		(new ListXml('mergeCells', new MergeXml(), [], false, true))->render($this->xml, $this->merges);
 
 		(new ListXml('hyperlinks', new HyperlinkXml()))->render($this->xml, $this->sheetRels->getHyperlinks());
+		if (!$this->comments->isEmpty())
+			(new StringXml('legacyDrawing', [], 'r:id'))
+				->render($this->xml, [$this->sheetRels->addComments()]);
+
 		(new PageMargins())->render($this->xml, $this->pageSetup->getModel()['margins'] ?? null);
 		(new PageSetupXml())->render($this->xml, $this->pageSetup->getModel());
 
