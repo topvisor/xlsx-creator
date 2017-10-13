@@ -4,7 +4,7 @@ namespace Topvisor\XlsxCreator\Helpers;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
-use Topvisor\XlsxCreator\Structures\Values\RichTextValue;
+use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\SharedStringValue;
 use Topvisor\XlsxCreator\Structures\Values\Value;
 use Topvisor\XlsxCreator\Workbook;

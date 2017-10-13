@@ -1,8 +1,8 @@
 <?php
 
-namespace Topvisor\XlsxCreator\Structures\Values;
+namespace Topvisor\XlsxCreator\Structures\Values\RichText;
 
-use Topvisor\XlsxCreator\Structures\Values\RichText\RichText;
+use Topvisor\XlsxCreator\Structures\Values\Value;
 
 /**
  * Class RichTextValue. Строка с разными шрифтами
