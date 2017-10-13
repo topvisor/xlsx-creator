@@ -15,6 +15,11 @@ class ContentTypesXml extends BaseXml{
 		$xml->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/package/2006/content-types');
 
 		$xml->startElement('Default');
+		$xml->writeAttribute('Extension', 'vml');
+		$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.vmlDrawing');
+		$xml->endElement();
+
+		$xml->startElement('Default');
 		$xml->writeAttribute('Extension', 'rels');
 		$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-package.relationships+xml');
 		$xml->endElement();
@@ -55,6 +60,15 @@ class ContentTypesXml extends BaseXml{
 		$xml->writeAttribute('PartName', '/docProps/app.xml');
 		$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.extended-properties+xml');
 		$xml->endElement();
+
+		foreach ($model as $worksheet) {
+			if ($worksheet['useComments'] ?? false) {
+				$xml->startElement('Override');
+				$xml->writeAttribute('PartName', "/xl/comments$worksheet[id].xml");
+				$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml');
+				$xml->endElement();
+			}
+		}
 
 		$xml->endElement();
 		$xml->endDocument();
