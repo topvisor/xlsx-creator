@@ -13,6 +13,7 @@ use DateTime;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Helpers\SharedStrings;
+use Topvisor\XlsxCreator\Structures\Values\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\SharedStringValue;
 use Topvisor\XlsxCreator\Xml\Book\WorkbookXml;
 use Topvisor\XlsxCreator\Xml\Core\App\AppXml;
@@ -239,7 +240,7 @@ class Workbook{
 	}
 
 	/**
-	 * @param  $value - значение
+	 * @param string|RichTextValue $value - значение
 	 * @return SharedStringValue - общая строка
 	 */
 	function addSharedString($value) : SharedStringValue{
