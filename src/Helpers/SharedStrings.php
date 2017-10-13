@@ -17,6 +17,9 @@ use XMLWriter;
  * @package Topvisor\XlsxCreator\Helpers
  */
 class SharedStrings{
+	private $workbook;
+
+	private $empty;
 	private $committed;
 	private $nextId;
 	private $sharedStrings;
@@ -30,19 +33,16 @@ class SharedStrings{
 	 * @param Workbook $workbook
 	 */
 	function __construct(Workbook $workbook){
+		$this->workbook = $workbook;
+
+		$this->empty = true;
 		$this->committed = false;
 		$this->nextId = 0;
 		if ($workbook->getUseSharedStrings()) $this->sharedStrings = [];
-
-		$this->filename = $workbook->genTempFilename();
-
-		$this->xml = new XMLWriter();
-		$this->xml->openURI($this->filename);
-
-		$this->startSharedStrings();
 	}
 
 	public function __destruct(){
+		unset($this->workbook);
 		unset($this->xml);
 
 		if ($this->filename && file_exists($this->filename)) unlink($this->filename);
@@ -62,6 +62,9 @@ class SharedStrings{
 	 */
 	function add($value) : SharedStringValue{
 		$this->checkCommitted();
+
+		if ($this->empty) $this->startSharedStrings();
+
 		if (!$value) throw new InvalidValueException('$value must be');
 		if (!($value instanceof Value)) $value = Value::parse($value);
 
@@ -84,6 +87,16 @@ class SharedStrings{
 		return new SharedStringValue($id);
 	}
 
+	/**
+	 * @return bool - файл общих строк пуст
+	 */
+	function isEmpty() : bool{
+		return $this->empty;
+	}
+
+	/**
+	 * @return bool - файл общих строк зафиксирован
+	 */
 	function isCommitted() : bool{
 		return $this->committed;
 	}
@@ -120,6 +133,13 @@ class SharedStrings{
 	 * Начать файл общих строк.
 	 */
 	private function startSharedStrings(){
+		$this->empty = false;
+
+		$this->filename = $this->workbook->genTempFilename();
+
+		$this->xml = new XMLWriter();
+		$this->xml->openURI($this->filename);
+
 		$this->xml->startDocument('1.0', 'UTF-8', 'yes');
 		$this->xml->startElement('sst');
 		$this->xml->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
@@ -129,6 +149,8 @@ class SharedStrings{
 	 * Завершить файл общих строк.
 	 */
 	private function endSharedStrings(){
+		if ($this->empty) return;
+
 		$this->xml->endElement();
 		$this->xml->endDocument();
 

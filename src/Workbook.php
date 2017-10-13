@@ -324,6 +324,9 @@ class Workbook{
 			if ($sheetRelsFilename)	$zip->addFile($sheetRelsFilename, $worksheet->getSheetRels()->getLocalname());
 		}
 
+		if (!$this->sharedStrings->isCommitted()) $this->sharedStrings->commit();
+		if (!$this->sharedStrings->isEmpty()) $zip->addFile($this->sharedStrings->getFilename(), 'xl/sharedStrings.xml');
+
 		$zip->addFromString('_rels/.rels', (new RelationshipsXml())->toXml([
 			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
 			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
@@ -378,8 +381,16 @@ class Workbook{
 	private function genRelationships() : array{
 		$count = 1;
 
-		$relationships = [
-			['Id' => 'rId' . $count++, 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles', 'Target' => 'styles.xml']
+		$relationships = [[
+			'Id' => 'rId' . $count++,
+			'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
+			'Target' => 'styles.xml'
+		]];
+
+		if (!$this->sharedStrings->isEmpty()) $relationships[] = [
+			'Id' => 'rId' . $count++,
+			'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
+			'Target' => 'sharedStrings.xml'
 		];
 
 		foreach ($this->worksheets as $worksheet) {
