@@ -110,6 +110,7 @@ class Comments{
 		$this->vmlXml->writeElement('v:textbox');
 
 		$this->vmlXml->startElement('x:ClientData');
+		$this->vmlXml->writeAttribute('ObjectType', 'Note');
 
 		$this->vmlXml->writeElement('x:MoveWithCells');
 		$this->vmlXml->writeElement('x:SizeWithCells');
