@@ -399,8 +399,6 @@ class Worksheet{
 		$this->checkCommitted();
 		if ($this->lastUncommittedRow + count($this->rows) > 1048576) throw new OutOfBoundsException('Excel supports rows from 1 to 1048576');
 
-		if (!$this->xml) $this->startWorksheet();
-
 		$row = new Row($this, count($this->rows) + $this->lastUncommittedRow);
 		if (!is_null($values)) $row->setCells($values);
 
@@ -485,7 +483,7 @@ class Worksheet{
 	 * 	@throws ObjectCommittedException
 	 */
 	function commit(){
-		if (!$this->xml && !$this->rows) throw new EmptyObjectException('Worksheet is empty');
+		if (!$this->rows && $this->lastUncommittedRow == 1) throw new EmptyObjectException('Worksheet is empty');
 
 		$this->commitRows();
 		unset($this->rows);
@@ -504,6 +502,8 @@ class Worksheet{
 	function commitRows(int $lastRow = null){
 		$this->checkCommitted();
 		if (!$this->rows) return;
+
+		if (!$this->xml) $this->startWorksheet();
 
 		$rowXml = new RowXml();
 		$found = false;
