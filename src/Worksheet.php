@@ -334,7 +334,7 @@ class Worksheet{
 	/**
 	 * @return array|null - временные файлы комментариев таблицы
 	 */
-	function getCommentsFilenames() : array{
+	function getCommentsFilenames(){
 		return !$this->comments->isEmpty() ? [
 			'comments' => $this->comments->getCommentsFilename(),
 			'vml' => $this->comments->getVmlFilename()
