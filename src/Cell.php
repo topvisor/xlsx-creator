@@ -178,7 +178,7 @@ class Cell extends Style{
 					break;
 
 				case Value::TYPE_HYPERLINK:
-					$valueModel = $this->getValue();
+					$valueModel = $value->getValue();
 					if (!isset($valueModel['ssId']))
 						$value = new HyperlinkValue($valueModel['hyperlink'], $workbook->addSharedString($valueModel['text']));
 			}
