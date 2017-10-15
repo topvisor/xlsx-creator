@@ -261,7 +261,7 @@ class Workbook{
 		$id = count($this->worksheets) + 1;
 		$this->worksheetsIds[$name] = $id;
 
-		$worksheet = new Worksheet($this, $id, $name);
+		$worksheet = new Worksheet($this, $this->stylesXml, $id, $name);
 		$this->worksheets[] = $worksheet;
 
 		return $worksheet;
@@ -321,11 +321,11 @@ class Workbook{
 			if (!$worksheet->isCommitted()) $worksheet->commit();
 			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
 
-			$sheetRelsFilename = $worksheet->getSheetRels()->getFilename();
-			if ($sheetRelsFilename)	$zip->addFile($sheetRelsFilename, $worksheet->getSheetRels()->getLocalname());
+			if ($sheetRelsFilename = $worksheet->getSheetRelsFilename())
+				$zip->addFile($sheetRelsFilename, $worksheet->getSheetRels()->getLocalname());
 
-			$comments = $worksheet->getComments();
-			if (!$comments->isEmpty()) {
+
+			if ($commentsFilenames = $worksheet->getCommentsFilenames()) {
 
 			}
 		}
@@ -359,13 +359,6 @@ class Workbook{
 	 */
 	function unlinkTempFiles(){
 		foreach ($this->tempFilenames as $tempFilename) if (file_exists($tempFilename)) unlink($tempFilename);
-	}
-
-	/**
-	 * @return StylesXml - менеджер стилей
-	 */
-	function getStyles() : StylesXml{
-		return $this->stylesXml;
 	}
 
 	/**

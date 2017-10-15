@@ -26,6 +26,7 @@ use Topvisor\XlsxCreator\Xml\Sheet\SheetPropertiesXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetViewsXml;
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Xml\Simple\StringXml;
+use Topvisor\XlsxCreator\Xml\Styles\StylesXml;
 use XMLWriter;
 
 /**
@@ -37,6 +38,7 @@ class Worksheet{
 	const DY_DESCENT = 55;
 
 	private $workbook;
+	private $styles;
 	private $id;
 	private $name;
 	private $tabColor;
@@ -64,10 +66,11 @@ class Worksheet{
 	 * Worksheet constructor.
 	 *
 	 * @param Workbook $workbook - workbook, к которому принадлежит таблица
+	 * @param StylesXml $styles - стили xlsx
 	 * @param int $id - ID таблицы в $workbook
 	 * @param string $name - имя таблицы
 	 */
-	function __construct(Workbook $workbook, int $id, string $name){
+	function __construct(Workbook $workbook, StylesXml $styles, int $id, string $name){
 		$this->workbook = $workbook;
 		$this->id = $id;
 		$this->name = $name;
@@ -85,12 +88,13 @@ class Worksheet{
 		$this->rows = [];
 		$this->merges = [];
 		$this->lastUncommittedRow = 1;
-		$this->comments = new Comments();
+		$this->comments = new Comments($this);
 		$this->sheetRels = new SheetRels($this);
 	}
 
 	function __destruct(){
 		unset($this->workbook);
+		unset($this->styles);
 		unset($this->view);
 		unset($this->pageSetup);
 		unset($this->rows);
@@ -320,19 +324,20 @@ class Worksheet{
 	}
 
 	/**
-	 * @return SheetRels - гиперссылки внутри таблицы
+	 * @return null|string - временый файл связей таблицы
 	 */
-	function getSheetRels() : SheetRels{
-		return $this->sheetRels;
+	function getSheetRelsFilename(){
+		return $this->sheetRels->getFilename();
 	}
 
-//	function add
-
 	/**
-	 * @return Comments - комментарии к ячейкам
+	 * @return array|null - временные файлы комментариев таблицы
 	 */
-	function getComments() : Comments{
-		return $this->comments;
+	function getCommentsFilenames() : array{
+		return !$this->comments->isEmpty() ? [
+			'comments' => $this->comments->getCommentsFilename(),
+			'vml' => $this->comments->getVmlFilename()
+		] : null;
 	}
 
 	/**
@@ -492,23 +497,20 @@ class Worksheet{
 	/**
 	 * Зафиксировать строки таблицы.
 	 *
-	 * @param Row|null $lastRow - последняя фиксируемая строка
+	 * @param int|null $lastRow - последняя фиксируемая строка
 	 * @throws ObjectCommittedException
 	 */
-	function commitRows(Row $lastRow = null){
+	function commitRows(int $lastRow = null){
 		$this->checkCommitted();
 		if (!$this->rows) return;
 
-		$lastRow = $lastRow ?? $this->rows[count($this->rows) - 1];
-		$lastRowNumber = $lastRow->getNumber();
 		$rowXml = new RowXml();
-
 		$found = false;
 		while (count($this->rows) && !$found) {
 			$row = array_shift($this->rows);
-			$found = (bool) ($row->getNumber() == $lastRowNumber);
+			$found = (bool) ($row->getNumber() == $lastRow);
 
-			$rowXml->render($this->xml, $row->getModel());
+			$rowXml->render($this->xml, $row->prepareToCommit($this->styles, $this->sheetRels, $this->comments));
 			$this->lastUncommittedRow++;
 		}
 	}
@@ -558,7 +560,7 @@ class Worksheet{
 		]);
 
 		(new ListXml('cols', new ColumnXml()))->render($this->xml, array_map(function($column){
-			return $column->getModel();
+			return $column->prepareToCommit($this->styles);
 		}, $this->columns));
 
 		$this->xml->startElement('sheetData');

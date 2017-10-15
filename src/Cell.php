@@ -3,11 +3,14 @@
 namespace Topvisor\XlsxCreator;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
+use Topvisor\XlsxCreator\Helpers\Comments;
+use Topvisor\XlsxCreator\Helpers\SheetRels;
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\HyperlinkValue;
 use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\Value;
+use Topvisor\XlsxCreator\Xml\Styles\StylesXml;
 
 /**
  * Class Cell. Содержит методы для работы c ячейкой.
@@ -159,9 +162,12 @@ class Cell extends Style{
 	}
 
 	/**
+	 * @param StylesXml $styles - стили xlsx
+	 * @param SheetRels $sheetRels - связи таблицы
+	 * @param Comments $comments - комментарии таблицы
 	 * @return array - модель ячейки
 	 */
-	function getModel() : array{
+	function prepareToCommit(StylesXml $styles, SheetRels $sheetRels, Comments $comments) : array{
 		$workbook = $this->row->getWorksheet()->getWorkbook();
 		$value = $this->value;
 
@@ -184,20 +190,17 @@ class Cell extends Style{
 			'address' => $this->getAddress(),
 			'value' => $value->getValue(),
 			'type' => $value->getType(),
-			'styleId' => $workbook->getStyles()->addStyle($this, $this->getType())
+			'styleId' => $styles->addStyle($this, $this->getType())
 		];
 
 		if ($this->master) $model['master'] = $this->master->getModel();
 
-		if ($this->value instanceof HyperlinkValue) $this->row->getWorksheet()->getSheetRels()->addHyperlink(
+		if ($this->value instanceof HyperlinkValue) $sheetRels->addHyperlink(
 			$model['value']['hyperlink'],
 			$model['address']
 		);
 
-		if ($this->comment) $this->row->getWorksheet()->getComments()->addComment([
-			'type' => $this->comment->getType(),
-			'value' => $this->comment->getValue()
-		], $model['address'], $this->commentWidth, $this->commentHeight);
+		if ($this->comment) $comments->addComment($this);
 
 		return $model;
 	}

@@ -3,6 +3,8 @@
 namespace Topvisor\XlsxCreator;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
+use Topvisor\XlsxCreator\Helpers\Comments;
+use Topvisor\XlsxCreator\Helpers\SheetRels;
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
@@ -10,6 +12,7 @@ use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
 use Topvisor\XlsxCreator\Structures\Styles\Font;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\Value;
+use Topvisor\XlsxCreator\Xml\Styles\StylesXml;
 
 /**
  * Class Row. Содержит методы для работы со строкой.
@@ -169,6 +172,10 @@ class Row extends Style{
 		return $this;
 	}
 
+	/**
+	 * @param int $col - номер колонки
+	 * @return Cell - ячейка
+	 */
 	function getCell(int $col) : Cell{
 		Validator::validateInRange($col, 1, 16384, '$col');
 
@@ -223,15 +230,18 @@ class Row extends Style{
 	}
 
 	/**
+	 * @param StylesXml $styles - стили xlsx
+	 * @param SheetRels $sheetRels - связи таблицы
+	 * @param Comments $comments - комментарии таблицы
 	 * @return array|null - модель строки
 	 */
-	function getModel(){
+	function prepareToCommit(StylesXml $styles, SheetRels $sheetRels, Comments $comments){
 		$cellsModels = [];
 		$min = 0;
 		$max = 0;
 
 		foreach ($this->cells as $cell) {
-			$cellsModels[] = $cell->getModel();
+			$cellsModels[] = $cell->prepareToCommit($styles, $sheetRels, $comments);
 
 			$cellCol = $cell->getCol();
 			if (!$min || $min > $cellCol) $min = $cellCol;

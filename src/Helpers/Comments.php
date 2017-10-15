@@ -50,20 +50,20 @@ class Comments{
 	}
 
 	/**
-	 * @param array $comment - комментарий
-	 * @param string $address - адрес ячейки
-	 * @param int $width - ширина комментария
-	 * @param int $height - высота комментария
+	 * @param Cell $cell - ячейка
 	 */
-	function addComment(array $comment, string $address, int $width = 1, int $height = 1){
+	function addComment(Cell $cell){
 		if ($this->empty) $this->startComments();
 
 		$this->commentsXml->startElement('comment');
 
 		$this->commentsXml->writeAttribute('authorId', 0);
-		$this->commentsXml->writeAttribute('ref', $address);
+		$this->commentsXml->writeAttribute('ref', $cell->getAddress());
 
-		(new SharedStringXml('text'))->render($this->commentsXml, $comment);
+		(new SharedStringXml('text'))->render($this->commentsXml, [
+			'type' => $cell->getComment()->getType(),
+			'value' => $cell->getComment()->ge
+		]);
 
 		$this->commentsXml->endElement();
 
