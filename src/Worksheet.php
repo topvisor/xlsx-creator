@@ -485,7 +485,7 @@ class Worksheet{
 	 * 	@throws ObjectCommittedException
 	 */
 	function commit(){
-		if (!$this->xml) throw new EmptyObjectException('Worksheet is empty');
+		if (!$this->xml && !$this->rows) throw new EmptyObjectException('Worksheet is empty');
 
 		$this->commitRows();
 		unset($this->rows);
