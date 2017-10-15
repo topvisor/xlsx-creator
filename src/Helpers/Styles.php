@@ -1,6 +1,6 @@
 <?php
 
-namespace Topvisor\XlsxCreator\Xml\Styles;
+namespace Topvisor\XlsxCreator\Helpers;
 
 use Serializable;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
@@ -15,10 +15,11 @@ use Topvisor\XlsxCreator\Xml\ListXml;
 use Topvisor\XlsxCreator\Xml\Styles\Border\BorderXml;
 use Topvisor\XlsxCreator\Xml\Styles\Fill\FillXml;
 use Topvisor\XlsxCreator\Xml\Styles\Font\FontXml;
+use Topvisor\XlsxCreator\Xml\Styles\NumFmtXml;
 use Topvisor\XlsxCreator\Xml\Styles\Style\StyleXml;
 use XMLWriter;
 
-class StylesXml extends BaseXml{
+class Styles extends BaseXml{
 	const DEFAULT_NUM_FMT = [
 		'General' => 0,
 		'0' => 1,

@@ -4,7 +4,7 @@ namespace Topvisor\XlsxCreator;
 
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
-use Topvisor\XlsxCreator\Xml\Styles\StylesXml;
+use Topvisor\XlsxCreator\Helpers\Styles;
 
 /**
  * Class Column. Содержит методы для работы с колонкой.
@@ -97,10 +97,10 @@ class Column extends Style{
 	}
 
 	/**
-	 * @param StylesXml $styles - стили xlsx
+	 * @param Styles $styles - стили xlsx
 	 * @return array|null - модель
 	 */
-	function prepareToCommit(StylesXml $styles){
+	function prepareToCommit(Styles $styles){
 		$styleId = $styles->addStyle($this);
 		$collapsed = (bool) ($this->outlineLevel && $this->outlineLevel > $this->worksheet->getOutlineLevelCol());
 

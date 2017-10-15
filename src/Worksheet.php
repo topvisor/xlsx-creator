@@ -26,7 +26,7 @@ use Topvisor\XlsxCreator\Xml\Sheet\SheetPropertiesXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetViewsXml;
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Xml\Simple\StringXml;
-use Topvisor\XlsxCreator\Xml\Styles\StylesXml;
+use Topvisor\XlsxCreator\Helpers\Styles;
 use XMLWriter;
 
 /**
@@ -66,11 +66,11 @@ class Worksheet{
 	 * Worksheet constructor.
 	 *
 	 * @param Workbook $workbook - workbook, к которому принадлежит таблица
-	 * @param StylesXml $styles - стили xlsx
+	 * @param Styles $styles - стили xlsx
 	 * @param int $id - ID таблицы в $workbook
 	 * @param string $name - имя таблицы
 	 */
-	function __construct(Workbook $workbook, StylesXml $styles, int $id, string $name){
+	function __construct(Workbook $workbook, Styles $styles, int $id, string $name){
 		$this->workbook = $workbook;
 		$this->id = $id;
 		$this->name = $name;

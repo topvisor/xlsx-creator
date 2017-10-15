@@ -12,7 +12,7 @@ use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
 use Topvisor\XlsxCreator\Structures\Styles\Font;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\Value;
-use Topvisor\XlsxCreator\Xml\Styles\StylesXml;
+use Topvisor\XlsxCreator\Helpers\Styles;
 
 /**
  * Class Row. Содержит методы для работы со строкой.
@@ -230,12 +230,12 @@ class Row extends Style{
 	}
 
 	/**
-	 * @param StylesXml $styles - стили xlsx
+	 * @param Styles $styles - стили xlsx
 	 * @param SheetRels $sheetRels - связи таблицы
 	 * @param Comments $comments - комментарии таблицы
 	 * @return array|null - модель строки
 	 */
-	function prepareToCommit(StylesXml $styles, SheetRels $sheetRels, Comments $comments){
+	function prepareToCommit(Styles $styles, SheetRels $sheetRels, Comments $comments){
 		$cellsModels = [];
 		$min = 0;
 		$max = 0;

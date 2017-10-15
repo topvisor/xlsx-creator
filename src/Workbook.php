@@ -20,8 +20,7 @@ use Topvisor\XlsxCreator\Xml\Core\App\AppXml;
 use Topvisor\XlsxCreator\Xml\Core\ContentTypesXml;
 use Topvisor\XlsxCreator\Xml\Core\CoreXml;
 use Topvisor\XlsxCreator\Xml\Core\Relationships\RelationshipsXml;
-use Topvisor\XlsxCreator\Xml\Sheet\SheetRelsXml;
-use Topvisor\XlsxCreator\Xml\Styles\StylesXml;
+use Topvisor\XlsxCreator\Helpers\Styles;
 use ZipArchive;
 
 /**
@@ -65,7 +64,7 @@ class Workbook{
 		$this->manager = null;
 
 		$this->sharedStrings = new SharedStrings($this);
-		$this->stylesXml = new StylesXml();
+		$this->stylesXml = new Styles();
 		$this->worksheets = [];
 		$this->worksheetsIds = [];
 		$this->committed = false;

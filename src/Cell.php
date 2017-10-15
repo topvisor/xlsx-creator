@@ -10,7 +10,7 @@ use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\HyperlinkValue;
 use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\Value;
-use Topvisor\XlsxCreator\Xml\Styles\StylesXml;
+use Topvisor\XlsxCreator\Helpers\Styles;
 
 /**
  * Class Cell. Содержит методы для работы c ячейкой.
@@ -162,12 +162,12 @@ class Cell extends Style{
 	}
 
 	/**
-	 * @param StylesXml $styles - стили xlsx
+	 * @param Styles $styles - стили xlsx
 	 * @param SheetRels $sheetRels - связи таблицы
 	 * @param Comments $comments - комментарии таблицы
 	 * @return array - модель ячейки
 	 */
-	function prepareToCommit(StylesXml $styles, SheetRels $sheetRels, Comments $comments) : array{
+	function prepareToCommit(Styles $styles, SheetRels $sheetRels, Comments $comments) : array{
 		$workbook = $this->row->getWorksheet()->getWorkbook();
 		$value = $this->value;
 
