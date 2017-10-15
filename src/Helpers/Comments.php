@@ -142,7 +142,7 @@ class Comments{
 		$this->commentsXml->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
 
 		$this->commentsXml->startElement('authors');
-		$this->commentsXml->writeRaw('<author></author>');
+		$this->commentsXml->writeElement('author');
 		$this->commentsXml->endElement();
 
 		$this->commentsXml->startElement('commentList');
