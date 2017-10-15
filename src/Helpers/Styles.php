@@ -10,6 +10,7 @@ use Topvisor\XlsxCreator\Structures\Styles\Font;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\Value;
+use Topvisor\XlsxCreator\Workbook;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use Topvisor\XlsxCreator\Xml\ListXml;
 use Topvisor\XlsxCreator\Xml\Styles\Border\BorderXml;
@@ -19,7 +20,7 @@ use Topvisor\XlsxCreator\Xml\Styles\NumFmtXml;
 use Topvisor\XlsxCreator\Xml\Styles\Style\StyleXml;
 use XMLWriter;
 
-class Styles extends BaseXml{
+class Styles{
 	const DEFAULT_NUM_FMT = [
 		'General' => 0,
 		'0' => 1,
@@ -72,7 +73,10 @@ class Styles extends BaseXml{
 		$this->addIndex(new Borders(), $this->borderIndex);
 	}
 
-	function render(XMLWriter $xml, array $model = null){
+	function writeToFile(string $filename){
+		$xml = new XMLWriter();
+		$xml->openURI($filename);
+
 		$xml->startDocument('1.0', 'UTF-8', 'yes');
 		$xml->startElement('styleSheet');
 
@@ -96,6 +100,9 @@ class Styles extends BaseXml{
 
 		$xml->endElement();
 		$xml->endDocument();
+
+		$xml->flush();
+		unset($xml);
 	}
 
 	function addStyle(Style $style, int $cellType = null) : int{

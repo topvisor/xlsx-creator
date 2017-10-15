@@ -40,7 +40,7 @@ class Workbook{
 	private $manager;
 
 	private $sharedStrings;
-	private $stylesXml;
+	private $styles;
 	private $worksheets;
 	private $worksheetsIds;
 	private $committed;
@@ -64,7 +64,7 @@ class Workbook{
 		$this->manager = null;
 
 		$this->sharedStrings = new SharedStrings($this);
-		$this->stylesXml = new Styles();
+		$this->styles = new Styles();
 		$this->worksheets = [];
 		$this->worksheetsIds = [];
 		$this->committed = false;
@@ -74,7 +74,7 @@ class Workbook{
 	function __destruct(){
 		unset($this->created);
 		unset($this->modified);
-		unset($this->stylesXml);
+		unset($this->styles);
 		unset($this->worksheets);
 
 		$this->unlinkTempFiles();
@@ -260,7 +260,7 @@ class Workbook{
 		$id = count($this->worksheets) + 1;
 		$this->worksheetsIds[$name] = $id;
 
-		$worksheet = new Worksheet($this, $this->stylesXml, $id, $name);
+		$worksheet = new Worksheet($this, $this->styles, $id, $name);
 		$this->worksheets[] = $worksheet;
 
 		return $worksheet;
@@ -321,7 +321,7 @@ class Workbook{
 			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
 
 			if ($sheetRelsFilename = $worksheet->getSheetRelsFilename())
-				$zip->addFile($sheetRelsFilename, $worksheet->getSheetRels()->getLocalname());
+				$zip->addFile($sheetRelsFilename, 'xl/worksheets/sheet' . $worksheet->getId() . '.xml.rels');
 
 
 			if ($commentsFilenames = $worksheet->getCommentsFilenames()) {
@@ -331,6 +331,10 @@ class Workbook{
 
 		if (!$this->sharedStrings->isCommitted()) $this->sharedStrings->commit();
 		if (!$this->sharedStrings->isEmpty()) $zip->addFile($this->sharedStrings->getFilename(), 'xl/sharedStrings.xml');
+
+		$stylesFilename = $this->genTempFilename();
+		$this->styles->writeToFile($stylesFilename);
+		$zip->addFile($stylesFilename, 'xl/styles.xml');
 
 		$zip->addFromString('_rels/.rels', (new RelationshipsXml())->toXml([
 			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
@@ -344,7 +348,6 @@ class Workbook{
 			'manager' => $this->manager
 		]));
 		$zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
-		$zip->addFromString('xl/styles.xml', $this->stylesXml->toXml());
 		$zip->addFromString('xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
 		$zip->addFromString('xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
 

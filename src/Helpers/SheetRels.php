@@ -60,13 +60,6 @@ class SheetRels{
 	}
 
 	/**
-	 * @return string - путь к файлу связей внутри xlsx файла
-	 */
-	function getLocalname() : string{
-		return 'xl/worksheets/_rels/sheet' . $this->worksheet->getId() . '.xml.rels';
-	}
-
-	/**
 	 * @param string $target - гиперссылка
 	 * @param string $address - ячейка таблицы ('A1', 'B5')
 	 */
