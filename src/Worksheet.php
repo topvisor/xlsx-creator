@@ -71,6 +71,7 @@ class Worksheet{
 	 */
 	function __construct(Workbook $workbook, Styles $styles, int $id, string $name){
 		$this->workbook = $workbook;
+		$this->styles = $styles;
 		$this->id = $id;
 		$this->name = $name;
 
