@@ -141,7 +141,9 @@ class Comments{
 		$this->commentsXml->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
 		$this->commentsXml->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
 
-		$this->commentsXml->writeElement('authors', '<author></author>');
+		$this->commentsXml->startElement('authors');
+		$this->commentsXml->writeRaw('<author></author>');
+		$this->commentsXml->endElement();
 
 		$this->commentsXml->startElement('commentList');
 	}
