@@ -293,6 +293,7 @@ class Worksheet{
 	 * @return null|string - путь к временному файлу таблицы
 	 */
 	function getFilename(){
+		if ($this->xml) $this->xml->flush();
 		return $this->filename;
 	}
 
@@ -570,12 +571,23 @@ class Worksheet{
 	 *	Закончить файл таблицы.
 	 */
 	private function endWorksheet(){
+		if (!$this->xml) return;
+
 		$this->xml->endElement();
 
 //		(new AutoFilterXml())->render($this->xml, [$this->autoFilter]);
 		(new ListXml('mergeCells', new MergeXml(), [], false, true))->render($this->xml, $this->merges);
 
-		(new ListXml('hyperlinks', new HyperlinkXml()))->render($this->xml, $this->sheetRels->getHyperlinks());
+		if ($hyperlinksFilename = $this->sheetRels->getHyperlinksFilename()) {
+			$this->xml->startElement('hyperlinks');
+
+			$hyperlinksFile = fopen($hyperlinksFilename, 'r');
+			while (!feof($hyperlinksFile)) $this->xml->writeRaw(fread($hyperlinksFile, 8192));
+			fclose($hyperlinksFile);
+
+			$this->xml->endElement();
+		}
+
 		if (!$this->comments->isEmpty())
 			(new StringXml('legacyDrawing', [], 'r:id'))
 				->render($this->xml, [$this->sheetRels->addComments()]);

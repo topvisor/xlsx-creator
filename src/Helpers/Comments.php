@@ -42,10 +42,12 @@ class Comments{
 	}
 
 	function getCommentsFilename(){
+		if ($this->commentsXml) $this->commentsXml->flush();
 		return $this->commentsFilename;
 	}
 
 	function getVmlFilename(){
+		if ($this->vmlXml) $this->vmlXml->flush();
 		return $this->vmlFilename;
 	}
 
@@ -62,7 +64,7 @@ class Comments{
 
 		(new SharedStringXml('text'))->render($this->commentsXml, [
 			'type' => $cell->getComment()->getType(),
-			'value' => $cell->getComment()->ge
+			'value' => $cell->getComment()->getValue()
 		]);
 
 		$this->commentsXml->endElement();

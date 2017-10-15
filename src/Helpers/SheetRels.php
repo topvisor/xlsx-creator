@@ -4,6 +4,7 @@ namespace Topvisor\XlsxCreator\Helpers;
 
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Worksheet;
+use Topvisor\XlsxCreator\Xml\Sheet\HyperlinkXml;
 use XMLWriter;
 
 /**
@@ -14,13 +15,14 @@ use XMLWriter;
 class SheetRels{
 	private $worksheet;
 
-	private $indexes;
-	private $hyperlinks;
 	private $committed;
 	private $nextId;
 
 	private $filename;
 	private $xml;
+
+	private $hyperlinksFilename;
+	private $hyperlinksXml;
 
 	/**
 	 * SheetRels constructor.
@@ -29,30 +31,32 @@ class SheetRels{
 	function __construct(Worksheet $worksheet){
 		$this->worksheet = $worksheet;
 
-		$this->indexes = [];
-		$this->hyperlinks = [];
 		$this->committed = false;
 		$this->nextId = 1;
 	}
 
 	function __destruct(){
 		unset($this->xml);
+		unset($this->hyperlinksXml);
 
 		if ($this->filename && file_exists($this->filename)) unlink($this->filename);
-	}
-
-	/**
-	 * @return array - список гиперссылок
-	 */
-	function getHyperlinks() : array{
-		return $this->hyperlinks;
+		if ($this->hyperlinksFilename && file_exists($this->hyperlinksFilename)) unlink($this->hyperlinksFilename);
 	}
 
 	/**
 	 * @return null|string - путь к временному файлу связей
 	 */
 	function getFilename(){
+		if ($this->xml) $this->xml->flush();
 		return $this->filename;
+	}
+
+	/**
+	 * @return null|string - путь к временному файлу гиперссылок
+	 */
+	function getHyperlinksFilename(){
+		if ($this->hyperlinksXml) $this->hyperlinksXml->flush();
+		return $this->hyperlinksFilename;
 	}
 
 	/**
@@ -69,12 +73,7 @@ class SheetRels{
 	function addHyperlink(string $target, string $address){
 		$this->checkCommited();
 
-		$index = ['target' => $target, 'address' => $address];
-		if (in_array($index, $this->indexes)) return;
-
-		$this->indexes[] = $index;
-
-		$this->hyperlinks[] = [
+		$hyperlink = [
 			'address' => $address,
 			'rId' => $this->writeRelationship(
 				'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink',
@@ -82,6 +81,9 @@ class SheetRels{
 				'External'
 			)
 		];
+
+		if (!$this->hyperlinksXml) $this->startHyperlinks();
+		(new HyperlinkXml())->render($this->hyperlinksXml, $hyperlink);
 	}
 
 	/**
@@ -111,6 +113,7 @@ class SheetRels{
 		$this->committed = true;
 
 		$this->endSheetRels();
+		$this->endHyperlinks();
 	}
 
 	/**
@@ -138,6 +141,20 @@ class SheetRels{
 
 		$this->xml->flush();
 		unset($this->xml);
+	}
+
+	private function startHyperlinks(){
+		$this->hyperlinksFilename = $this->worksheet->getWorkbook()->genTempFilename();
+
+		$this->hyperlinksXml = new XMLWriter();
+		$this->hyperlinksXml->openURI($this->hyperlinksFilename);
+	}
+
+	private function endHyperlinks(){
+		if (!$this->hyperlinksXml) return;
+
+		$this->hyperlinksXml->flush();
+		unset($this->hyperlinksXml);
 	}
 
 	/**
