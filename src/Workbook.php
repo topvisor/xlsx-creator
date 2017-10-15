@@ -321,7 +321,7 @@ class Workbook{
 			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
 
 			if ($sheetRelsFilename = $worksheet->getSheetRelsFilename())
-				$zip->addFile($sheetRelsFilename, 'xl/worksheets/sheet' . $worksheet->getId() . '.xml.rels');
+				$zip->addFile($sheetRelsFilename, 'xl/worksheets/_rels/sheet' . $worksheet->getId() . '.xml.rels');
 
 			if ($commentsFilenames = $worksheet->getCommentsFilenames()) {
 				$zip->addFile($commentsFilenames['comments'], 'xl/comments' . $worksheet->getId() . '.xml');
