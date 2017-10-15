@@ -323,9 +323,9 @@ class Workbook{
 			if ($sheetRelsFilename = $worksheet->getSheetRelsFilename())
 				$zip->addFile($sheetRelsFilename, 'xl/worksheets/sheet' . $worksheet->getId() . '.xml.rels');
 
-
 			if ($commentsFilenames = $worksheet->getCommentsFilenames()) {
-
+				$zip->addFile($commentsFilenames['comments'], 'xl/comments' . $worksheet->getId() . '.xml');
+				$zip->addFile($commentsFilenames['vml'], 'xl/drawings/vmlDrawing' . $worksheet->getId() . '.vml');
 			}
 		}
 

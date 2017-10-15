@@ -57,21 +57,38 @@ class Comments{
 	function addComment(Cell $cell){
 		if ($this->empty) $this->startComments();
 
+		$this->addCommentToComments($cell->getAddress(), $cell->getComment());
+		$this->addCommentToVml($cell->getCol(), $cell->getRow()->getNumber(), $cell->getCommentWidth(), $cell->getCommentHeight());
+	}
+
+	function isEmpty() : bool{
+		return $this->empty;
+	}
+
+	function commit(){
+		$this->checkCommitted();
+		$this->committed = true;
+
+		$this->endComments();
+	}
+
+	private function addCommentToComments(string $address, Value $comment){
+		if (!$comment) return;
+
 		$this->commentsXml->startElement('comment');
 
 		$this->commentsXml->writeAttribute('authorId', 0);
-		$this->commentsXml->writeAttribute('ref', $cell->getAddress());
+		$this->commentsXml->writeAttribute('ref', $address);
 
 		(new SharedStringXml('text'))->render($this->commentsXml, [
-			'type' => $cell->getComment()->getType(),
-			'value' => $cell->getComment()->getValue()
+			'type' => $comment->getType(),
+			'value' => $comment->getValue()
 		]);
 
 		$this->commentsXml->endElement();
+	}
 
-
-		###
-
+	private function addCommentToVml(int $col, int $row, int $width, int $height){
 		$this->vmlXml->startElement('v:shape');
 
 		$this->vmlXml->writeAttribute('id', '_x0000_s000' . $this->nextShapeId++);
@@ -96,22 +113,13 @@ class Comments{
 
 		$this->vmlXml->writeElement('x:MoveWithCells');
 		$this->vmlXml->writeElement('x:SizeWithCells');
-		$this->vmlXml->writeElement('x:Anchor', implode(', ', [])); ###
+		$this->vmlXml->writeElement('x:Anchor', implode(', ', [$col, 15, $row, 10, 3 + $col + $width, 15, 1 + $row + $height, 4]));
+		$this->vmlXml->writeElement('x:AutoFill', 'False');
+		$this->vmlXml->writeElement('x:Row', $row - 1);
+		$this->vmlXml->writeElement('x:Column', $col - 1);
 
 		$this->vmlXml->endElement();
-
 		$this->vmlXml->endElement();
-	}
-
-	function isEmpty() : bool{
-		return $this->empty;
-	}
-
-	function commit(){
-		$this->checkCommitted();
-		$this->committed = true;
-
-		$this->endComments();
 	}
 
 	private function startComments(){
@@ -169,10 +177,6 @@ class Comments{
 		$this->vmlXml->writeAttribute('coordsize', '21600,21600');
 		$this->vmlXml->writeAttribute('path', 'm,l,21600r21600,l21600,xe');
 		$this->vmlXml->endElement();
-
-
-
-
 	}
 
 	private function endComments(){
