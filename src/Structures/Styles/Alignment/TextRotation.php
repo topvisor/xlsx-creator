@@ -2,6 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Styles\Alignment;
 
+use Serializable;
 use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
@@ -9,7 +10,7 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package Topvisor\XlsxCreator\Structures\Styles
  */
-class TextRotation{
+class TextRotation implements Serializable{
 	private $model;
 
 	/**
@@ -52,5 +53,14 @@ class TextRotation{
 	 */
 	function getModel(){
 		return $this->model;
+	}
+
+	public function serialize(){
+		return $this->model == 'vertical' ? '181' : (string) $this->model;
+	}
+
+	public function unserialize($serialized){
+		Validator::validateInRange((int) $serialized, 0, 181, '$serialized');
+		$this->model = $serialized == '181' ? 'vertical' : (int) $serialized;
 	}
 }

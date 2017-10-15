@@ -2,6 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Styles;
 
+use Serializable;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Helpers\Validator;
 
@@ -10,9 +11,9 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package Topvisor\XlsxCreator\Structures\Styles
  */
-class Font{
+class Font implements Serializable{
 	const VALID_UNDERLINE = ['single', 'double', 'singleAccounting', 'doubleAccounting'];
-//	const VALID_SCHEME = ['minor', 'major', 'none'];
+	const VALID_SCHEME = ['minor', 'major', 'none'];
 
 	private $name;
 	private $size;
@@ -21,6 +22,7 @@ class Font{
 	private $italic;
 	private $underline;
 //	private $scheme;
+//	private $family;
 	private $strike;
 
 	public function __destruct(){
@@ -128,20 +130,38 @@ class Font{
 	}
 
 //	/**
-//	 * @return string|null - надстрочный/подстрочный
+//	 * @return string|null - схема
 //	 */
 //	function getScheme(){
 //		return $this->scheme ?? null;
 //	}
 //
 //	/**
-//	 * @param string|null $scheme - надстрочный/подстрочный
+//	 * @param string|null $scheme - схема
 //	 * @return Font - $this
 //	 */
 //	function setScheme(string $scheme = null) : self{
 //		if (!is_null($scheme)) Validator::validate($scheme, '$scheme', self::VALID_SCHEME);
 //
 //		$this->scheme = $scheme;
+//		return $this;
+//	}
+//
+//	/**
+//	 * @return int|null - семейство
+//	 */
+//	function getFamily(){
+//		return $this->family ?? null;
+//	}
+//
+//	/**
+//	 * @param int|null $family - семейство
+//	 * @return Font - $this
+//	 */
+//	function setFamily(int $family = null) : self{
+//		if (!is_null($family)) Validator::validatePositive($family, '$family');
+//
+//		$this->family = $family;
 //		return $this;
 //	}
 
@@ -171,9 +191,39 @@ class Font{
 			'u' => $this->underline,
 			'color' => $this->color ? $this->color->getModel() : null,
 //			'scheme' => $this->scheme,
+//			'family' => $this->family,
 			'strike' => $this->strike,
 			'sz' => $this->size,
 			'name' => $this->name
  		];
+	}
+
+	public function serialize(){
+		return ($this->bold ? '1' : '') . ';' .
+		($this->italic ? '1' : '') . ';' .
+		($this->underline ? array_search($this->underline, self::VALID_UNDERLINE) : '') . ';' .
+		($this->color ? $this->color->serialize() : '') . ';' .
+		($this->strike ? '1' : '') . ';' .
+		($this->size ? $this->size : '') . ';' .
+		($this->name ? $this->name : '');
+	}
+
+	public function unserialize($serialized){
+		$params = explode(';', $serialized);
+
+		if ($params[3]) {
+			$this->color = Color::fromHex();
+			$this->color->unserialize($params[3]);
+		} else {
+			$this->color = null;
+		}
+
+		$this
+			->setBold((bool) $params[0])
+			->setItalic((bool) $params[1])
+			->setUnderline($params[2] ? self::VALID_UNDERLINE[(int) $params[2]] : null)
+			->setStrike((bool) $params[4])
+			->setSize($params[5] ? (int) $params[5] : null)
+			->setName($params[6] ? $params[6] : null);
 	}
 }

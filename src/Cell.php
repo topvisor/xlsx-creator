@@ -3,8 +3,8 @@
 namespace Topvisor\XlsxCreator;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
-use Topvisor\XlsxCreator\Helpers\StyleSetters;
 use Topvisor\XlsxCreator\Helpers\Validator;
+use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\HyperlinkValue;
 use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\Value;
@@ -14,11 +14,7 @@ use Topvisor\XlsxCreator\Structures\Values\Value;
  *
  * @package  Topvisor\XlsxCreator
  */
-class Cell{
-	use StyleSetters {
-		StyleSetters::__destruct as styleManagerDestruct;
-	}
-
+class Cell extends Style{
 	private $row;
 	private $col;
 	private $style;
@@ -48,7 +44,7 @@ class Cell{
 	}
 
 	function __destruct(){
-		$this->styleManagerDestruct();
+		parent::__destruct();
 
 		unset($this->row);
 		unset($this->value);
@@ -184,14 +180,11 @@ class Cell{
 
 		if ($value->getType() === Value::TYPE_RICH_TEXT) $value = $workbook->addSharedString($value);
 
-		$style = $this->getStyleModel();
-
 		$model = [
 			'address' => $this->getAddress(),
 			'value' => $value->getValue(),
 			'type' => $value->getType(),
-			'style' => $style,
-			'styleId' => $workbook->getStyles()->addStyle($style, $this->getType()),
+			'styleId' => $workbook->getStyles()->addStyle($this, $this->getType())
 		];
 
 		if ($this->master) $model['master'] = $this->master->getModel();

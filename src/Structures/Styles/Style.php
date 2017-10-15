@@ -1,23 +1,22 @@
 <?php
 
-namespace Topvisor\XlsxCreator\Helpers;
+namespace Topvisor\XlsxCreator\Structures\Styles;
 
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
 use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
-use Topvisor\XlsxCreator\Structures\Styles\Font;
 
 /**
- * trait StyleManager. Управляет стилями.
+ * class Style. Управляет стилями.
  *
  * @package Topvisor\XlsxCreator\Structures\Styles
  */
-trait StyleSetters{
-	private $numFmt;
-	private $font;
-	private $fill;
-	private $borders;
-	private $alignment;
+class Style{
+	protected $numFmt;
+	protected $font;
+	protected $fill;
+	protected $borders;
+	protected $alignment;
 
 	function __destruct(){
 		unset($this->font);
@@ -35,7 +34,7 @@ trait StyleSetters{
 
 	/**
 	 * @param string|null $numFmt - формат чисел ячейки
-	 * @return StyleSetters - $this
+	 * @return Style - $this
 	 */
 	function setNumFmt(string $numFmt = null) : self{
 		$this->numFmt = $numFmt;
@@ -51,7 +50,7 @@ trait StyleSetters{
 
 	/**
 	 * @param Font|null $font - шрифт
-	 * @return StyleSetters - $this
+	 * @return Style - $this
 	 */
 	function setFont(Font $font = null) : self{
 		$this->font = $font;
@@ -67,7 +66,7 @@ trait StyleSetters{
 
 	/**
 	 * @param Color|null $color - заливка ячейки
-	 * @return StyleSetters - $this
+	 * @return Style - $this
 	 */
 	function setFill(Color $color = null) : self{
 		$this->fill = $color;
@@ -83,7 +82,7 @@ trait StyleSetters{
 
 	/**
 	 * @param Borders|null $borders - границы ячейки
-	 * @return StyleSetters - $this
+	 * @return Style - $this
 	 */
 	function setBorders(Borders $borders = null) : self{
 		$this->borders = $borders;
@@ -99,17 +98,21 @@ trait StyleSetters{
 
 	/**
 	 * @param Alignment|null $alignment - выравнивание текста
-	 * @return StyleSetters - $this
+	 * @return Style - $this
 	 */
 	function setAlignment(Alignment $alignment = null) : self{
 		$this->alignment = $alignment;
 		return $this;
 	}
 
+	function isDefaultStyle() : bool{
+		return $this->numFmt || $this->font || $this->fill || $this->borders || $this->alignment;
+	}
+
 	/**
 	 * @return array - модель
 	 */
-	private function getStyleModel() : array{
+	function getStyleModel() : array{
 		if (!$this->numFmt && !$this->font && !$this->fill && !$this->borders && !$this->alignment) return [];
 		
 		return [

@@ -2,18 +2,59 @@
 
 namespace Topvisor\XlsxCreator\Xml\Styles;
 
+use Serializable;
+use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
+use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
+use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
+use Topvisor\XlsxCreator\Structures\Styles\Font;
+use Topvisor\XlsxCreator\Structures\Color;
+use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\Value;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use Topvisor\XlsxCreator\Xml\ListXml;
 use Topvisor\XlsxCreator\Xml\Styles\Border\BorderXml;
 use Topvisor\XlsxCreator\Xml\Styles\Fill\FillXml;
 use Topvisor\XlsxCreator\Xml\Styles\Font\FontXml;
-use Topvisor\XlsxCreator\Xml\Styles\Index\StylesIndex;
-use Topvisor\XlsxCreator\Xml\Styles\Index\StylesNumFmtIndex;
 use Topvisor\XlsxCreator\Xml\Styles\Style\StyleXml;
 use XMLWriter;
 
 class StylesXml extends BaseXml{
+	const DEFAULT_NUM_FMT = [
+		'General' => 0,
+		'0' => 1,
+		'0.00' => 2,
+		'#,##0' => 3,
+		'#,##0.00' => 4,
+		'0%' => 9,
+		'0.00%' => 10,
+		'0.00E+00' => 11,
+		'# ?/?' => 12,
+		'# ??/??' => 13,
+		'mm-dd-yy' => 14,
+		'd-mmm-yy' => 15,
+		'd-mmm' => 16,
+		'mmm-yy' => 17,
+		'h:mm AM/PM' => 18,
+		'h:mm:ss AM/PM' => 19,
+		'h:mm' => 20,
+		'h:mm:ss' => 21,
+		'm/d/yy "h":mm' => 22,
+		'#,##0 ;(#,##0)' => 37,
+		'#,##0 ;[Red](#,##0)' => 38,
+		'#,##0.00 ;(#,##0.00)' => 39,
+		'#,##0.00 ;[Red](#,##0.00)' => 40,
+		'mm:ss' => 45,
+		'[h]:mm:ss' => 46,
+		'mmss.0' => 47,
+		'##0.0E+0' => 48,
+		'@' => 49
+	];
+
+	const NUM_FMT_START_INDEX = 164;
+	const FONT_START_INDEX = 1;
+	const FILL_START_INDEX = 2;
+	const STYLE_START_INDEX = 1;
+
 	private $fontIndex;
 	private $borderIndex;
 	private $styleIndex;
@@ -21,17 +62,13 @@ class StylesXml extends BaseXml{
 	private $numFmtIndex;
 
 	function __construct(){
-		$this->fontIndex = new StylesIndex(new FontXml());
-		$this->borderIndex = new StylesIndex(new BorderXml());
-		$this->styleIndex = new StylesIndex(new StyleXml());
-		$this->fillIndex = new StylesIndex(new FillXml());
-		$this->numFmtIndex = new StylesNumFmtIndex(new NumFmtXml());
+		$this->fontIndex = [];
+		$this->borderIndex = [];
+		$this->fillIndex = [];
+		$this->numFmtIndex = [];
+		$this->styleIndex = [];
 
-		$this->fontIndex->addIndex(['sz' => 11, 'color' => ['theme' => 1], 'name' => 'Calibri', 'family' => 2, 'scheme' => 'minor']);
-		$this->borderIndex->addIndex([]);
-		$this->styleIndex->addIndex(['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0, 'xfId' => 0]);
-		$this->fillIndex->addIndex(['type' => 'pattern', 'pattern' => 'none']);
-		$this->fillIndex->addIndex(['type' => 'pattern', 'pattern' => 'gray125']);
+		$this->addIndex(new Borders(), $this->borderIndex);
 	}
 
 	function render(XMLWriter $xml, array $model = null){
@@ -44,15 +81,15 @@ class StylesXml extends BaseXml{
 		$xml->writeAttribute('xmlns:x14ac', 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac');
 		$xml->writeAttribute('xmlns:x16r2', 'http://schemas.microsoft.com/office/spreadsheetml/2015/02/main');
 
-		if ($rawXmls = $this->numFmtIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'numFmts', $rawXmls);
-		if ($rawXmls = $this->fontIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'fonts', $rawXmls);
-		if ($rawXmls = $this->fillIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'fills', $rawXmls);
-		if ($rawXmls = $this->borderIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'borders', $rawXmls);
+		$this->renderNumFmts($xml);
+		$this->renderFonts($xml);
+		$this->renderFills($xml);
+		$this->renderBorders($xml);
 
 		(new ListXml('cellStyleXfs', new StyleXml(false), [], false, true))
 			->render($xml, [['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0]]);
 
-		if ($rawXmls = $this->styleIndex->getXmls() ?? false) $this->addIndexToXml($xml, 'cellXfs', $rawXmls);
+		$this->renderStyles($xml);
 
 		$this->writeStatic($xml);
 
@@ -60,33 +97,131 @@ class StylesXml extends BaseXml{
 		$xml->endDocument();
 	}
 
-	function addStyle(array $model, int $cellType = null) : int{
-		if (!($model['numFmt'] ?? false)) {
+	function addStyle(Style $style, int $cellType = null) : int{
+		if (!$style->getNumFmt()) {
 			switch ($cellType) {
 				case null:
-				case Value::TYPE_NUMBER: $model['numFmt'] = 'General'; break;
-				case Value::TYPE_DATE: $model['numFmt'] = 'mm-dd-yy'; break;
+				case Value::TYPE_NUMBER: $style->setNumFmt('General'); break;
+				case Value::TYPE_DATE: $style->setNumFmt('mm-dd-yy'); break;
 			}
 		}
 
-		if (!$model) return 0;
+		if (!$style->isDefaultStyle()) return 0;
 
-		$styleModel = [];
+		$styleKey =
+			($style->getNumFmt()
+				? $this->addIndex($style->getNumFmt(), $this->numFmtIndex, self::NUM_FMT_START_INDEX, self::DEFAULT_NUM_FMT)
+				: ''
+			) . ',' .
+			($style->getFont() ? $this->addIndex($style->getFont(), $this->fontIndex, self::FONT_START_INDEX) : '') . ',' .
+			($style->getFill() ? $this->addIndex($style->getFill(), $this->fillIndex, self::FILL_START_INDEX) : '') . ',' .
+			($style->getBorders() ? $this->addIndex($style->getBorders(), $this->borderIndex) : '') . ',' .
+			($style->getAlignment() ? $style->getAlignment()->serialize() : '');
 
-		if ($model['numFmt'] ?? false) $styleModel['numFmtId'] = $this->numFmtIndex->addIndex($model['numFmt']);
-		if ($model['font'] ?? false) $styleModel['fontId'] = $this->fontIndex->addIndex($model['font']);
-		if ($model['fill'] ?? false) $styleModel['fillId'] = $this->fillIndex->addIndex($model['fill']);
-		if ($model['border'] ?? false) $styleModel['borderId'] = $this->borderIndex->addIndex($model['border']);
-		if ($model['alignment'] ?? false) $styleModel['alignment'] = $model['alignment'];
-
-		return $this->styleIndex->addIndex($styleModel);
+		return $this->addIndex($styleKey, $this->styleIndex, self::STYLE_START_INDEX);
 	}
 
-	private function addIndexToXml(XMLWriter $xml, string $tag, array $rawXmls){
-		$xml->startElement($tag);
-		$xml->writeAttribute('count', count($rawXmls));
+	private function addIndex($key, array &$indexes, int $startIndex = 0, array $defaults = []) : int{
+		if ($key instanceof Serializable) $key = $key->serialize();
+		elseif (!is_string($key)) throw new InvalidValueException('$key must be string or Serializable');
 
-		foreach ($rawXmls as $rawXml) $xml->writeRaw($rawXml);
+		if (isset($defaults[$key])) return $defaults[$key];
+		if (isset($indexes[$key])) return $indexes[$key];
+
+		$index = count($indexes) + $startIndex;
+		$indexes[$key] = $index;
+
+		return $index;
+	}
+
+	private function renderNumFmts(XMLWriter $xml){
+		$xml->startElement('numFmts');
+		$xml->writeAttribute('count', count($this->numFmtIndex));
+
+		foreach (array_keys($this->numFmtIndex) as $key) (new NumFmtXml())->render($xml, [
+			'formatCode' => $key,
+			'id' => $this->numFmtIndex[$key]
+		]);
+
+		$xml->endElement();
+	}
+
+	private function renderFonts(XMLWriter $xml){
+		$xml->startElement('fonts');
+		$xml->writeAttribute('count', count($this->fontIndex) + self::FONT_START_INDEX);
+
+		$fontXml = new FontXml();
+		$fontXml->render($xml, ['sz' => 11, 'color' => ['theme' => 1], 'name' => 'Calibri', 'family' => 2, 'scheme' => 'minor']);
+
+		$font = new Font();
+		foreach (array_keys($this->fontIndex) as $key){
+			$font->unserialize($key);
+			$fontXml->render($xml, $font->getModel());
+		}
+
+		$xml->endElement();
+	}
+
+	private function renderFills(XMLWriter $xml){
+		$xml->startElement('fills');
+		$xml->writeAttribute('count', count($this->fillIndex) + self::FILL_START_INDEX);
+
+		$fillXml = new FillXml();
+		$fillXml->render($xml, ['type' => 'pattern', 'pattern' => 'none']);
+		$fillXml->render($xml, ['type' => 'pattern', 'pattern' => 'gray125']);
+
+		$color = Color::fromHex();
+		foreach (array_keys($this->fillIndex) as $key) {
+			$color->unserialize($key);
+			$fillXml->render($xml, [
+				'type' => 'pattern',
+				'pattern' => 'solid',
+				'fgColor' => $color->getModel(),
+				'bgColor' => $color->getModel()
+			]);
+		}
+
+		$xml->endElement();
+	}
+
+	private function renderBorders(XMLWriter $xml){
+		$xml->startElement('borders');
+		$xml->writeAttribute('count', count($this->borderIndex));
+
+		$borderXml = new BorderXml();
+		$border = new Borders();
+		foreach (array_keys($this->borderIndex) as $key){
+			$border->unserialize($key);
+			$borderXml->render($xml, $border->getModel());
+		}
+
+		$xml->endElement();
+	}
+
+	private function renderStyles(XMLWriter $xml){
+		$xml->startElement('cellXfs');
+		$xml->writeAttribute('count', count($this->styleIndex) + self::STYLE_START_INDEX);
+
+		$styleXml = new StyleXml();
+		$styleXml->render($xml, ['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0, 'xfId' => 0]);
+
+		$alignment = new Alignment();
+		foreach (array_keys($this->styleIndex) as $key){
+			$params = explode(',', $key);
+			$model = [
+				'numFmtId' => (int) $params[0],
+				'fontId' => (int) $params[1],
+				'fillId' => (int) $params[2],
+				'borderId' => (int) $params[3]
+			];
+
+			if ($params[4]) {
+				$alignment->unserialize($params[4]);
+				$model['alignment'] = $alignment->getModel();
+			}
+
+			$styleXml->render($xml, $model);
+		}
 
 		$xml->endElement();
 	}

@@ -2,6 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures;
 
+use Serializable;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Helpers\Validator;
 
@@ -10,7 +11,7 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package  Topvisor\XlsxCreator
  */
-class Color{
+class Color implements Serializable {
 	private $model;
 
 	/**
@@ -63,9 +64,33 @@ class Color{
 	}
 
 	/**
+	 * Задать цвет из предустановленных
+	 *
+	 * @param int $theme - номер цвета
+	 * @return Color - цвет
+	 * @throws InvalidValueException
+	 */
+	static function fromTheme(int $theme) : self{
+		Validator::validatePositive($theme, '$theme');
+
+		return new self(['theme' => $theme]);
+	}
+
+	/**
 	 * @return array - модель цвета
 	 */
 	function getModel(): array{
 		return $this->model;
+	}
+
+	public function serialize(){
+		return $this->model['argb'] ? $this->model['argb'] : (string) $this->model['theme'];
+	}
+
+	public function unserialize($serialized){
+		if (preg_match('/^([A-F\d]{2})([A-F\d]{6})$/', $serialized, $matches))
+			$this->model = self::fromHex($matches[2], $matches[1])->getModel();
+		else
+			$this->model = self::fromTheme((int) $serialized)->getModel();
 	}
 }

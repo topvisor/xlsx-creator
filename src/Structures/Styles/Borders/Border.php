@@ -2,6 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Styles\Borders;
 
+use Serializable;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Helpers\Validator;
 
@@ -10,7 +11,7 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package Topvisor\XlsxCreator\Structures\Styles\Borders
  */
-class Border{
+class Border implements Serializable{
 	const VALID_STYLE = [
 		'thin', 'dotted', 'dashDot', 'hair', 'dashDotDot', 'slantDashDot', 'mediumDashed',
 		'mediumDashDotDot', 'mediumDashDot', 'medium', 'double', 'thick'
@@ -48,5 +49,24 @@ class Border{
 			'style' => $this->style,
 			'color' => $this->color
 		];
+	}
+
+	public function serialize(){
+		$serialized = array_search($this->style, self::VALID_STYLE);
+		if ($this->color) $serialized .= ',' . $this->color->serialize();
+		return $serialized;
+	}
+
+	public function unserialize($serialized){
+		$params = explode(',', $serialized);
+
+		$this->style = self::VALID_STYLE[(int) $params[0]];
+
+		if (isset($params[1])) {
+			$this->color = Color::fromHex();
+			$this->color->unserialize($params[1]);
+		} else {
+			$this->color = null;
+		}
 	}
 }

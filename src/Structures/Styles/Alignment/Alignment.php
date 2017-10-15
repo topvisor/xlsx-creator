@@ -2,6 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Styles\Alignment;
 
+use Serializable;
 use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
@@ -9,7 +10,7 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package Topvisor\XlsxCreator\Structures\Styles
  */
-class Alignment{
+class Alignment implements Serializable{
 	const VALID_HORIZONTAL = ['left', 'center', 'right', 'fill', 'centerContinuous', 'distributed', 'justify'];
 	const VALID_VERTICAL = ['top', 'center', 'bottom', 'distributed', 'justify'];
 	const VALID_READING_ORDER = ['leftToRight', 'rightToLeft'];
@@ -151,5 +152,32 @@ class Alignment{
 			'readingOrder' => $this->readingOrder,
 			'textRotation' => $this->textRotation ? $this->textRotation->getModel() : null
 		];
+	}
+
+	public function serialize(){
+		return ($this->horizontal ? array_search($this->horizontal, self::VALID_HORIZONTAL) : '') . ';' .
+			($this->vertical ? array_search($this->vertical, self::VALID_VERTICAL) : '') . ';' .
+			($this->wrapText ? '1' : '') . ';' .
+			($this->indent ? $this->indent : '') . ';' .
+			($this->readingOrder ? array_search($this->readingOrder, self::VALID_READING_ORDER) : '') . ';' .
+			($this->textRotation ? $this->textRotation->serialize() : '');
+	}
+
+	public function unserialize($serialized){
+		$params = explode(';', $serialized);
+
+		if ($params[5]) {
+			$this->textRotation = TextRotation::vertical();
+			$this->textRotation->unserialize($params[5]);
+		} else {
+			$this->textRotation = null;
+		}
+
+		$this
+			->setHorizontal($params[0] ? self::VALID_HORIZONTAL[(int) $params[0]] : null)
+			->setVertical($params[1] ? self::VALID_VERTICAL[(int) $params[1]] : null)
+			->setWrapText((bool) $params[2])
+			->setIndent($params[3] ? (int) $params[3] : null)
+			->setReadingOrder($params[4] ? self::VALID_READING_ORDER[(int) $params[4]] : null);
 	}
 }

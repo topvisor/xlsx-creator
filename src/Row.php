@@ -3,12 +3,12 @@
 namespace Topvisor\XlsxCreator;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
-use Topvisor\XlsxCreator\Helpers\StyleSetters;
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
 use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
 use Topvisor\XlsxCreator\Structures\Styles\Font;
+use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\Value;
 
 /**
@@ -16,16 +16,7 @@ use Topvisor\XlsxCreator\Structures\Values\Value;
  *
  * @package  Topvisor\XlsxCreator
  */
-class Row{
-	use StyleSetters {
-		StyleSetters::__destruct as styleManagerDestruct;
-		StyleSetters::setNumFmt as styleManagerSetNumFmt;
-		StyleSetters::setFont as styleManagerSetFont;
-		StyleSetters::setFill as styleManagerSetFill;
-		StyleSetters::setBorders as styleManagerSetBorders;
-		StyleSetters::setAlignment as styleManagerSetAlignment;
-	}
-
+class Row extends Style{
 	private $worksheet;
 	private $number;
 	private $height;
@@ -52,7 +43,7 @@ class Row{
 	}
 
 	function __destruct(){
-		$this->styleManagerDestruct();
+		parent::__destruct();
 
 		unset($this->worksheet);
 	}
@@ -73,10 +64,10 @@ class Row{
 
 	/**
 	 * @param string|null $numFmt - формат чисел ячейки
-	 * @return Row - $this
+	 * @return Style - $this
 	 */
-	function setNumFmt(string $numFmt = null) : self{
-		$this->styleManagerSetNumFmt($numFmt);
+	function setNumFmt(string $numFmt = null) : Style{
+		parent::setNumFmt($numFmt);
 		foreach ($this->cells as $cell) $cell->setNumFmt($numFmt);
 
 		return $this;
@@ -84,10 +75,10 @@ class Row{
 
 	/**
 	 * @param Font|null $font - шрифт
-	 * @return Row - $this
+	 * @return Style - $this
 	 */
-	function setFont(Font $font = null) : self{
-		$this->styleManagerSetFont($font);
+	function setFont(Font $font = null) : Style{
+		parent::setFont($font);
 		foreach ($this->cells as $cell) $cell->setFont($font);
 
 		return $this;
@@ -95,10 +86,10 @@ class Row{
 
 	/**
 	 * @param Color|null $color - заливка ячейки
-	 * @return Row - $this
+	 * @return Style - $this
 	 */
-	function setFill(Color $color = null) : self{
-		$this->styleManagerSetFill($color);
+	function setFill(Color $color = null) : Style{
+		parent::setFill($color);
 		foreach ($this->cells as $cell) $cell->setFill($color);
 
 		return $this;
@@ -106,10 +97,10 @@ class Row{
 
 	/**
 	 * @param Borders|null $borders - границы ячейки
-	 * @return Row - $this
+	 * @return Style - $this
 	 */
-	function setBorders(Borders $borders = null) : self{
-		$this->styleManagerSetBorders($borders);
+	function setBorders(Borders $borders = null) : Style{
+		parent::setBorders($borders);
 		foreach ($this->cells as $cell) $cell->setBorders($borders);
 
 		return $this;
@@ -117,10 +108,10 @@ class Row{
 
 	/**
 	 * @param Alignment|null $alignment - выравнивание текста
-	 * @return Row - $this
+	 * @return Style - $this
 	 */
-	function setAlignment(Alignment $alignment = null) : self{
-		$this->styleManagerSetAlignment($alignment);
+	function setAlignment(Alignment $alignment = null) : Style{
+		parent::setAlignment($alignment);
 		foreach ($this->cells as $cell) $cell->setAlignment($alignment);
 
 		return $this;

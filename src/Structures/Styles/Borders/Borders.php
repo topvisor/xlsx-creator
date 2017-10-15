@@ -2,6 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Styles\Borders;
 
+use Serializable;
 use Topvisor\XlsxCreator\Structures\Color;
 
 /**
@@ -9,7 +10,7 @@ use Topvisor\XlsxCreator\Structures\Color;
  *
  * @package Topvisor\XlsxCreator\Structures\Styles\Borders
  */
-class Borders{
+class Borders implements Serializable{
 	private $defaultColor;
 	private $left;
 	private $right;
@@ -173,5 +174,66 @@ class Borders{
 			'bottom' => $this->bottom ? $this->bottom->getModel() : null,
 			'diagonal' => $diagonal,
 		];
+	}
+
+	public function serialize(){
+		return ($this->defaultColor ? $this->defaultColor->serialize() : '') . ';' .
+			($this->left ? $this->left->serialize() : '') . ';' .
+			($this->right ? $this->right->serialize() : '') . ';' .
+			($this->top ? $this->top->serialize() : '') . ';' .
+			($this->bottom ? $this->bottom->serialize() : '') . ';' .
+			($this->diagonalStyle ? $this->diagonalStyle->serialize() : '') . ';' .
+			($this->diagonalUp ? '1' : '') . ';' .
+			($this->diagonalDown ? '1' : '');
+	}
+
+	public function unserialize($serialized){
+		$params = explode(';', $serialized);
+
+		if ($params[0]) {
+			$this->defaultColor = Color::fromHex();
+			$this->defaultColor->unserialize($params[0]);
+		} else {
+			$this->defaultColor = null;
+		}
+
+		if ($params[1]) {
+			$this->left = new Border('thin');
+			$this->left->unserialize($params[1]);
+		} else {
+			$this->left = null;
+		}
+
+		if ($params[2]) {
+			$this->right = new Border('thin');
+			$this->right->unserialize($params[2]);
+		} else {
+			$this->right = null;
+		}
+
+		if ($params[3]) {
+			$this->top = new Border('thin');
+			$this->top->unserialize($params[3]);
+		} else {
+			$this->top = null;
+		}
+
+		if ($params[4]) {
+			$this->bottom = new Border('thin');
+			$this->bottom->unserialize($params[4]);
+		} else {
+			$this->bottom = null;
+		}
+
+		if ($params[5]) {
+			$this->diagonalStyle = new Border('thin');
+			$this->diagonalStyle->unserialize($params[5]);
+		} else {
+			$this->diagonalStyle = null;
+		}
+
+		$this
+			->setDiagonalUp((bool) $params[6])
+			->setDiagonalDown((bool) $params[7]);
 	}
 }

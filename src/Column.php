@@ -2,19 +2,15 @@
 
 namespace Topvisor\XlsxCreator;
 
-use Topvisor\XlsxCreator\Helpers\StyleSetters;
 use Topvisor\XlsxCreator\Helpers\Validator;
+use Topvisor\XlsxCreator\Structures\Styles\Style;
 
 /**
  * Class Column. Содержит методы для работы с колонкой.
  *
  * @package Topvisor\XlsxCreator
  */
-class Column{
-	use StyleSetters {
-		StyleSetters::__destruct as styleManagerDestruct;
-	}
-
+class Column extends Style{
 	private $worksheet;
 	private $number;
 
@@ -28,7 +24,7 @@ class Column{
 	}
 
 	function __destruct(){
-		$this->styleManagerDestruct();
+		parent::__destruct();
 
 		unset($this->worksheet);
 	}
@@ -103,15 +99,13 @@ class Column{
 	 * @return array|null - модель
 	 */
 	function getModel(){
-		$style = $this->getStyleModel();
-		$styleId = $this->worksheet->getWorkbook()->getStyles()->addStyle($style);
+		$styleId = $this->worksheet->getWorkbook()->getStyles()->addStyle($this);
 		$collapsed = (bool) ($this->outlineLevel && $this->outlineLevel > $this->worksheet->getOutlineLevelCol());
 
 		return ($this->isDefault()) ? null : [
 			'min' => $this->number,
 			'max' => $this->number,
 			'width' => $this->width,
-			'style' => $style,
 			'styleId' => $styleId,
 			'hidden' => $this->hidden,
 			'outlineLevel' => $this->outlineLevel,
