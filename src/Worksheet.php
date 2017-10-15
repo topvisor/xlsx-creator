@@ -588,12 +588,12 @@ class Worksheet{
 			$this->xml->endElement();
 		}
 
+		(new PageMargins())->render($this->xml, $this->pageSetup->getModel()['margins'] ?? null);
+		(new PageSetupXml())->render($this->xml, $this->pageSetup->getModel());
+
 		if (!$this->comments->isEmpty())
 			(new StringXml('legacyDrawing', [], 'r:id'))
 				->render($this->xml, [$this->sheetRels->addComments()]);
-
-		(new PageMargins())->render($this->xml, $this->pageSetup->getModel()['margins'] ?? null);
-		(new PageSetupXml())->render($this->xml, $this->pageSetup->getModel());
 
 		$this->xml->endElement();
 		$this->xml->endDocument();
