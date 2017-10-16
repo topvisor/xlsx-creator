@@ -59,7 +59,7 @@ class Font implements Serializable{
 	function setSize(int $size = null) : self{
 		if (!is_null($size)) Validator::validateInRange($size, 1, 409, '$size');
 
-		$this->size;
+		$this->size = $size;
 		return $this;
 	}
 
@@ -125,7 +125,7 @@ class Font implements Serializable{
 	function setUnderline(string $underline = null) : self{
 		if (!is_null($underline)) Validator::validate($underline, '$underline', self::VALID_UNDERLINE);
 
-		$this->underline;
+		$this->underline = $underline;
 		return $this;
 	}
 
