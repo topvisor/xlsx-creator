@@ -634,6 +634,7 @@ class Worksheet{
 		$this->xml->flush();
 		unset($this->xml);
 
+		$this->drawing->commit();
 		$this->comments->commit();
 		$this->sheetRels->commit();
 	}
