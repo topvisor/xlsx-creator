@@ -193,7 +193,7 @@ class Cell extends Style{
 			'styleId' => $styles->addStyle($this, $this->getType())
 		];
 
-		if ($this->master) $model['master'] = $this->master->getModel();
+		if ($this->master) $model['master'] = $this->master->prepareToCommit($styles, $sheetRels, $comments);
 
 		if ($this->value instanceof HyperlinkValue) $sheetRels->addHyperlink(
 			$model['value']['hyperlink'],
