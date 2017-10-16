@@ -264,7 +264,7 @@ class Workbook{
 	 */
 	function addImage(string $filename, string $extension = '') : array{
 		$filename = realpath($filename);
-		if (!$this->filename) throw new InvalidValueException('Invalid $filename');
+		if (!$filename) throw new InvalidValueException('Invalid $filename');
 
 		if (!$extension) $extension = pathinfo($filename, PATHINFO_EXTENSION);
 		Validator::validate($extension, '$extension', self::VALID_IMAGES_EXTENSION);
