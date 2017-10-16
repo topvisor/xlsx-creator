@@ -2,6 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Xml\Core;
 
+use Topvisor\XlsxCreator\Workbook;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
@@ -13,6 +14,13 @@ class ContentTypesXml extends BaseXml{
 		$xml->startElement('Types');
 
 		$xml->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/package/2006/content-types');
+
+		foreach (Workbook::VALID_IMAGES_EXTENSION as $extension) {
+			$xml->startElement('Default');
+			$xml->writeAttribute('Extension', $extension);
+			$xml->writeAttribute('ContentType', "image/$extension");
+			$xml->endElement();
+		}
 
 		$xml->startElement('Default');
 		$xml->writeAttribute('Extension', 'vml');
