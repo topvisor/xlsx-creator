@@ -238,7 +238,7 @@ class Drawing{
 	private function startDrawing(){
 		$this->empty = false;
 
-		$this->filename = $this->worksheet->getWorkbook()->getFilename();
+		$this->filename = $this->worksheet->getWorkbook()->genTempFilename();
 		$this->xml = new XMLWriter();
 		$this->xml->openURI($this->filename);
 
@@ -247,7 +247,7 @@ class Drawing{
 		$this->xml->writeAttribute('xmlns:xdr', 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing');
 		$this->xml->writeAttribute('xmlns:a', 'http://schemas.openxmlformats.org/drawingml/2006/main');
 
-		$this->relsFilename = $this->worksheet->getWorkbook()->getFilename();
+		$this->relsFilename = $this->worksheet->getWorkbook()->genTempFilename();
 		$this->relsXml = new XMLWriter();
 		$this->relsXml->openURI($this->relsFilename);
 
