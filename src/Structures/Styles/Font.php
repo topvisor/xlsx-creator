@@ -205,7 +205,7 @@ class Font implements Serializable{
 		($this->color ? $this->color->serialize() : '') . ';' .
 		($this->strike ? '1' : '') . ';' .
 		($this->size ? $this->size : '') . ';' .
-		($this->name ? $this->name : '');
+		($this->name ? str_replace(';', urlencode(';'), $this->name) : '');
 	}
 
 	public function unserialize($serialized){
@@ -224,6 +224,6 @@ class Font implements Serializable{
 			->setUnderline($params[2] ? self::VALID_UNDERLINE[(int) $params[2]] : null)
 			->setStrike((bool) $params[4])
 			->setSize($params[5] ? (int) $params[5] : null)
-			->setName($params[6] ? $params[6] : null);
+			->setName($params[6] ? str_replace(urlencode(';'), ';', $params[6]) : null);
 	}
 }

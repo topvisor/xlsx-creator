@@ -53,12 +53,12 @@ class Border implements Serializable{
 
 	public function serialize(){
 		$serialized = array_search($this->style, self::VALID_STYLE);
-		if ($this->color) $serialized .= ',' . $this->color->serialize();
+		if ($this->color) $serialized .= ';' . $this->color->serialize();
 		return $serialized;
 	}
 
 	public function unserialize($serialized){
-		$params = explode(',', $serialized);
+		$params = explode(';', $serialized);
 
 		$this->style = self::VALID_STYLE[(int) $params[0]];
 

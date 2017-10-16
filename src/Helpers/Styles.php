@@ -120,11 +120,11 @@ class Styles{
 			($style->getNumFmt()
 				? $this->addIndex($style->getNumFmt(), $this->numFmtIndex, self::NUM_FMT_START_INDEX, self::DEFAULT_NUM_FMT)
 				: ''
-			) . ',' .
-			($style->getFont() ? $this->addIndex($style->getFont(), $this->fontIndex, self::FONT_START_INDEX) : '') . ',' .
-			($style->getFill() ? $this->addIndex($style->getFill(), $this->fillIndex, self::FILL_START_INDEX) : '') . ',' .
-			($style->getBorders() ? $this->addIndex($style->getBorders(), $this->borderIndex) : '') . ',' .
-			($style->getAlignment() ? $style->getAlignment()->serialize() : '');
+			) . ';' .
+			($style->getFont() ? $this->addIndex($style->getFont(), $this->fontIndex, self::FONT_START_INDEX) : '') . ';' .
+			($style->getFill() ? $this->addIndex($style->getFill(), $this->fillIndex, self::FILL_START_INDEX) : '') . ';' .
+			($style->getBorders() ? $this->addIndex($style->getBorders(), $this->borderIndex) : '') . ';' .
+			($style->getAlignment() ? str_replace(';', urlencode(';'), $style->getAlignment()->serialize()) : '');
 
 		return $this->addIndex($styleKey, $this->styleIndex, self::STYLE_START_INDEX);
 	}
@@ -215,7 +215,7 @@ class Styles{
 
 		$alignment = new Alignment();
 		foreach (array_keys($this->styleIndex) as $key){
-			$params = explode(',', $key);
+			$params = explode(';', $key);
 			$model = [
 				'numFmtId' => (int) $params[0],
 				'fontId' => (int) $params[1],
@@ -224,7 +224,7 @@ class Styles{
 			];
 
 			if ($params[4]) {
-				$alignment->unserialize($params[4]);
+				$alignment->unserialize(str_replace(urlencode(';'), ';', $params[4]));
 				$model['alignment'] = $alignment->getModel();
 			}
 

@@ -177,18 +177,21 @@ class Borders implements Serializable{
 	}
 
 	public function serialize(){
+		$replace = urlencode(';');
+
 		return ($this->defaultColor ? $this->defaultColor->serialize() : '') . ';' .
-			($this->left ? $this->left->serialize() : '') . ';' .
-			($this->right ? $this->right->serialize() : '') . ';' .
-			($this->top ? $this->top->serialize() : '') . ';' .
-			($this->bottom ? $this->bottom->serialize() : '') . ';' .
-			($this->diagonalStyle ? $this->diagonalStyle->serialize() : '') . ';' .
+			($this->left ? str_replace(';', $replace, $this->left->serialize()) : '') . ';' .
+			($this->right ? str_replace(';', $replace, $this->right->serialize()) : '') . ';' .
+			($this->top ? str_replace(';', $replace, $this->top->serialize()) : '') . ';' .
+			($this->bottom ? str_replace(';', $replace, $this->bottom->serialize()) : '') . ';' .
+			($this->diagonalStyle ? str_replace(';', $replace, $this->left->diagonalStyle()) : '') . ';' .
 			($this->diagonalUp ? '1' : '') . ';' .
 			($this->diagonalDown ? '1' : '');
 	}
 
 	public function unserialize($serialized){
 		$params = explode(';', $serialized);
+		$search = urlencode(';');
 
 		if ($params[0]) {
 			$this->defaultColor = Color::fromHex();
@@ -199,35 +202,35 @@ class Borders implements Serializable{
 
 		if ($params[1]) {
 			$this->left = new Border('thin');
-			$this->left->unserialize($params[1]);
+			$this->left->unserialize(str_replace($search, ';', $params[1]));
 		} else {
 			$this->left = null;
 		}
 
 		if ($params[2]) {
 			$this->right = new Border('thin');
-			$this->right->unserialize($params[2]);
+			$this->right->unserialize(str_replace($search, ';', $params[2]));
 		} else {
 			$this->right = null;
 		}
 
 		if ($params[3]) {
 			$this->top = new Border('thin');
-			$this->top->unserialize($params[3]);
+			$this->top->unserialize(str_replace($search, ';', $params[3]));
 		} else {
 			$this->top = null;
 		}
 
 		if ($params[4]) {
 			$this->bottom = new Border('thin');
-			$this->bottom->unserialize($params[4]);
+			$this->bottom->unserialize(str_replace($search, ';', $params[4]));
 		} else {
 			$this->bottom = null;
 		}
 
 		if ($params[5]) {
 			$this->diagonalStyle = new Border('thin');
-			$this->diagonalStyle->unserialize($params[5]);
+			$this->diagonalStyle->unserialize(str_replace($search, ';', $params[5]));
 		} else {
 			$this->diagonalStyle = null;
 		}
