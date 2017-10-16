@@ -264,7 +264,7 @@ class Workbook{
 	 */
 	function addImage(string $filename, string $extension = '') : array{
 		$filename = realpath($filename);
-		if (!$filename) throw new InvalidValueException('Invalid $filename');
+		if (!$filename || !file_exists($filename)) throw new InvalidValueException('Invalid $filename');
 
 		if (!$extension) $extension = pathinfo($filename, PATHINFO_EXTENSION);
 		Validator::validate($extension, '$extension', self::VALID_IMAGES_EXTENSION);
@@ -395,6 +395,8 @@ class Workbook{
 				$zip->addFile($drawingFilenames['rels'], 'xl/drawings/_rels/drawing' . $worksheet->getId() . '.xml.rels');
 			}
 		}
+
+		foreach ($this->images as $filename => $image) $zip->addFile($filename, "xl/media/$image[localname]");
 
 		if (!$this->sharedStrings->isCommitted()) $this->sharedStrings->commit();
 		if (!$this->sharedStrings->isEmpty()) $zip->addFile($this->sharedStrings->getFilename(), 'xl/sharedStrings.xml');
