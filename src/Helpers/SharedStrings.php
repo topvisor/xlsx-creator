@@ -52,7 +52,7 @@ class SharedStrings{
 	 * @return null|string - путь к временному файлу общих строк
 	 */
 	function getFilename(){
-		if ($this->xml) $this->xml->flush();
+		if ($this->xml ?? false) $this->xml->flush();
 		return $this->filename;
 	}
 

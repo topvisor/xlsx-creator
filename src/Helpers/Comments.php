@@ -42,12 +42,12 @@ class Comments{
 	}
 
 	function getCommentsFilename(){
-		if ($this->commentsXml) $this->commentsXml->flush();
+		if ($this->commentsXml ?? false) $this->commentsXml->flush();
 		return $this->commentsFilename;
 	}
 
 	function getVmlFilename(){
-		if ($this->vmlXml) $this->vmlXml->flush();
+		if ($this->vmlXml ?? false) $this->vmlXml->flush();
 		return $this->vmlFilename;
 	}
 

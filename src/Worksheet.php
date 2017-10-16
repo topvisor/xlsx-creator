@@ -293,7 +293,7 @@ class Worksheet{
 	 * @return null|string - путь к временному файлу таблицы
 	 */
 	function getFilename(){
-		if ($this->xml) $this->xml->flush();
+		if ($this->xml ?? false) $this->xml->flush();
 		return $this->filename;
 	}
 
@@ -503,7 +503,7 @@ class Worksheet{
 		$this->checkCommitted();
 		if (!$this->rows) return;
 
-		if (!$this->xml) $this->startWorksheet();
+		if (!($this->xml ?? false)) $this->startWorksheet();
 
 		$rowXml = new RowXml();
 		$found = false;
@@ -571,7 +571,7 @@ class Worksheet{
 	 *	Закончить файл таблицы.
 	 */
 	private function endWorksheet(){
-		if (!$this->xml) return;
+		if (!($this->xml ?? false)) return;
 
 		$this->xml->endElement();
 

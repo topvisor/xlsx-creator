@@ -47,7 +47,7 @@ class SheetRels{
 	 * @return null|string - путь к временному файлу связей
 	 */
 	function getFilename(){
-		if ($this->xml) $this->xml->flush();
+		if ($this->xml ?? false) $this->xml->flush();
 		return $this->filename;
 	}
 
@@ -55,7 +55,7 @@ class SheetRels{
 	 * @return null|string - путь к временному файлу гиперссылок
 	 */
 	function getHyperlinksFilename(){
-		if ($this->hyperlinksXml) $this->hyperlinksXml->flush();
+		if ($this->hyperlinksXml ?? false) $this->hyperlinksXml->flush();
 		return $this->hyperlinksFilename;
 	}
 
@@ -75,7 +75,7 @@ class SheetRels{
 			)
 		];
 
-		if (!$this->hyperlinksXml) $this->startHyperlinks();
+		if (!$this->hyperlinksXml ?? false) $this->startHyperlinks();
 		(new HyperlinkXml())->render($this->hyperlinksXml, $hyperlink);
 	}
 
@@ -127,7 +127,7 @@ class SheetRels{
 	 *	Завершить файл связей.
 	 */
 	private function endSheetRels(){
-		if (!$this->xml) return;
+		if (!($this->xml ?? false)) return;
 
 		$this->xml->endElement();
 		$this->xml->endDocument();
@@ -144,7 +144,7 @@ class SheetRels{
 	}
 
 	private function endHyperlinks(){
-		if (!$this->hyperlinksXml) return;
+		if (!($this->hyperlinksXml ?? false)) return;
 
 		$this->hyperlinksXml->flush();
 		unset($this->hyperlinksXml);
@@ -159,7 +159,7 @@ class SheetRels{
 	 * @return string - id связи
 	 */
 	private function writeRelationship(string $type, string $target, string $targetMode = null) : string{
-		if (!$this->xml) $this->startSheetRels();
+		if (!($this->xml ?? false)) $this->startSheetRels();
 
 		$rId = 'rId' . $this->nextId++;
 
