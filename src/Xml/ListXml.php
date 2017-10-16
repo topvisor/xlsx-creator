@@ -23,6 +23,10 @@ class ListXml extends BaseXml{
 		$this->countAttributeName = $countAttributeName;
 	}
 
+	public function __destruct(){
+		unset($this->baseXml);
+	}
+
 	function render(XMLWriter $xml, array $model = null){
 		if ($this->isEmpty) {
 			$xml->writeElement($this->tag);

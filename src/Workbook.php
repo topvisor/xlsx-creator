@@ -80,6 +80,7 @@ class Workbook{
 	function __destruct(){
 		unset($this->created);
 		unset($this->modified);
+		unset($this->sharedStrings);
 		unset($this->styles);
 		unset($this->worksheets);
 

@@ -604,7 +604,7 @@ class Worksheet{
 
 //		(new AutoFilterXml())->render($this->xml, [$this->autoFilter]);
 		(new ListXml('mergeCells', new MergeXml(), [], false, true))->render($this->xml, array_map(function($merge){
-			return (string) $merge;
+			return [(string) $merge];
 		}, $this->merges));
 
 		if ($hyperlinksFilename = $this->sheetRels->getHyperlinksFilename()) {
