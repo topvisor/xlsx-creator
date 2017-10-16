@@ -540,10 +540,6 @@ class Worksheet{
 			$rowXml->render($this->xml, $row->prepareToCommit($this->styles, $this->sheetRels, $this->comments));
 			$this->lastUncommittedRow++;
 		}
-
-		foreach ($this->merges as $key => $merge)
-			if ($merge->getBottom() < $this->lastUncommittedRow)
-				unset($this->merges[$key]);
 	}
 
 	/**
