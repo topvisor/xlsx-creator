@@ -13,7 +13,7 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  */
 class Font implements Serializable{
 	const VALID_UNDERLINE = ['single', 'double', 'singleAccounting', 'doubleAccounting'];
-	const VALID_SCHEME = ['minor', 'major', 'none'];
+	const VALID_VERTICAL_ALIGN = ['superscript', 'subscript'];
 
 	private $name;
 	private $size;
@@ -21,6 +21,7 @@ class Font implements Serializable{
 	private $bold;
 	private $italic;
 	private $underline;
+	private $vertAlign;
 //	private $scheme;
 //	private $family;
 	private $strike;
@@ -129,41 +130,23 @@ class Font implements Serializable{
 		return $this;
 	}
 
-//	/**
-//	 * @return string|null - схема
-//	 */
-//	function getScheme(){
-//		return $this->scheme ?? null;
-//	}
-//
-//	/**
-//	 * @param string|null $scheme - схема
-//	 * @return Font - $this
-//	 */
-//	function setScheme(string $scheme = null) : self{
-//		if (!is_null($scheme)) Validator::validate($scheme, '$scheme', self::VALID_SCHEME);
-//
-//		$this->scheme = $scheme;
-//		return $this;
-//	}
-//
-//	/**
-//	 * @return int|null - семейство
-//	 */
-//	function getFamily(){
-//		return $this->family ?? null;
-//	}
-//
-//	/**
-//	 * @param int|null $family - семейство
-//	 * @return Font - $this
-//	 */
-//	function setFamily(int $family = null) : self{
-//		if (!is_null($family)) Validator::validatePositive($family, '$family');
-//
-//		$this->family = $family;
-//		return $this;
-//	}
+	/**
+	 * @return string|null - надстрочный/подстрочный текст
+	 */
+	function getVerticalAlign(){
+		return $this->vertAlign;
+	}
+
+	/**
+	 * @param string|null $vertAlign - надстрочный/подстрочный текст
+	 * @return Font - $this
+	 */
+	function setVerticalAlign(string $vertAlign = null) : self{
+		if (!is_null($vertAlign)) Validator::validate($vertAlign, '$vertAlign', self::VALID_VERTICAL_ALIGN);
+
+		$this->vertAlign = $vertAlign;
+		return $this;
+	}
 
 	/**
 	 * @return bool - зачеркнутый
@@ -189,9 +172,8 @@ class Font implements Serializable{
 			'b' => $this->bold,
 			'i' => $this->italic,
 			'u' => $this->underline,
+			'vertAlign' => $this->vertAlign,
 			'color' => $this->color ? $this->color->getModel() : null,
-//			'scheme' => $this->scheme,
-//			'family' => $this->family,
 			'strike' => $this->strike,
 			'sz' => $this->size,
 			'name' => $this->name
@@ -200,12 +182,13 @@ class Font implements Serializable{
 
 	public function serialize(){
 		return ($this->bold ? '1' : '') . ';' .
-		($this->italic ? '1' : '') . ';' .
-		($this->underline ? array_search($this->underline, self::VALID_UNDERLINE) : '') . ';' .
-		($this->color ? $this->color->serialize() : '') . ';' .
-		($this->strike ? '1' : '') . ';' .
-		($this->size ? $this->size : '') . ';' .
-		($this->name ? str_replace(';', urlencode(';'), $this->name) : '');
+			($this->italic ? '1' : '') . ';' .
+			($this->underline ? array_search($this->underline, self::VALID_UNDERLINE) : '') . ';' .
+			($this->color ? $this->color->serialize() : '') . ';' .
+			($this->strike ? '1' : '') . ';' .
+			($this->size ? $this->size : '') . ';' .
+			($this->name ? str_replace(';', urlencode(';'), $this->name) : '') . ';' .
+			($this->vertAlign ? array_search($this->vertAlign, self::VALID_VERTICAL_ALIGN) : '');
 	}
 
 	public function unserialize($serialized){
@@ -224,6 +207,7 @@ class Font implements Serializable{
 			->setUnderline($params[2] ? self::VALID_UNDERLINE[(int) $params[2]] : null)
 			->setStrike((bool) $params[4])
 			->setSize($params[5] ? (int) $params[5] : null)
-			->setName($params[6] ? str_replace(urlencode(';'), ';', $params[6]) : null);
+			->setName($params[6] ? str_replace(urlencode(';'), ';', $params[6]) : null)
+			->setVerticalAlign($params[7] ? self::VALID_VERTICAL_ALIGN[(int) $params[7]] : null);
 	}
 }
