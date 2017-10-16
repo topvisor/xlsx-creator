@@ -11,6 +11,11 @@ use Topvisor\XlsxCreator\Worksheet;
 use Topvisor\XlsxCreator\Xml\Strings\SharedStringXml;
 use XMLWriter;
 
+/**
+ * Class Comments. Комментарии таблицы
+ *
+ * @package Topvisor\XlsxCreator\Helpers
+ */
 class Comments{
 	private $worksheet;
 
@@ -24,6 +29,11 @@ class Comments{
 	private $vmlFilename;
 	private $vmlXml;
 
+	/**
+	 * Comments constructor.
+	 *
+	 * @param Worksheet $worksheet - таблица
+	 */
 	function __construct(Worksheet $worksheet){
 		$this->worksheet = $worksheet;
 
@@ -41,11 +51,17 @@ class Comments{
 		if ($this->vmlFilename && file_exists($this->vmlFilename)) unlink($this->vmlFilename);
 	}
 
+	/**
+	 * @return string|null - имя файла с текстом комментариев
+	 */
 	function getCommentsFilename(){
 		if ($this->commentsXml ?? false) $this->commentsXml->flush();
 		return $this->commentsFilename;
 	}
 
+	/**
+	 * @return string|null - имя файла с положением и размерами комментариев
+	 */
 	function getVmlFilename(){
 		if ($this->vmlXml ?? false) $this->vmlXml->flush();
 		return $this->vmlFilename;
@@ -61,10 +77,16 @@ class Comments{
 		$this->addCommentToVml($cell->getCol(), $cell->getRow()->getNumber(), $cell->getCommentWidth(), $cell->getCommentHeight());
 	}
 
+	/**
+	 * @return bool - комментариев нет
+	 */
 	function isEmpty() : bool{
 		return $this->empty;
 	}
 
+	/**
+	 * Зафиксировать комментарии.
+	 */
 	function commit(){
 		$this->checkCommitted();
 		$this->committed = true;
@@ -72,6 +94,12 @@ class Comments{
 		$this->endComments();
 	}
 
+	/**
+	 * Записать текст комментария.
+	 *
+	 * @param string $address - адрес ячейки
+	 * @param Value $comment - комментарий
+	 */
 	private function addCommentToComments(string $address, Value $comment){
 		if (!$comment) return;
 
@@ -88,6 +116,14 @@ class Comments{
 		$this->commentsXml->endElement();
 	}
 
+	/**
+	 * Записать положение и размеры комментария.
+	 *
+	 * @param int $col - колонка
+	 * @param int $row - строка
+	 * @param int $width - ширина
+	 * @param int $height - высота
+	 */
 	private function addCommentToVml(int $col, int $row, int $width, int $height){
 		$this->vmlXml->startElement('v:shape');
 
@@ -123,6 +159,9 @@ class Comments{
 		$this->vmlXml->endElement();
 	}
 
+	/**
+	 * Начать файлы комментариев.
+	 */
 	private function startComments(){
 		$this->empty = false;
 
@@ -130,6 +169,9 @@ class Comments{
 		$this->startVmlXml();
 	}
 
+	/**
+	 * Начать файл с текстом комментариев.
+	 */
 	private function startCommentsXml(){
 		$this->commentsFilename = $this->worksheet->getWorkbook()->genTempFilename();
 
@@ -149,6 +191,9 @@ class Comments{
 		$this->commentsXml->startElement('commentList');
 	}
 
+	/**
+	 * Начать файл с положением и размерами комментариев.
+	 */
 	private function startVmlXml(){
 		$this->vmlFilename = $this->worksheet->getWorkbook()->genTempFilename();
 
@@ -178,6 +223,9 @@ class Comments{
 		$this->vmlXml->endElement();
 	}
 
+	/**
+	 * Закончить файлы комментариев.
+	 */
 	private function endComments(){
 		if ($this->empty) return;
 
@@ -195,6 +243,9 @@ class Comments{
 		unset($this->vmlXml);
 	}
 
+	/**
+	 * @throws ObjectCommittedException
+	 */
 	private function checkCommitted(){
 		if ($this->committed) throw new ObjectCommittedException();
 	}

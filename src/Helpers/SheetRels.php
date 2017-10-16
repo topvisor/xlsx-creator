@@ -98,6 +98,19 @@ class SheetRels{
 	}
 
 	/**
+	 * Связать таблицу с файлом рисунков
+	 * @return string - id связи с файлом рисунков
+	 */
+	function addDrawing() : string{
+		$this->checkCommited();
+
+		return $this->writeRelationship(
+			'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
+			'../drawings/drawing' . $this->worksheet->getId() . '.xml'
+		);
+	}
+
+	/**
 	 * Зафиксировать файл связей.
 	 * @throws ObjectCommittedException
 	 */

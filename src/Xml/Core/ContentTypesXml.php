@@ -46,6 +46,15 @@ class ContentTypesXml extends BaseXml{
 		$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml');
 		$xml->endElement();
 
+		foreach ($model as $worksheet) {
+			if ($worksheet['useDrawing']) {
+				$xml->startElement('Override');
+				$xml->writeAttribute('PartName', "/xl/drawings/drawing$worksheet[id].xml");
+				$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.drawing+xml');
+				$xml->endElement();
+			}
+		}
+
 		$xml->startElement('Override');
 		$xml->writeAttribute('PartName', '/xl/sharedStrings.xml');
 		$xml->writeAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml');

@@ -6,10 +6,12 @@ use OutOfBoundsException;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Helpers\Comments;
+use Topvisor\XlsxCreator\Helpers\Drawing;
 use Topvisor\XlsxCreator\Helpers\SheetRels;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\PageSetup;
-use Topvisor\XlsxCreator\Structures\Range;
+use Topvisor\XlsxCreator\Structures\Range\CellsRange;
+use Topvisor\XlsxCreator\Structures\Range\Range;
 use Topvisor\XlsxCreator\Structures\Views\NormalView;
 use Topvisor\XlsxCreator\Structures\Views\View;
 use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
@@ -54,6 +56,7 @@ class Worksheet{
 	private $columns;
 	private $merges;
 	private $comments;
+	private $drawing;
 	private $sheetRels;
 
 	private $filename;
@@ -89,6 +92,7 @@ class Worksheet{
 		$this->merges = [];
 		$this->lastUncommittedRow = 1;
 		$this->comments = new Comments($this);
+		$this->drawing = new Drawing($this);
 		$this->sheetRels = new SheetRels($this);
 	}
 
@@ -342,6 +346,16 @@ class Worksheet{
 	}
 
 	/**
+	 * @return array|null - временные файлы рисунков таблицы
+	 */
+	function getDrawingFilenames(){
+		return !$this->drawing->isEmpty() ? [
+			'drawing' => $this->drawing->getFilename(),
+			'rels' => $this->drawing->getRelsFilename()
+		] : null;
+	}
+
+	/**
 	 * @param int $col - номер колонки
 	 * @return Column - колонка
 	 */
@@ -419,19 +433,31 @@ class Worksheet{
 	}
 
 	/**
+	 * Вставить картинку на таблицу
+	 *
+	 * @param Range $position - месторасположения картинки
+	 * @param string $filename - путь к файлу картинки
+	 * @param string $extension - расшинение файла картинки
+	 * @param string $imageName - имя картинки
+	 */
+	function addImage(Range $position, string $filename, string $extension = '', string $imageName = ''){
+		$this->drawing->addImage($this->workbook->addImage($filename, $extension), $position, $imageName);
+	}
+
+	/**
 	 * Соединить ячейки в одну
 	 *
-	 * @param Range $range - диапазон ячеек
+	 * @param CellsRange $range - диапазон ячеек
 	 * @throws InvalidValueException
 	 */
-	function mergeCells(Range $range) {
+	function mergeCells(CellsRange $range) {
 		$this->checkCommitted();
 
 		$master = $this->getCell($range->getTop(), $range->getLeft());
 		$this->getCell($range->getBottom(), $range->getRight());
 
 		foreach ($this->merges as $merge)
-			if ($range->intersection(Range::fromString($merge[0])))
+			if ($range->intersection($merge))
 				throw new InvalidValueException('Merge intersect');
 
 		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
@@ -443,16 +469,16 @@ class Worksheet{
 			}
 		}
 
-		$this->merges[] = [(string) $range];
+		$this->merges[] = $range;
 	}
 
 	/**
 	 * Разъединить ячейки
 	 *
-	 * @param Range $range - диапазон ячеек
+	 * @param CellsRange $range - диапазон ячеек
 	 * @throws InvalidValueException
 	 */
-	function unMergeCells(Range $range) {
+	function unMergeCells(CellsRange $range) {
 		$this->checkCommitted();
 
 		$this->getCell($range->getTop(), $range->getLeft());
@@ -460,7 +486,7 @@ class Worksheet{
 
 		$found = false;
 		foreach ($this->merges as $mergeIndex => $merge) {
-			if ($merge[0] == (string) $range) {
+			if ($merge == $range) {
 				$found = $mergeIndex;
 				break;
 			}
@@ -514,6 +540,10 @@ class Worksheet{
 			$rowXml->render($this->xml, $row->prepareToCommit($this->styles, $this->sheetRels, $this->comments));
 			$this->lastUncommittedRow++;
 		}
+
+		foreach ($this->merges as $key => $merge)
+			if ($merge->getBottom() < $this->lastUncommittedRow)
+				unset($this->merges[$key]);
 	}
 
 	/**
@@ -525,7 +555,8 @@ class Worksheet{
 			'name' => $this->name,
 			'rId' => $this->rId ?? '',
 			'partName' => $this->getLocalname(),
-			'useComments' => !$this->comments->isEmpty()
+			'useComments' => !$this->comments->isEmpty(),
+			'useDrawing' => !$this->drawing->isEmpty()
 		];
 	}
 
@@ -576,7 +607,9 @@ class Worksheet{
 		$this->xml->endElement();
 
 //		(new AutoFilterXml())->render($this->xml, [$this->autoFilter]);
-		(new ListXml('mergeCells', new MergeXml(), [], false, true))->render($this->xml, $this->merges);
+		(new ListXml('mergeCells', new MergeXml(), [], false, true))->render($this->xml, array_map(function($merge){
+			return (string) $merge;
+		}, $this->merges));
 
 		if ($hyperlinksFilename = $this->sheetRels->getHyperlinksFilename()) {
 			$this->xml->startElement('hyperlinks');
@@ -590,6 +623,10 @@ class Worksheet{
 
 		(new PageMargins())->render($this->xml, $this->pageSetup->getModel()['margins'] ?? null);
 		(new PageSetupXml())->render($this->xml, $this->pageSetup->getModel());
+
+		if (!$this->drawing->isEmpty())
+			(new StringXml('drawing', [], 'r:id'))
+				->render($this->xml, [$this->sheetRels->addDrawing()]);
 
 		if (!$this->comments->isEmpty())
 			(new StringXml('legacyDrawing', [], 'r:id'))

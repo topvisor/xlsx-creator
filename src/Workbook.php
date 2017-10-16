@@ -10,9 +10,11 @@
 namespace Topvisor\XlsxCreator;
 
 use DateTime;
+use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Helpers\SharedStrings;
+use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\SharedStringValue;
 use Topvisor\XlsxCreator\Xml\Book\WorkbookXml;
@@ -29,6 +31,8 @@ use ZipArchive;
  * @package  Topvisor\XlsxCreator
  */
 class Workbook{
+	const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
+
 	private $filename;
 	private $useSharedStrings;
 	private $tempdir;
@@ -39,6 +43,7 @@ class Workbook{
 	private $company;
 	private $manager;
 
+	private $images;
 	private $sharedStrings;
 	private $styles;
 	private $worksheets;
@@ -63,6 +68,7 @@ class Workbook{
 		$this->company = '';
 		$this->manager = null;
 
+		$this->images = [];
 		$this->sharedStrings = new SharedStrings($this);
 		$this->styles = new Styles();
 		$this->worksheets = [];
@@ -248,6 +254,29 @@ class Workbook{
 	}
 
 	/**
+	 * Добавить картинку.
+	 *
+	 * @param string $filename - имя файла
+	 * @param string $extension - расширение файла
+	 * @return array - картинка
+	 * @throws InvalidValueException
+	 */
+	function addImage(string $filename, string $extension = '') : array{
+		$filename = realpath($filename);
+		if (!$this->filename) throw new InvalidValueException('Invalid $filename');
+
+		if (!$extension) $extension = pathinfo($filename, PATHINFO_EXTENSION);
+		Validator::validate($extension, '$extension', self::VALID_IMAGES_EXTENSION);
+
+		$id = isset($this->images[$filename]) ? $this->images[$filename]['id'] : (count($this->images) + 1);
+
+		$image = ['id' => $id, 'localname' => "image$id.$extension"];
+		$this->images[$filename] = $image;
+
+		return $image;
+	}
+
+	/**
 	 * Добавить таблицу
 	 *
 	 * @param string $name - имя таблицы
@@ -316,40 +345,8 @@ class Workbook{
 		$zip = new ZipArchive();
 		$zip->open($this->filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
-		foreach ($this->worksheets as $worksheet){
-			if (!$worksheet->isCommitted()) $worksheet->commit();
-			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
-
-			if ($sheetRelsFilename = $worksheet->getSheetRelsFilename())
-				$zip->addFile($sheetRelsFilename, 'xl/worksheets/_rels/sheet' . $worksheet->getId() . '.xml.rels');
-
-			if ($commentsFilenames = $worksheet->getCommentsFilenames()) {
-				$zip->addFile($commentsFilenames['comments'], 'xl/comments' . $worksheet->getId() . '.xml');
-				$zip->addFile($commentsFilenames['vml'], 'xl/drawings/vmlDrawing' . $worksheet->getId() . '.vml');
-			}
-		}
-
-		if (!$this->sharedStrings->isCommitted()) $this->sharedStrings->commit();
-		if (!$this->sharedStrings->isEmpty()) $zip->addFile($this->sharedStrings->getFilename(), 'xl/sharedStrings.xml');
-
-		$stylesFilename = $this->genTempFilename();
-		$this->styles->writeToFile($stylesFilename);
-		$zip->addFile($stylesFilename, 'xl/styles.xml');
-
-		$zip->addFromString('_rels/.rels', (new RelationshipsXml())->toXml([
-			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
-			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
-			['Id' => 'rId3', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'Target' => 'docProps/app.xml']
-		]));
-		$zip->addFromString('[Content_Types].xml', (new ContentTypesXml())->toXml($this->getWorksheetsModels()));
-		$zip->addFromString('docProps/app.xml', (new AppXml())->toXml([
-			'worksheets' => $this->getWorksheetsModels(),
-			'company' => $this->company,
-			'manager' => $this->manager
-		]));
-		$zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
-		$zip->addFromString('xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
-		$zip->addFromString('xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
+		$this->addFilesToZip($zip);
+		$this->addStringsToZip($zip);
 
 		$zip->close();
 
@@ -372,6 +369,63 @@ class Workbook{
 
 		$this->tempFilenames[] = $filename;
 		return $filename;
+	}
+
+	/**
+	 * Добавить временные файлы в xlsx.
+	 *
+	 * @param ZipArchive $zip - xlsx файл
+	 */
+	private function addFilesToZip(ZipArchive $zip){
+		foreach ($this->worksheets as $worksheet){
+			if (!$worksheet->isCommitted()) $worksheet->commit();
+			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
+
+			if ($sheetRelsFilename = $worksheet->getSheetRelsFilename())
+				$zip->addFile($sheetRelsFilename, 'xl/worksheets/_rels/sheet' . $worksheet->getId() . '.xml.rels');
+
+			if ($commentsFilenames = $worksheet->getCommentsFilenames()) {
+				$zip->addFile($commentsFilenames['comments'], 'xl/comments' . $worksheet->getId() . '.xml');
+				$zip->addFile($commentsFilenames['vml'], 'xl/drawings/vmlDrawing' . $worksheet->getId() . '.vml');
+			}
+
+			if ($drawingFilenames = $worksheet->getDrawingFilenames()) {
+				$zip->addFile($drawingFilenames['drawing'], 'xl/drawings/drawing' . $worksheet->getId() . '.xml');
+				$zip->addFile($drawingFilenames['rels'], 'xl/drawings/_rels/drawing' . $worksheet->getId() . '.xml.rels');
+			}
+		}
+
+		if (!$this->sharedStrings->isCommitted()) $this->sharedStrings->commit();
+		if (!$this->sharedStrings->isEmpty()) $zip->addFile($this->sharedStrings->getFilename(), 'xl/sharedStrings.xml');
+
+		$stylesFilename = $this->genTempFilename();
+		$this->styles->writeToFile($stylesFilename);
+		$zip->addFile($stylesFilename, 'xl/styles.xml');
+	}
+
+	/**
+	 * Сгенерировать файлы из строк и добавить в xlsx.
+	 *
+	 * @param ZipArchive $zip - xlsx файл
+	 */
+	private function addStringsToZip(ZipArchive $zip){
+		$zip->addFromString('_rels/.rels', (new RelationshipsXml())->toXml([
+			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
+			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
+			['Id' => 'rId3', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'Target' => 'docProps/app.xml']
+		]));
+
+		$zip->addFromString('[Content_Types].xml', (new ContentTypesXml())->toXml($this->getWorksheetsModels()));
+
+		$zip->addFromString('docProps/app.xml', (new AppXml())->toXml([
+			'worksheets' => $this->getWorksheetsModels(),
+			'company' => $this->company,
+			'manager' => $this->manager
+		]));
+
+		$zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
+		$zip->addFromString('xl/_rels/workbook.xml.rels', (new RelationshipsXml())->toXml($this->genRelationships()));
+		$zip->addFromString('xl/workbook.xml', (new WorkbookXml())->toXml($this->getWorksheetsModels()));
 	}
 
 	/**

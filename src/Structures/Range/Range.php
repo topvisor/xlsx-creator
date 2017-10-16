@@ -1,6 +1,6 @@
 <?php
 
-namespace Topvisor\XlsxCreator\Structures;
+namespace Topvisor\XlsxCreator\Structures\Range;
 
 use Topvisor\XlsxCreator\Cell;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
@@ -12,21 +12,21 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  * @package Topvisor\XlsxCreator\Structures
  */
 class Range{
-	private $top;
-	private $left;
-	private $bottom;
-	private $right;
+	protected $top;
+	protected $left;
+	protected $bottom;
+	protected $right;
 
 	/**
 	 * Range constructor.
 	 *
-	 * @param int $row1 - номер первой строки
-	 * @param int $col1 - номер первого столбца
-	 * @param int $row2 - номер второй строки
-	 * @param int $col2 - номер второго столбца
+	 * @param float $row1 - номер первой строки
+	 * @param float $col1 - номер первого столбца
+	 * @param float $row2 - номер второй строки
+	 * @param float $col2 - номер второго столбца
 	 * @throws InvalidValueException
 	 */
-	function __construct(int $row1, int $col1, int $row2, int $col2){
+	function __construct(float $row1, float $col1, float $row2, float $col2){
 		if ($row1 == $row2 && $col1 == $col2) throw new InvalidValueException("It's not range");
 
 		Validator::validateInRange($row1, 1, 1048576, '$row1');
@@ -52,35 +52,31 @@ class Range{
 	}
 
 	/**
-	 * @return int - левая колонка
+	 * @return float - левая колонка
 	 */
-	function getLeft() : int{
+	function getLeft() : float{
 		return $this->left;
 	}
 
 	/**
-	 * @return int - верхняя строка
+	 * @return float - верхняя строка
 	 */
-	function getTop() : int{
+	function getTop() : float{
 		return $this->top;
 	}
 
 	/**
-	 * @return int - правая колонка
+	 * @return float - правая колонка
 	 */
-	function getRight() : int{
+	function getRight() : float{
 		return $this->right;
 	}
 
 	/**
-	 * @return int - нижняя строка
+	 * @return float - нижняя строка
 	 */
-	function getBottom() : int{
+	function getBottom() : float{
 		return $this->bottom;
-	}
-
-	function __toString(){
-		return Cell::genColStr($this->left) . $this->top . ':' . Cell::genColStr($this->right) . $this->bottom;
 	}
 
 	/**
@@ -115,26 +111,5 @@ class Range{
 		}
 
 		return new Range($top, $left, $bottom, $right);
-	}
-
-	/**
-	 * @param string $range - диапазон в формате (A1:B4)
-	 * @return Range - диапазон
-	 * @throws InvalidValueException
-	 */
-	static function fromString(string $range) : self{
-		$addresses = explode(':', $range);
-
-		if (count($addresses) !== 2) throw new InvalidValueException("Unavailable cell's range");
-
-		if (!preg_match('/^([A-Z]{1,3})(\d{1,5})$/', $addresses[0], $matches)) throw new InvalidValueException('Unavailable address format');
-		$col1 = Cell::genColNum($matches[1]);
-		$row1 = (int) $matches[2];
-
-		if (!preg_match('/^([A-Z]{1,3})(\d{1,5})$/', $addresses[1], $matches)) throw new InvalidValueException('Unavailable address format');
-		$col2 = Cell::genColNum($matches[1]);
-		$row2 = (int) $matches[2];
-
-		return new self($row1, $col1, $row2, $col2);
 	}
 }
