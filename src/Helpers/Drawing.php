@@ -154,15 +154,18 @@ class Drawing{
 
 		$this->xml->startElement('xdr:spPr');
 		$this->xml->startElement('a:xfrm');
-
 		$this->xml->startElement('a:off');
+
 		$this->xml->writeAttribute('x', 0);
 		$this->xml->writeAttribute('y', 0);
+
 		$this->xml->endElement();
 
 		$this->xml->startElement('a:ext');
 		$this->xml->writeAttribute('cx', 2057400);
 		$this->xml->writeAttribute('cy', 528034);
+		$this->xml->endElement();
+
 		$this->xml->endElement();
 
 		$this->xml->startElement('a:prstGeom');
@@ -171,10 +174,7 @@ class Drawing{
 		$this->xml->writeElement('a:avLst');
 
 		$this->xml->endElement();
-
 		$this->xml->endElement();
-		$this->xml->endElement();
-
 		$this->xml->endElement();
 	}
 
