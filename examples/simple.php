@@ -1,6 +1,6 @@
 <?php
 /**
- * Простейший пример использования библиотеки
+ * Простейший пример использования библиотеки.
  *
  * @author decaseal <decaseal@gmail.com>
  */
@@ -9,7 +9,7 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$xlsxFilename = __DIR__.'/example1.xlsx'; // путь, по которому будет создан xlsx файл
+$xlsxFilename = __DIR__.'/simple.xlsx'; // путь, по которому будет создан xlsx файл
 $workbook = new Workbook($xlsxFilename); // инициализация библиотеки
 
 $sheetName = 'Sheet1'; // имя таблицы

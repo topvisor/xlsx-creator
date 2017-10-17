@@ -37,6 +37,7 @@ use XMLWriter;
  */
 class Worksheet{
 	const DY_DESCENT = 55;
+	const DEFAULT_ROW_HEIGHT = 15;
 
 	private $workbook;
 	private $styles;
@@ -45,7 +46,6 @@ class Worksheet{
 	private $tabColor;
 	private $outlineLevelCol;
 	private $outlineLevelRow;
-	private $defaultRowHeight;
 	private $view;
 	private $pageSetup;
 //	private $autoFilter;
@@ -81,7 +81,6 @@ class Worksheet{
 		$this->tabColor = null;
 		$this->outlineLevelCol = 0;
 		$this->outlineLevelRow = 0;
-		$this->defaultRowHeight = 15;
 		$this->view = new NormalView();
 		$this->pageSetup = new PageSetup();
 //		$this->autoFilter = null;
@@ -194,29 +193,6 @@ class Worksheet{
 		Validator::validatePositive($outlineLevelRow, '$outlineLevelRow');
 
 		$this->outlineLevelRow = $outlineLevelRow;
-		return $this;
-	}
-
-	/**
-	 * @return int - высота строк по умолчанию
-	 */
-	function getDefaultRowHeight() : int{
-		return $this->defaultRowHeight;
-	}
-
-	/**
-	 * @param int $defaultRowHeight - высота строк по умолчанию
-	 * @return Worksheet - $this
-	 * @throws ObjectCommittedException
-	 * @throws InvalidValueException
-	 */
-	function setDefaultRowHeight(int $defaultRowHeight) : Worksheet{
-		$this->checkCommitted();
-		$this->checkStarted();
-
-		Validator::validatePositive($defaultRowHeight, '$defaultRowHeight');
-
-		$this->defaultRowHeight = $defaultRowHeight;
 		return $this;
 	}
 
@@ -581,10 +557,10 @@ class Worksheet{
 		(new SheetViewsXml())->render($this->xml, $this->view->getModel());
 
 		(new SheetFormatPropertiesXml())->render($this->xml, [
-			'defaultRowHeight' => $this->defaultRowHeight,
+			'defaultRowHeight' => self::DEFAULT_ROW_HEIGHT,
 			'outlineLevelCol' => $this->outlineLevelCol,
 			'outlineLevelRow' => $this->outlineLevelRow,
-			'dyDescent' => Worksheet::DY_DESCENT
+			'dyDescent' => self::DY_DESCENT
 		]);
 
 		(new ListXml('cols', new ColumnXml()))->render($this->xml, array_map(function($column){

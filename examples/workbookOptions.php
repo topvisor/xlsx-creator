@@ -1,0 +1,29 @@
+<?php
+/**
+ * Пример задания различных опций xlsx файла
+ *
+ * @author decaseal <decaseal@gmail.com>
+ */
+
+use Topvisor\XlsxCreator\Workbook;
+
+include __DIR__.'/../vendor/autoload.php';
+
+$xlsxFilename = __DIR__.'/workbookOptions.xlsx'; // путь, по которому будет создан xlsx файл
+$useSharedStrings = true; // использовать общие строки. Данная опция уменьшит размер xlsx файла за счет увеличения потребления оперативной памяти
+$workbook = new Workbook($xlsxFilename, $useSharedStrings); // инициализация библиотеки
+
+$workbook
+	->setFilename(__DIR__.'/workbookOptions1.xlsx') // изменение пути, по которому будет создан xlsx файл
+	->setTempdir(sys_get_temp_dir()) // путь к директории для хранения временных файлов библиотеки
+	->setCompany('Topvisor') // компания
+	->setCreator('decaseal') // создатель файла
+	->setLastModifiedBy('decaseal') // последний изменявший файл
+	->setCreated(new DateTime()) // время создания
+	->setModified(new DateTime()) // время изменения
+	->setManager('decaseal'); // менеджер
+
+$worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
+$worksheet->addRow(['test1', 'test2', 3, 4]); // создание строки
+
+$workbook->commit(); // создание xlsx файла
