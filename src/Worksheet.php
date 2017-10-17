@@ -453,9 +453,6 @@ class Worksheet{
 	function mergeCells(CellsRange $range) {
 		$this->checkCommitted();
 
-		if ($range->getLeft() == $range->getRight()
-			&& $range->getTop() == $range->getBottom()) throw new InvalidValueException('Invalid $range to merge');
-
 		$master = $this->getCell($range->getTop(), $range->getLeft());
 		$this->getCell($range->getBottom(), $range->getRight());
 

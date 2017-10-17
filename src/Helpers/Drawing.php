@@ -134,6 +134,9 @@ class Drawing{
 	private function writeCellPosition(string $tag, float $col, float $row){
 		$this->xml->startElement($tag);
 
+		$col -= 1;
+		$row -= 1;
+
 		$this->xml->writeElement('xdr:col', $intCol = (int) floor($col));
 		$this->xml->writeElement('xdr:colOff', (int) floor(($col - $intCol) * 640000));
 		$this->xml->writeElement('xdr:row', $intRow = (int) floor(($row)));
