@@ -41,8 +41,6 @@ class Alignment implements Serializable{
 		if (!is_null($horizontal)) {
 			Validator::validate($horizontal, '$horizontal', self::VALID_HORIZONTAL);
 			$this->setIndent(null);
-
-			if ($horizontal !== 'distributed') $this->setWrapText(false);
 		}
 
 		$this->horizontal = $horizontal;
@@ -79,8 +77,6 @@ class Alignment implements Serializable{
 	 * @return Alignment - $this
 	 */
 	function setWrapText(bool $wrapText) : self{
-		if ($wrapText) $this->setHorizontal('distributed');
-
 		$this->wrapText = $wrapText;
 		return $this;
 	}
