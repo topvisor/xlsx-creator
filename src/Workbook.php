@@ -4,7 +4,7 @@
  * Библиотека для создания xlsx файлов
  *
  * @author decaseal <decaseal@gmail.com>
- * @version v0.5-alpha
+ * @version v0.6-alpha
  */
 
 namespace Topvisor\XlsxCreator;
