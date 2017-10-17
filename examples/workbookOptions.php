@@ -14,7 +14,6 @@ $useSharedStrings = true; // использовать общие строки. �
 $workbook = new Workbook($xlsxFilename, $useSharedStrings); // инициализация библиотеки
 
 $workbook
-	->setFilename(__DIR__.'/workbookOptions1.xlsx') // изменение пути, по которому будет создан xlsx файл
 	->setTempdir(sys_get_temp_dir()) // путь к директории для хранения временных файлов библиотеки
 	->setCompany('Topvisor') // компания
 	->setCreator('decaseal') // создатель файла

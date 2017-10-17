@@ -10,6 +10,8 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  * @package  Topvisor\XlsxCreator\Structures\Views
  */
 class SplitView extends View{
+	const VALID_ACTIVE_PANE = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
+
 	public function __construct(int $xSplit, int $ySplit){
 		$this->model['state'] = 'split';
 
@@ -72,18 +74,18 @@ class SplitView extends View{
 	}
 
 	/**
-	 * @return string|null - Левая-верхняя ячейка в нижней правой панели
+	 * @return string|null - активная панель
 	 */
 	function getActivePane(){
 		return $this->model['activePane'] ?? null;
 	}
 
 	/**
-	 * @param string|null $activePane - Левая-верхняя ячейка в нижней правой панели (например, 'A1', 'B10', и т.д.)
+	 * @param string|null $activePane - активная панель
 	 * @return SplitView - $this
 	 */
 	function setActivePane(string $activePane = null) : self{
-		if (!is_null($activePane)) Validator::validateAddress($activePane);
+		if (!is_null($activePane)) Validator::validate($activePane, '$activePane', self::VALID_ACTIVE_PANE);
 
 		$this->model['activePane'] = $activePane;
 		return $this;
