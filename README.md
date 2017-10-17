@@ -9,14 +9,8 @@
 composer.json
 ```json
 {
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/topvisor/xlsx-creator"
-        }
-    ],
     "require": {
-        "topvisor/xlsx-creator": "v0.7-alpha"
+        "topvisor/xlsx-creator": "v0.8-alpha"
     }
 }
 ```
