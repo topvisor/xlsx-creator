@@ -12,18 +12,18 @@ composer.json
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/topvisor/XlsxCreator"
+            "url": "https://github.com/topvisor/xlsx-creator"
         }
     ],
     "require": {
-        "topvisor/XlsxCreator": "v0.6-alpha"
+        "topvisor/xlsx-creator": "v0.7-alpha"
     }
 }
 ```
 
 # Вступление
 
-Примеры расположены в папке [examples](https://github.com/topvisor/XlsxCreator/tree/master/examples).
+Примеры расположены в папке [examples](https://github.com/topvisor/xlsx-creator/tree/master/examples).
 
 Важнейшей особенностью библиотеки является ее потоковость. [Фиксация изменений](#Фиксация-изменений) выгружает данные в файл, и удаляет их 
 из оперативной памяти.

@@ -1,5 +1,5 @@
 {
-	"name": "topvisor/XlsxCreator",
+	"name": "topvisor/xlsx-creator",
 	"description": "Library for creating xlsx files for Topvisor",
 	"keywords": ["PHP","Excel","OpenXML","xlsx","xls","spreadsheet"],
 	"license": "MIT",
