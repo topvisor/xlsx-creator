@@ -10,12 +10,8 @@ class TextXml extends BaseXml {
 		if (!$model) return;
 
 		$xml->startElement('t');
-
-		if ($model['value'][0] == ' ' || $model['value'][mb_strlen($model['value']) - 1] == ' ')
-			$xml->writeAttribute('xml:space', 'preserve');
-
+		$xml->writeAttribute('xml:space', 'preserve');
 		$xml->text($model['value']);
-
 		$xml->endElement();
 	}
 }
