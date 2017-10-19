@@ -1,6 +1,6 @@
 <?php
 
-namespace Topvisor\XlsxCreator\Structures\Drawing;
+namespace Topvisor\XlsxCreator\Structures\Drawing\Pic;
 
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
