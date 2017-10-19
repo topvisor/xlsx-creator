@@ -7,6 +7,8 @@ use XMLWriter;
 
 class PicPropertiesXml extends BaseXml{
 	function render(XMLWriter $xml, array $model = null){
+		if (!$model) return;
+
 		$xml->startElement('xdr:nvPicPr');
 
 		$xml->startElement('xdr:cNvPr');

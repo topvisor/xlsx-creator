@@ -7,6 +7,8 @@ use XMLWriter;
 
 class BlipFillXml extends BaseXml{
 	function render(XMLWriter $xml, array $model = null){
+		if (!$model) return;
+
 		$xml->startElement('xdr:blipFill');
 
 		$xml->startElement('a:blip');
