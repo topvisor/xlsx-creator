@@ -11,6 +11,11 @@ class RelationshipXml extends BaseXml{
 
 		$xml->startElement('Relationship');
 
+		$xml->writeAttribute('Id', $model['id']);
+		$xml->writeAttribute('Type', $model['type']);
+		$xml->writeAttribute('Target', $model['target']);
+		if ($model['targetMode'] ?? false) $xml->writeAttribute('TargetMode', $model['targetMode']);
+
 		foreach ($model as $name => $value) $xml->writeAttribute($name, $value);
 
 		$xml->endElement();

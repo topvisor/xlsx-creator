@@ -4,6 +4,7 @@ namespace Topvisor\XlsxCreator\Helpers;
 
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Worksheet;
+use Topvisor\XlsxCreator\Xml\Core\Relationships\RelationshipXml;
 use Topvisor\XlsxCreator\Xml\Sheet\HyperlinkXml;
 use XMLWriter;
 
@@ -176,14 +177,12 @@ class SheetRels{
 
 		$rId = 'rId' . $this->nextId++;
 
-		$this->xml->startElement('Relationship');
-
-		$this->xml->writeAttribute('Id', $rId);
-		$this->xml->writeAttribute('Type', $type);
-		$this->xml->writeAttribute('Target', $target);
-		if ($targetMode) $this->xml->writeAttribute('TargetMode', $targetMode);
-
-		$this->xml->endElement();
+		(new RelationshipXml())->render($this->xml, [
+			'id' => $rId,
+			'type' => $type,
+			'target' => $target,
+			'targetMode' => $targetMode
+		]);
 
 		return $rId;
 	}

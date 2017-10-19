@@ -413,9 +413,9 @@ class Workbook{
 	 */
 	private function addStringsToZip(ZipArchive $zip){
 		$zip->addFromString('_rels/.rels', (new RelationshipsXml())->toXml([
-			['Id' => 'rId1', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'Target' => 'xl/workbook.xml'],
-			['Id' => 'rId2', 'Type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'Target' => 'docProps/core.xml'],
-			['Id' => 'rId3', 'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'Target' => 'docProps/app.xml']
+			['id' => 'rId1', 'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'target' => 'xl/workbook.xml'],
+			['id' => 'rId2', 'type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'target' => 'docProps/core.xml'],
+			['id' => 'rId3', 'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'target' => 'docProps/app.xml']
 		]));
 
 		$zip->addFromString('[Content_Types].xml', (new ContentTypesXml())->toXml($this->getWorksheetsModels()));
@@ -440,24 +440,24 @@ class Workbook{
 		$count = 1;
 
 		$relationships = [[
-			'Id' => 'rId' . $count++,
-			'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
-			'Target' => 'styles.xml'
+			'id' => 'rId' . $count++,
+			'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
+			'target' => 'styles.xml'
 		]];
 
 		if (!$this->sharedStrings->isEmpty()) $relationships[] = [
-			'Id' => 'rId' . $count++,
-			'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
-			'Target' => 'sharedStrings.xml'
+			'id' => 'rId' . $count++,
+			'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
+			'target' => 'sharedStrings.xml'
 		];
 
 		foreach ($this->worksheets as $worksheet) {
 			$worksheet->setRId('rId' . $count++);
 
 			$relationships[] = [
-				'Id' => $worksheet->getRId(),
-				'Type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
-				'Target' => 'worksheets/sheet' . $worksheet->getId() . '.xml'
+				'id' => $worksheet->getRId(),
+				'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
+				'target' => 'worksheets/sheet' . $worksheet->getId() . '.xml'
 			];
 		}
 

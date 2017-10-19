@@ -5,6 +5,7 @@ namespace Topvisor\XlsxCreator\Helpers;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Structures\Range\Range;
 use Topvisor\XlsxCreator\Worksheet;
+use Topvisor\XlsxCreator\Xml\Core\Relationships\RelationshipXml;
 use XMLWriter;
 
 /**
@@ -100,11 +101,11 @@ class Drawing{
 	 * @param string $localname - имя файла картинки
 	 */
 	private function writeRelationships(string $rId, string $localname){
-		$this->relsXml->startElement('Relationship');
-		$this->relsXml->writeAttribute('Id', $rId);
-		$this->relsXml->writeAttribute('Type', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image');
-		$this->relsXml->writeAttribute('Target', "../media/$localname");
-		$this->relsXml->endElement();
+		(new RelationshipXml())->render($this->relsXml, [
+			'id' => $rId,
+			'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
+			'target' => "../media/$localname"
+		]);
 	}
 
 	/**
