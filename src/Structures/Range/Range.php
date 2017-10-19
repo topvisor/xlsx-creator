@@ -112,4 +112,13 @@ class Range{
 
 		return new Range($top, $left, $bottom, $right);
 	}
+
+	function getModel() : array{
+		return [
+			'left' => $this->left,
+			'right' => $this->right,
+			'top' => $this->top,
+			'bottom' => $this->bottom
+		];
+	}
 }
