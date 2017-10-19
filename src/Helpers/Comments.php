@@ -8,6 +8,8 @@ use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\Value;
 use Topvisor\XlsxCreator\Worksheet;
+use Topvisor\XlsxCreator\Xml\Comments\CommentXml;
+use Topvisor\XlsxCreator\Xml\Comments\Vml\ShapeXml;
 use Topvisor\XlsxCreator\Xml\Strings\SharedStringXml;
 use XMLWriter;
 
@@ -73,8 +75,19 @@ class Comments{
 	function addComment(Cell $cell){
 		if ($this->empty) $this->startComments();
 
-		$this->addCommentToComments($cell->getAddress(), $cell->getComment());
-		$this->addCommentToVml($cell->getCol(), $cell->getRow()->getNumber(), $cell->getCommentWidth(), $cell->getCommentHeight());
+		(new CommentXml())->render($this->commentsXml, [
+			'address' => $cell->getAddress(),
+			'type' => $cell->getComment()->getType(),
+			'value' => $cell->getComment()->getValue()
+		]);
+
+		(new ShapeXml())->render($this->vmlXml, [
+			'id' => $this->nextShapeId++,
+			'col' => $cell->getCol(),
+			'row' => $cell->getRow()->getNumber(),
+			'width' => $cell->getCommentWidth(),
+			'height' => $cell->getCommentHeight()
+		]);
 	}
 
 	/**
@@ -92,71 +105,6 @@ class Comments{
 		$this->committed = true;
 
 		$this->endComments();
-	}
-
-	/**
-	 * Записать текст комментария.
-	 *
-	 * @param string $address - адрес ячейки
-	 * @param Value $comment - комментарий
-	 */
-	private function addCommentToComments(string $address, Value $comment){
-		if (!$comment) return;
-
-		$this->commentsXml->startElement('comment');
-
-		$this->commentsXml->writeAttribute('authorId', 0);
-		$this->commentsXml->writeAttribute('ref', $address);
-
-		(new SharedStringXml('text'))->render($this->commentsXml, [
-			'type' => $comment->getType(),
-			'value' => $comment->getValue()
-		]);
-
-		$this->commentsXml->endElement();
-	}
-
-	/**
-	 * Записать положение и размеры комментария.
-	 *
-	 * @param int $col - колонка
-	 * @param int $row - строка
-	 * @param int $width - ширина
-	 * @param int $height - высота
-	 */
-	private function addCommentToVml(int $col, int $row, int $width, int $height){
-		$this->vmlXml->startElement('v:shape');
-
-		$this->vmlXml->writeAttribute('id', '_x0000_s000' . $this->nextShapeId++);
-		$this->vmlXml->writeAttribute('style', 'visibility:hidden');
-		$this->vmlXml->writeAttribute('fillcolor', '#ffffe1');
-		$this->vmlXml->writeAttribute('type', '#_x0000_t202');
-
-		$this->vmlXml->startElement('v:fill');
-		$this->vmlXml->writeAttribute('angle', 0);
-		$this->vmlXml->writeAttribute('color2', '#ffffe1');
-		$this->vmlXml->endElement();
-
-		$this->vmlXml->startElement('v:shadow');
-		$this->vmlXml->writeAttribute('color', 'black');
-		$this->vmlXml->writeAttribute('obscured', 't');
-		$this->vmlXml->writeAttribute('on', 't');
-		$this->vmlXml->endElement();
-
-		$this->vmlXml->writeElement('v:textbox');
-
-		$this->vmlXml->startElement('x:ClientData');
-		$this->vmlXml->writeAttribute('ObjectType', 'Note');
-
-		$this->vmlXml->writeElement('x:MoveWithCells');
-		$this->vmlXml->writeElement('x:SizeWithCells');
-		$this->vmlXml->writeElement('x:Anchor', implode(', ', [$col, 15, $row, 10, 3 + $col + $width, 15, 1 + $row + $height, 4]));
-		$this->vmlXml->writeElement('x:AutoFill', 'False');
-		$this->vmlXml->writeElement('x:Row', $row - 1);
-		$this->vmlXml->writeElement('x:Column', $col - 1);
-
-		$this->vmlXml->endElement();
-		$this->vmlXml->endElement();
 	}
 
 	/**
