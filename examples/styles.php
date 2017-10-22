@@ -15,7 +15,7 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$workbook = new Workbook(__DIR__.'/rows.xlsx'); // инициализация библиотеки
+$workbook = new Workbook(__DIR__.'/styles.xlsx'); // инициализация библиотеки
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 
 // стили можно назначать колонкам, строкам и ячейкам
