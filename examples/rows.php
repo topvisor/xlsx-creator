@@ -15,7 +15,7 @@ $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблиц
 $values = ['test1', 'test2', 3, 4]; // значения ячеек строки
 
 $row = $worksheet->addRow(); // создать пустую строку
-$row = $worksheet->addRow(); // создать строку со значениями ячеек
+$row = $worksheet->addRow($values); // создать строку со значениями ячеек
 $row = $worksheet->getRow(3); // полученить строку
 
 $row
