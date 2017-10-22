@@ -184,7 +184,7 @@ class Borders implements Serializable{
 			($this->right ? str_replace(';', $replace, $this->right->serialize()) : '') . ';' .
 			($this->top ? str_replace(';', $replace, $this->top->serialize()) : '') . ';' .
 			($this->bottom ? str_replace(';', $replace, $this->bottom->serialize()) : '') . ';' .
-			($this->diagonalStyle ? str_replace(';', $replace, $this->left->diagonalStyle()) : '') . ';' .
+			($this->diagonalStyle ? str_replace(';', $replace, $this->diagonalStyle->serialize()) : '') . ';' .
 			($this->diagonalUp ? '1' : '') . ';' .
 			($this->diagonalDown ? '1' : '');
 	}
