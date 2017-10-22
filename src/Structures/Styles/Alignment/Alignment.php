@@ -73,7 +73,7 @@ class Alignment implements Serializable{
 	}
 
 	/**
-	 * @param bool $wrapText - распределять по ширине
+	 * @param bool $wrapText - заполнить ячейку текстом
 	 * @return Alignment - $this
 	 */
 	function setWrapText(bool $wrapText) : self{

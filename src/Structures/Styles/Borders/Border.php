@@ -47,7 +47,7 @@ class Border implements Serializable{
 	function getModel() : array{
 		return [
 			'style' => $this->style,
-			'color' => $this->color
+			'color' => $this->color->getModel()
 		];
 	}
 
