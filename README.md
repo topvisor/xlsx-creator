@@ -10,7 +10,7 @@ composer.json
 ```json
 {
     "require": {
-        "topvisor/xlsx-creator": "v0.8-alpha"
+        "topvisor/xlsx-creator": "1.0"
     }
 }
 ```
@@ -18,6 +18,14 @@ composer.json
 # Вступление
 
 Примеры расположены в папке [examples](https://github.com/topvisor/xlsx-creator/tree/master/examples).
+
+Запуск примеров
+```bash
+git clone https://github.com/topvisor/xlsx-creator.git
+cd xlsx-creator
+composer install
+php examples/simple.php
+```
 
 Важнейшей особенностью библиотеки является ее потоковость. [Фиксация изменений](#Фиксация-изменений) выгружает данные в файл, и удаляет их 
 из оперативной памяти.
