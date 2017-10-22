@@ -20,6 +20,7 @@ class Column extends Style{
 	private $outlineLevel;
 
 	public function __construct(Worksheet $worksheet, int $number){
+	    $this->width = 8;
 		$this->worksheet = $worksheet;
 		$this->number = $number;
 	}
@@ -45,17 +46,17 @@ class Column extends Style{
 	}
 
 	/**
-	 * @return null|int - ширина столбца
+	 * @return int - ширина столбца
 	 */
-	function getWidth(){
+	function getWidth() : int{
 		return $this->width;
 	}
 
 	/**
-	 * @param int|null $width - ширина столбца
+	 * @param int $width - ширина столбца
 	 * @return Column - $this
 	 */
-	function setWidth(int $width = null) : self{
+	function setWidth(int $width = 8) : self{
 		Validator::validateInRange($width, 0, 409, '$width');
 
 		$this->width = $width;
@@ -100,11 +101,11 @@ class Column extends Style{
 	 * @param Styles $styles - стили xlsx
 	 * @return array|null - модель
 	 */
-	function prepareToCommit(Styles $styles){
-		$styleId = $styles->addStyle($this);
+	function prepareToCommit(Styles $styles) : array{
+        $styleId = $styles->addStyle($this);
 		$collapsed = (bool) ($this->outlineLevel && $this->outlineLevel > $this->worksheet->getOutlineLevelCol());
 
-		return ($this->isDefault()) ? null : [
+		return [
 			'min' => $this->number,
 			'max' => $this->number,
 			'width' => $this->width,
@@ -113,24 +114,5 @@ class Column extends Style{
 			'outlineLevel' => $this->outlineLevel,
 			'collapsed' => $collapsed
 		];
-	}
-
-	/**
-	 * @return bool - является ли колонка не измененной
-	 */
-	private function isDefault() : bool{
-		if ($this->isCustomWidth()) return false;
-		if ($this->hidden) return false;
-		if ($this->outlineLevel) return false;
-		if ($this->getStyleModel()) return false;
-
-		return true;
-	}
-
-	/**
-	 * @return bool - высота колонки изменена
-	 */
-	private function isCustomWidth() : bool{
-		return (bool) ($this->width && $this->width != 8);
 	}
 }
