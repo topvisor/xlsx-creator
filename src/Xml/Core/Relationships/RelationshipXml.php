@@ -16,8 +16,6 @@ class RelationshipXml extends BaseXml{
 		$xml->writeAttribute('Target', $model['target']);
 		if ($model['targetMode'] ?? false) $xml->writeAttribute('TargetMode', $model['targetMode']);
 
-		foreach ($model as $name => $value) $xml->writeAttribute($name, $value);
-
 		$xml->endElement();
 	}
 }
