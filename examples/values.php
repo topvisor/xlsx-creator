@@ -15,7 +15,7 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$workbook = new Workbook(__DIR__.'/values.xlsx'); // инициализация библиотеки
+$workbook = new Workbook(); // инициализация библиотеки
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 
 $nullValue = null; // пустая ячейка
@@ -55,4 +55,4 @@ $worksheet->addRow([
     $richTextValue
 ]);
 
-$workbook->commit(); // создание xlsx файла
+$workbook->toFile(__DIR__.'/values.xlsx'); // создание xlsx файла

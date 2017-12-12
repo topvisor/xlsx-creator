@@ -9,7 +9,7 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$workbook = new Workbook(__DIR__.'/columns.xlsx'); // инициализация библиотеки
+$workbook = new Workbook(); // инициализация библиотеки
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 
 $column = $worksheet->addColumn(); // создать колонку
@@ -21,4 +21,4 @@ $column
 
 $worksheet->addRow(['test1', 'test2', 3, 4]); // создание строки
 
-$workbook->commit(); // создание xlsx файла
+$workbook->toFile(__DIR__.'/columns.xlsx'); // создание xlsx файла

@@ -9,7 +9,7 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$workbook = new Workbook(__DIR__.'/comments.xlsx'); // инициализация библиотеки
+$workbook = new Workbook(); // инициализация библиотеки
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 $cell = $worksheet->getCell(1, 1); // получить ячейку по номеру строки и столбца
 
@@ -18,4 +18,4 @@ $cell
     ->setCommentHeight(4) // высота комментария
     ->setComment('comment'); // комментарий
 
-$workbook->commit(); // создание xlsx файла
+$workbook->toFile(__DIR__.'/comments.xlsx'); // создание xlsx файла

@@ -15,7 +15,7 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$workbook = new Workbook(__DIR__.'/styles.xlsx'); // инициализация библиотеки
+$workbook = new Workbook(); // инициализация библиотеки
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 
 // стили можно назначать колонкам, строкам и ячейкам
@@ -73,4 +73,4 @@ $worksheet->getCell(1, 1)
     ->setNumFmt($numFmt)
     ->setAlignment($alignment);
 
-$workbook->commit(); // создание xlsx файла
+$workbook->toFile(__DIR__.'/styles.xlsx'); // создание xlsx файла

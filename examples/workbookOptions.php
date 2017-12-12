@@ -9,9 +9,8 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$xlsxFilename = __DIR__.'/workbookOptions.xlsx'; // путь, по которому будет создан xlsx файл
 $useSharedStrings = true; // использовать общие строки. Данная опция уменьшит размер xlsx файла за счет увеличения потребления оперативной памяти
-$workbook = new Workbook($xlsxFilename, $useSharedStrings); // инициализация библиотеки
+$workbook = new Workbook($useSharedStrings); // инициализация библиотеки
 
 $workbook
 	->setTempdir(sys_get_temp_dir()) // путь к директории для хранения временных файлов библиотеки
@@ -25,4 +24,5 @@ $workbook
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 $worksheet->addRow(['test1', 'test2', 3, 4]); // создание строки
 
-$workbook->commit(); // создание xlsx файла
+$xlsxFilename = __DIR__.'/workbookOptions.xlsx'; // путь, по которому будет создан xlsx файл
+$workbook->toFile($xlsxFilename); // создание xlsx файла

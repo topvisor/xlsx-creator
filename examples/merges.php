@@ -10,7 +10,7 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$workbook = new Workbook(__DIR__.'/merges.xlsx'); // инициализация библиотеки
+$workbook = new Workbook(); // инициализация библиотеки
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 
 // добавление строк
@@ -24,4 +24,4 @@ $worksheet->mergeCells(new CellsRange(1, 1, 1, 2));
 $worksheet->mergeCells(new CellsRange(2, 1, 2, 2));
 $worksheet->unMergeCells(new CellsRange(2, 1, 2, 2));
 
-$workbook->commit(); // создание xlsx файла
+$workbook->toFile(__DIR__.'/merges.xlsx'); // создание xlsx файла

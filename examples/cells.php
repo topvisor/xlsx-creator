@@ -9,7 +9,7 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$workbook = new Workbook(__DIR__.'/cells.xlsx'); // инициализация библиотеки
+$workbook = new Workbook(); // инициализация библиотеки
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 $row = $worksheet->addRow(); // создание строки
 
@@ -19,4 +19,4 @@ $cell = $worksheet->getCell(2, 2); // получить ячейку по ном�
 
 $cell->setValue('value'); // значение ячейки
 
-$workbook->commit(); // создание xlsx файла
+$workbook->toFile(__DIR__.'/cells.xlsx'); // создание xlsx файла
