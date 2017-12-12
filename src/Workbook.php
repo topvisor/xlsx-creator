@@ -351,9 +351,7 @@ class Workbook{
 	 */
 	function toFile(string $filename){
 		if (!$this->committed) $this->commit();
-		echo $this->tempFilename;
 		copy($this->tempFilename, $filename);
-		sleep(100);
 	}
 
 	/**
