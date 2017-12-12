@@ -9,8 +9,7 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$xlsxFilename = __DIR__.'/simple.xlsx'; // путь, по которому будет создан xlsx файл
-$workbook = new Workbook($xlsxFilename); // инициализация библиотеки
+$workbook = new Workbook(); // инициализация библиотеки
 
 $sheetName = 'Sheet1'; // имя таблицы
 $worksheet = $workbook->addWorksheet($sheetName); // создание таблицы
@@ -18,4 +17,5 @@ $worksheet = $workbook->addWorksheet($sheetName); // создание табли
 $values = ['test1', 'test2', 3, 4]; // значения ячеек строки
 $worksheet->addRow($values); // создание строки
 
-$workbook->commit(); // создание xlsx файла
+$xlsxFilename = __DIR__.'/simple.xlsx'; // путь, по которому будет создан xlsx файл
+$workbook->toFile($xlsxFilename); // создание xlsx файла

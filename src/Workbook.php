@@ -32,7 +32,7 @@ use ZipArchive;
  */
 class Workbook{
 	const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
-	const INVALID_WORKSHEET_NAME = '/[\/?*\[\]]/';
+	const INVALID_WORKSHEET_NAME = '/[\/\\\?\*\[\]]/';
 
 	private $useSharedStrings;
 	private $tempdir;
@@ -329,7 +329,7 @@ class Workbook{
 		if (!count($this->worksheets)) throw new EmptyObjectException('Workbook is empty');
 
 		$this->committed = true;
-		$this->tempFilename = $this->genTempFilename(false);
+		$this->tempFilename = $this->genTempFilename(false, 'xlsx');
 
 		$zip = new ZipArchive();
 		$zip->open($this->tempFilename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
@@ -351,7 +351,9 @@ class Workbook{
 	 */
 	function toFile(string $filename){
 		if (!$this->committed) $this->commit();
+		echo $this->tempFilename;
 		copy($this->tempFilename, $filename);
+		sleep(100);
 	}
 
 	/**
@@ -388,10 +390,11 @@ class Workbook{
 	/**
 	 * @return string - имя временного файла
 	 *
-	 * @param bool $autoUnlink - удалять временный файл при создании фиксации workbook.
+	 * @param bool $autoUnlink - удалять временный файл при создании фиксации workbook
+	 * @param string $ext - расширение файла
 	 */
-	function genTempFilename(bool $autoUnlink = true){
-		$filename = $this->tempdir . '/xlsxcreator_' . base64_encode(rand()) . '.xml';
+	function genTempFilename(bool $autoUnlink = true, string $ext = 'xml'){
+		$filename = $this->tempdir . '/xlsxcreator_' . base64_encode(rand()) . ".$ext";
 		if(file_exists($filename)) return $this->genTempFilename();
 
 		if($autoUnlink) $this->tempFilenames[] = $filename;

@@ -33,7 +33,6 @@ php examples/simple.php
 # Пример использования библиотеки
 
 ```php
-$xlsxFilename = __DIR__.'/example1.xlsx'; // путь, по которому будет создан xlsx файл
 $workbook = new \Topvisor\XlsxCreator\Workbook($xlsxFilename); // инициализация библиотеки
  
 $sheetName = 'Sheet1'; // имя таблицы
@@ -42,7 +41,8 @@ $worksheet = $workbook->addWorksheet($sheetName); // создание табли
 $values = ['test1', 'test2', 3, 4]; // значения ячеек строки
 $worksheet->addRow($values); // создание строки
  
-$workbook->commit(); // создание xlsx файла
+$xlsxFilename = __DIR__.'/example1.xlsx'; // путь, по которому будет создан xlsx файл
+$workbook->toFile($xlsxFilename); // создание xlsx файла
 ```
 
 # Фиксация изменений
@@ -50,7 +50,7 @@ $workbook->commit(); // создание xlsx файла
 Фиксация выгружает изменения из памяти в файл. После фиксации объект становится неизменяемым.
 
 ```php
-// Фиксирует книгу и создает xlsx файл
+// Фиксирует книгу
 $workbook->commit();
  
 // Фиксирует таблицу
