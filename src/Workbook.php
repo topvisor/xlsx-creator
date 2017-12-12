@@ -4,7 +4,7 @@
  * Библиотека для создания xlsx файлов
  *
  * @author decaseal <decaseal@gmail.com>
- * @version v1.0
+ * @version v1.1
  */
 
 namespace Topvisor\XlsxCreator;
@@ -28,12 +28,12 @@ use ZipArchive;
 /**
  * Class Workbook. Используйте его для создания xlsx файла.
  *
- * @package  Topvisor\XlsxCreator
+ * @package Topvisor\XlsxCreator
  */
 class Workbook{
 	const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
+	const INVALID_WORKSHEET_NAME = '/[\/?*\[\]]/';
 
-	private $filename;
 	private $useSharedStrings;
 	private $tempdir;
 	private $created;
@@ -43,6 +43,7 @@ class Workbook{
 	private $company;
 	private $manager;
 
+	private $tempFilename;
 	private $images;
 	private $sharedStrings;
 	private $styles;
@@ -54,11 +55,9 @@ class Workbook{
 	/**
 	 * Workbook constructor.
 	 *
-	 * @param string $filename - путь к xlsx файлу
 	 * @param bool $useSharedStrings - принудительно записывать строки как общие. Проверять дубликаты
 	 */
-	function __construct(string $filename, bool $useSharedStrings = false){
-		$this->filename = $filename;
+	function __construct(bool $useSharedStrings = false){
 		$this->useSharedStrings = $useSharedStrings;
 		$this->tempdir = sys_get_temp_dir();
 		$this->created = new DateTime();
@@ -84,26 +83,9 @@ class Workbook{
 		unset($this->styles);
 		unset($this->worksheets);
 
+		if($this->tempFilename && file_exists($this->tempFilename)) unlink($this->tempFilename);
+
 		$this->unlinkTempFiles();
-	}
-
-	/**
-	 * @return string - путь к xlsx файлу
-	 */
-	function getFilename() : string{
-		return $this->filename;
-	}
-
-	/**
-	 * @param string $filename - путь к xlsx файлу
-	 * @return Workbook - $this
-	 * @throws ObjectCommittedException
-	 */
-	function setFilename(string $filename) : Workbook{
-		$this->checkCommitted();
-
-		$this->filename = $filename;
-		return $this;
 	}
 
 	/**
@@ -249,6 +231,7 @@ class Workbook{
 	/**
 	 * @param string|RichTextValue $value - значение
 	 * @return SharedStringValue - общая строка
+	 * @throws InvalidValueException
 	 */
 	function addSharedString($value) : SharedStringValue{
 		return $this->sharedStrings->add($value);
@@ -283,9 +266,12 @@ class Workbook{
 	 * @param string $name - имя таблицы
 	 * @return Worksheet - таблица
 	 * @throws ObjectCommittedException
+	 * @throws InvalidValueException
 	 */
 	function addWorksheet(string $name) : Worksheet{
 		$this->checkCommitted();
+
+		Validator::validateString($name, self::INVALID_WORKSHEET_NAME, '$name');
 
 		$id = count($this->worksheets) + 1;
 		$this->worksheetsIds[$name] = $id;
@@ -333,7 +319,8 @@ class Workbook{
 	}
 
 	/**
-	 * Зафиксировать файл workbook. Используйте для создания xlsx файла.
+	 * Зафиксировать файл workbook
+	 *
 	 * @throws EmptyObjectException
 	 * @throws ObjectCommittedException
 	 */
@@ -342,9 +329,10 @@ class Workbook{
 		if (!count($this->worksheets)) throw new EmptyObjectException('Workbook is empty');
 
 		$this->committed = true;
+		$this->tempFilename = $this->genTempFilename(false);
 
 		$zip = new ZipArchive();
-		$zip->open($this->filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+		$zip->open($this->tempFilename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
 		$this->addFilesToZip($zip);
 		$this->addStringsToZip($zip);
@@ -352,6 +340,42 @@ class Workbook{
 		$zip->close();
 
 		$this->unlinkTempFiles();
+	}
+
+	/**
+	 * Сохранить workbook в файл. Фиксирует изменения
+	 *
+	 * @param string $filename - путь для созддания xlsx файла
+	 * @throws EmptyObjectException
+	 * @throws ObjectCommittedException
+	 */
+	function toFile(string $filename){
+		if (!$this->committed) $this->commit();
+		copy($this->tempFilename, $filename);
+	}
+
+	/**
+	 * Записать workbook в stdout и установить необходимые для скачивания заголовки. Фиксирует изменения
+	 *
+	 * @param string name - имя скачеваемого файла
+	 * @throws EmptyObjectException
+	 * @throws ObjectCommittedException
+	 */
+	function toHttp(string $filename){
+		if (!$this->committed) $this->commit();
+		if(!preg_match('/\.xlsx$/', $filename)) $filename .= '.xlsx';
+		if(ob_get_level()) ob_end_clean();
+
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+		header('Content-Transfer-Encoding: binary');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: '.stat($this->tempFilename)['size']);
+
+		readfile($this->tempFilename);
 	}
 
 	/**
@@ -363,12 +387,14 @@ class Workbook{
 
 	/**
 	 * @return string - имя временного файла
+	 *
+	 * @param bool $autoUnlink - удалять временный файл при создании фиксации workbook.
 	 */
-	function genTempFilename(){
+	function genTempFilename(bool $autoUnlink = true){
 		$filename = $this->tempdir . '/xlsxcreator_' . base64_encode(rand()) . '.xml';
-		if (file_exists($filename)) $filename = $this->genTempFilename();
+		if(file_exists($filename)) return $this->genTempFilename();
 
-		$this->tempFilenames[] = $filename;
+		if($autoUnlink) $this->tempFilenames[] = $filename;
 		return $filename;
 	}
 
@@ -376,6 +402,7 @@ class Workbook{
 	 * Добавить временные файлы в xlsx.
 	 *
 	 * @param ZipArchive $zip - xlsx файл
+	 * @throws ObjectCommittedException
 	 */
 	private function addFilesToZip(ZipArchive $zip){
 		foreach ($this->worksheets as $worksheet){

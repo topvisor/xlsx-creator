@@ -91,6 +91,18 @@ class Validator{
 //	}
 
 	/**
+	 * Пороверка строки
+	 *
+	 * @param string $str - строка
+	 * @param string $invalidRegexp - регулярное выражение
+	 * @param string $varName - имя переменной
+	 * @throws InvalidValueException
+	 */
+	static function validateString(string $str, string $invalidRegexp, string $varName){
+		if(preg_match($invalidRegexp, $str)) throw new InvalidValueException("$varName must not be '$invalidRegexp'");
+	}
+
+	/**
 	 * @param string $var - название переменной
 	 * @param array $in - массив с правильными значениями
 	 * @return string - сообщение об ошибке

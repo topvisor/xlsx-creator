@@ -334,6 +334,8 @@ class Worksheet{
 	/**
 	 * @param int $col - номер колонки
 	 * @return Column - колонка
+	 * @throws InvalidValueException
+	 * @throws ObjectCommittedException
 	 */
 	function getColumn(int $col) : Column{
 		Validator::validateInRange($col, 1, 16384, '$col');
@@ -350,6 +352,7 @@ class Worksheet{
 
 	/**
 	 * @return Column - колонка
+	 * @throws ObjectCommittedException
 	 */
 	function addColumn() : Column{
 		$this->checkCommitted();
@@ -384,6 +387,8 @@ class Worksheet{
 	/**
 	 * @param array|null $values - значения ячеек строки
 	 * @return Row - строка таблицы
+	 * @throws ObjectCommittedException
+	 * @throws InvalidValueException
 	 */
 	function addRow(array $values = null) : Row{
 		$this->checkCommitted();
@@ -401,6 +406,8 @@ class Worksheet{
 	 * @param int $row - номер строки
 	 * @param int $col - номер колонки
 	 * @return Cell - ячейка
+	 * @throws ObjectCommittedException
+	 * @throws InvalidValueException
 	 */
 	function getCell(int $row, int $col) : Cell{
 		$this->checkCommitted();
@@ -415,6 +422,7 @@ class Worksheet{
 	 * @param string $filename - путь к файлу картинки
 	 * @param string $extension - расшинение файла картинки
 	 * @param string $imageName - имя картинки
+	 * @throws InvalidValueException
 	 */
 	function addImage(Range $position, string $filename, string $extension = '', string $imageName = ''){
 		$this->drawing->addImage($this->workbook->addImage($filename, $extension), $position, $imageName);
@@ -425,6 +433,7 @@ class Worksheet{
 	 *
 	 * @param CellsRange $range - диапазон ячеек
 	 * @throws InvalidValueException
+	 * @throws ObjectCommittedException
 	 */
 	function mergeCells(CellsRange $range) {
 		$this->checkCommitted();
@@ -453,6 +462,7 @@ class Worksheet{
 	 *
 	 * @param CellsRange $range - диапазон ячеек
 	 * @throws InvalidValueException
+	 * @throws ObjectCommittedException
 	 */
 	function unMergeCells(CellsRange $range) {
 		$this->checkCommitted();
@@ -480,9 +490,10 @@ class Worksheet{
 	}
 
 	/**
-	 *	Зафиксировать файл таблицы.
+	 * Зафиксировать файл таблицы.
 	 *
-	 * 	@throws ObjectCommittedException
+	 * @throws ObjectCommittedException
+	 * @throws EmptyObjectException
 	 */
 	function commit(){
 		if (!$this->rows && $this->lastUncommittedRow == 1) throw new EmptyObjectException('Worksheet is empty');
@@ -571,7 +582,9 @@ class Worksheet{
 	}
 
 	/**
-	 *	Закончить файл таблицы.
+	 * Закончить файл таблицы.
+	 *
+	 * @throws ObjectCommittedException
 	 */
 	private function endWorksheet(){
 		if (!($this->xml ?? false)) return;
