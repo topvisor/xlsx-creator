@@ -226,7 +226,7 @@ class Row extends Style{
 	 *	Зафиксировать строку (и предыдущие).
 	 */
 	function commit(){
-		$this->worksheet->commitRows($this);
+		$this->worksheet->commitRows($this->number);
 	}
 
 	/**
