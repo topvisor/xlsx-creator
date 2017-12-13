@@ -271,6 +271,7 @@ class Workbook{
 	function addWorksheet(string $name) : Worksheet{
 		$this->checkCommitted();
 
+		if(mb_strlen($name) > 31) throw new InvalidValueException('The length $name must be less than 31');
 		Validator::validateString($name, self::INVALID_WORKSHEET_NAME, '$name');
 
 		$id = count($this->worksheets) + 1;
