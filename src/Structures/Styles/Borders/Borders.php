@@ -48,7 +48,7 @@ class Borders implements Serializable{
 	/**
 	 * @return Border|null - левая граница
 	 */
-	function getLeft(){
+	function getTopLeftCol(){
 		return $this->left;
 	}
 
@@ -64,7 +64,7 @@ class Borders implements Serializable{
 	/**
 	 * @return Border|null - правая граница
 	 */
-	function getRight(){
+	function getBottomRightCol(){
 		return $this->right;
 	}
 
@@ -80,7 +80,7 @@ class Borders implements Serializable{
 	/**
 	 * @return Border|null - верхняя граница
 	 */
-	function getTop(){
+	function getTopLeftRow(){
 		return $this->top ?? null;
 	}
 
@@ -96,7 +96,7 @@ class Borders implements Serializable{
 	/**
 	 * @return Border|null - нижняя граница
 	 */
-	function getBottom(){
+	function getBottomRightRow(){
 		return $this->bottom ?? null;
 	}
 

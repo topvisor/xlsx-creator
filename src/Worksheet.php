@@ -438,16 +438,16 @@ class Worksheet{
 	function mergeCells(CellsRange $range) {
 		$this->checkCommitted();
 
-		$master = $this->getCell($range->getTop(), $range->getLeft());
-		$this->getCell($range->getBottom(), $range->getRight());
+		$master = $this->getCell($range->getTopLeftRow(), $range->getTopLeftCol());
+		$this->getCell($range->getBottomRightRow(), $range->getBottomRightCol());
 
 		foreach ($this->merges as $merge)
 			if ($range->intersection($merge))
 				throw new InvalidValueException('Merge intersect');
 
-		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
+		for ($i = $range->getTopLeftRow(); $i <= $range->getBottomRightRow(); $i++) {
 			$row = $this->getRow($i);
-			for ($j = $range->getLeft(); $j <= $range->getRight(); $j++) {
+			for ($j = $range->getTopLeftCol(); $j <= $range->getBottomRightCol(); $j++) {
 				$cell = $row->getCell($j);
 				if ($cell === $master) continue;
 				else $cell->setMaster($master);
@@ -467,8 +467,8 @@ class Worksheet{
 	function unMergeCells(CellsRange $range) {
 		$this->checkCommitted();
 
-		$this->getCell($range->getTop(), $range->getLeft());
-		$this->getCell($range->getBottom(), $range->getRight());
+		$this->getCell($range->getTopLeftRow(), $range->getTopLeftCol());
+		$this->getCell($range->getBottomRightRow(), $range->getBottomRightCol());
 
 		$found = false;
 		foreach ($this->merges as $mergeIndex => $merge) {
@@ -480,9 +480,9 @@ class Worksheet{
 
 		if ($found === false) throw new InvalidValueException('Merge not found');
 
-		for ($i = $range->getTop(); $i <= $range->getBottom(); $i++) {
+		for ($i = $range->getTopLeftRow(); $i <= $range->getBottomRightRow(); $i++) {
 			$row = $this->getRow($i);
-			for ($j = $range->getLeft(); $j <= $range->getRight(); $j++)
+			for ($j = $range->getTopLeftCol(); $j <= $range->getBottomRightCol(); $j++)
 				$row->getCell($j)->setMaster(null);
 		}
 

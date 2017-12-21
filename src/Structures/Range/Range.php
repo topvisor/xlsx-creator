@@ -12,10 +12,8 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  * @package Topvisor\XlsxCreator\Structures
  */
 class Range{
-	protected $top;
-	protected $left;
-	protected $bottom;
-	protected $right;
+	protected $topLeftCoords;
+	protected $bottomRightCoords;
 
 	/**
 	 * Range constructor.
@@ -29,96 +27,92 @@ class Range{
 	function __construct(float $row1, float $col1, float $row2, float $col2){
 		if ($row1 == $row2 && $col1 == $col2) throw new InvalidValueException("It's not range");
 
-		Validator::validateInRange($row1, 1, 1048576, '$row1');
-		Validator::validateInRange($col1, 1, 16384, '$col1');
-		Validator::validateInRange($row2, 1, 1048576, '$row2');
-		Validator::validateInRange($col2, 1, 16384, '$col2');
 
 		if ($row1 <= $row2) {
-			$this->top = $row1;
-			$this->bottom = $row2;
+			$topLeftRow = $row1;
+			$bottomRightRow = $row2;
 		} else {
-			$this->top = $row2;
-			$this->bottom = $row1;
+			$topLeftRow = $row2;
+			$bottomRightRow = $row1;
 		}
 
 		if ($col1 <= $col2) {
-			$this->left = $col1;
-			$this->right = $col2;
+			$topLeftCol = $col1;
+			$bottomRightCol = $col2;
 		} else {
-			$this->left = $col2;
-			$this->right = $col1;
+			$topLeftCol = $col2;
+			$bottomRightCol = $col1;
 		}
+
+		$this->topLeftCoords = new Coords($topLeftRow, $topLeftCol);
+		$this->bottomRightCoords = new Coords($bottomRightRow, $bottomRightCol);
 	}
 
 	/**
 	 * @return float - левая колонка
 	 */
-	function getLeft() : float{
-		return $this->left;
+	function getTopLeftCol() : float{
+		return $this->topLeftCoords->getCol();
 	}
 
 	/**
 	 * @return float - верхняя строка
 	 */
-	function getTop() : float{
-		return $this->top;
+	function getTopLeftRow() : float{
+		return $this->topLeftCoords->getRow();
 	}
 
 	/**
 	 * @return float - правая колонка
 	 */
-	function getRight() : float{
-		return $this->right;
+	function getBottomRightCol() : float{
+		return $this->bottomRightCoords->getCol();
 	}
 
 	/**
 	 * @return float - нижняя строка
 	 */
-	function getBottom() : float{
-		return $this->bottom;
+	function getBottomRightRow() : float{
+		return $this->bottomRightCoords->getRow();
 	}
 
 	/**
 	 * @param Range $range - диапазон
-	 * @return Range|null - пересечение
+	 * @return Range|Coords|null - пересечение
 	 */
 	function intersection(Range $range) {
-		if ($range->right >= $this->left && $range->right <= $this->right
-			&& $range->bottom >= $this->top && $range->bottom <= $this->bottom){
+		if ($range->getBottomRightCol() >= $this->getTopLeftCol() && $range->getTopLeftCol() <= $this->getBottomRightCol()
+			&& $range->getBottomRightRow() >= $this->getTopLeftRow() && $range->getTopLeftRow() <= $this->getBottomRightRow()) {
 
-			$right = $range->right;
-			$bottom = $range->bottom;
+			$bottomRightCol = $range->getBottomRightCol() <= $this->getBottomRightCol()
+				? $range->getBottomRightCol()
+				: $this->getBottomRightCol();
 
-			if ($this->left <= $range->left) $left = $range->left;
-			else $left = $this->left;
+			$topLeftCol = $range->getTopLeftCol() >= $this->getTopLeftCol()
+				? $range->getTopLeftCol()
+				: $this->getTopLeftCol();
 
-			if ($this->top <= $range->top) $top = $range->top;
-			else $top = $this->top;
-		} elseif ($range->left >= $this->left && $range->left <= $this->right
-			&& $range->top >= $this->top && $this->top <= $this->bottom) {
+			$bottomRightRow = $range->getBottomRightRow() <= $this->getBottomRightRow()
+				? $range->getBottomRightRow()
+				: $this->getBottomRightRow();
 
-			$left = $range->left;
-			$top = $range->bottom;
-
-			if ($this->right <= $range->right) $right = $range->right;
-			else $right = $this->right;
-
-			if ($this->bottom <= $range->bottom) $bottom = $range->bottom;
-			else $bottom = $this->bottom;
+			$topLeftRow = $range->getTopLeftRow() >= $this->getTopLeftRow()
+				? $range->getTopLeftRow()
+				: $this->getTopLeftRow();
 		} else {
 			return null;
 		}
 
-		return new Range($top, $left, $bottom, $right);
+		if ($topLeftCol === $bottomRightCol && $topLeftRow === $bottomRightRow) return new Coords($topLeftRow, $topLeftCol);
+		else return new Range($topLeftRow, $topLeftCol, $bottomRightRow, $bottomRightCol);
 	}
 
 	function getModel() : array{
 		return [
-			'left' => $this->left,
-			'right' => $this->right,
-			'top' => $this->top,
-			'bottom' => $this->bottom
+			'left' => $this->getBottomRightCol(),
+			'right' => $this->getTopLeftCol(),
+			'top' => $this->getTopLeftRow(),
+			'bottom' => $this->getBottomRightRow()
 		];
 	}
 }
