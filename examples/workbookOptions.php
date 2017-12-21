@@ -12,6 +12,8 @@ include __DIR__.'/../vendor/autoload.php';
 $useSharedStrings = true; // использовать общие строки. Данная опция уменьшит размер xlsx файла за счет увеличения потребления оперативной памяти
 $workbook = new Workbook($useSharedStrings); // инициализация библиотеки
 
+$version = Workbook::VERSION; // верcия библиотеки
+
 $workbook
 	->setTempdir(sys_get_temp_dir()) // путь к директории для хранения временных файлов библиотеки
 	->setCompany('Topvisor') // компания

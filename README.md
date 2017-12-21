@@ -10,7 +10,7 @@ composer.json
 ```json
 {
     "require": {
-        "topvisor/xlsx-creator": "1.4"
+        "topvisor/xlsx-creator": "^1.0"
     }
 }
 ```

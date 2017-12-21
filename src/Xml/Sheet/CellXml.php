@@ -32,6 +32,7 @@ class CellXml extends BaseXml{
 
 			case Value::TYPE_STRING:
 				$xml->writeAttribute('t', 'str');
+				$xml->writeAttribute('xml:space', 'preserve');
 				$xml->writeElement('v', $model['value']);
 				break;
 

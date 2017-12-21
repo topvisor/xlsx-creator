@@ -4,7 +4,7 @@
  * Библиотека для создания xlsx файлов
  *
  * @author decaseal <decaseal@gmail.com>
- * @version v1.4
+ * @version v1.5
  */
 
 namespace Topvisor\XlsxCreator;
@@ -31,6 +31,8 @@ use ZipArchive;
  * @package Topvisor\XlsxCreator
  */
 class Workbook{
+	const VERSION = "v1.5";
+
 	const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
 	const INVALID_WORKSHEET_NAME = '/[\/\\\?\*\[\]]/';
 
@@ -62,7 +64,7 @@ class Workbook{
 		$this->tempdir = sys_get_temp_dir();
 		$this->created = new DateTime();
 		$this->modified = $this->created;
-		$this->creator = 'XlsxWriter';
+		$this->creator = 'topvisor/xlsx-writer ' . Workbook::VERSION;
 		$this->lastModifiedBy = $this->creator;
 		$this->company = '';
 		$this->manager = null;
