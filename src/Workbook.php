@@ -31,7 +31,7 @@ use ZipArchive;
  * @package Topvisor\XlsxCreator
  */
 class Workbook{
-	const VERSION = "v1.6";
+	const VERSION = "v1.7";
 
 	const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
 	const INVALID_WORKSHEET_NAME = '/[\/\\\?\*\[\]]/';
