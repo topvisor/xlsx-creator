@@ -15,9 +15,11 @@ use XMLWriter;
  */
 class SheetRels{
 	private $worksheet;
+	private $checkDoubles;
 
 	private $committed;
 	private $nextId;
+	private $rels;
 
 	private $filename;
 	private $xml;
@@ -28,12 +30,15 @@ class SheetRels{
 	/**
 	 * SheetRels constructor.
 	 * @param Worksheet $worksheet - таблица
+	 * @param bool $checkDoubles - проверять дубликаты
 	 */
-	function __construct(Worksheet $worksheet){
+	function __construct(Worksheet $worksheet, bool $checkDoubles){
 		$this->worksheet = $worksheet;
+		$this->checkDoubles = $checkDoubles;
 
 		$this->committed = false;
 		$this->nextId = 1;
+		$this->rels = [];
 	}
 
 	function __destruct(){
@@ -63,6 +68,7 @@ class SheetRels{
 	/**
 	 * @param string $target - гиперссылка
 	 * @param string $address - ячейка таблицы ('A1', 'B5')
+	 * @throws ObjectCommittedException
 	 */
 	function addHyperlink(string $target, string $address){
 		$this->checkCommited();
@@ -83,6 +89,7 @@ class SheetRels{
 	/**
 	 * Связать таблицу с файлом комментариев и его vml представлением
 	 * @return string - id связи с vml файлом
+	 * @throws ObjectCommittedException
 	 */
 	function addComments() : string{
 		$this->checkCommited();
@@ -101,6 +108,7 @@ class SheetRels{
 	/**
 	 * Связать таблицу с файлом рисунков
 	 * @return string - id связи с файлом рисунков
+	 * @throws ObjectCommittedException
 	 */
 	function addDrawing() : string{
 		$this->checkCommited();
@@ -175,16 +183,30 @@ class SheetRels{
 	private function writeRelationship(string $type, string $target, string $targetMode = null) : string{
 		if (!($this->xml ?? false)) $this->startSheetRels();
 
-		$rId = 'rId' . $this->nextId++;
+		$key = '';
+
+		if ($this->checkDoubles) {
+			preg_match('/\w*$/', $type, $typeMatches);
+
+			$key = $typeMatches[0] . ';' . $target;
+			if(!is_null($targetMode)) $key .= ';'. $targetMode;
+
+			if (isset($this->rels[$key])) return 'rId' . $this->rels[$key];
+		}
+
+		$rId = $this->nextId++;
+		$rIdStr = 'rId' . $rId;
 
 		(new RelationshipXml())->render($this->xml, [
-			'id' => $rId,
+			'id' => $rIdStr,
 			'type' => $type,
 			'target' => $target,
 			'targetMode' => $targetMode
 		]);
 
-		return $rId;
+		if ($this->checkDoubles) $this->rels[$key] = $rId;
+
+		return $rIdStr;
 	}
 
 	/**

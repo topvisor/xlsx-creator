@@ -92,7 +92,7 @@ class Worksheet{
 		$this->lastUncommittedRow = 1;
 		$this->comments = new Comments($this);
 		$this->drawing = new Drawing($this);
-		$this->sheetRels = new SheetRels($this);
+		$this->sheetRels = new SheetRels($this, $workbook->getCheckRelsDoubles());
 	}
 
 	function __destruct(){

@@ -15,6 +15,7 @@ class HyperlinkValue extends Value{
 	 * @param string|SharedStringValue|null $text - текст ссылки
 	 */
 	function __construct(string $hyperlink, $text = null){
+		if(is_numeric($text)) $text = (string) $text;
 		$text = $text ?? $hyperlink;
 		$model = ['hyperlink' => $hyperlink];
 

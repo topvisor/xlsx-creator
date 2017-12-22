@@ -9,8 +9,9 @@ use Topvisor\XlsxCreator\Workbook;
 
 include __DIR__.'/../vendor/autoload.php';
 
-$useSharedStrings = true; // использовать общие строки. Данная опция уменьшит размер xlsx файла за счет увеличения потребления оперативной памяти
-$workbook = new Workbook($useSharedStrings); // инициализация библиотеки
+$useSharedStrings = true; // использовать общие строки. Данная опция уменьшит размер xlsx файла за счет увеличения потребления оперативной памяти.
+$checkRelsDoubles = true; // проверять дубли ссылок. Данная опция уменьшит размер xlsx файла за счет увеличения потребления оперативной памяти.
+$workbook = new Workbook($useSharedStrings, $checkRelsDoubles); // инициализация библиотеки
 
 $version = Workbook::VERSION; // верcия библиотеки
 

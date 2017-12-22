@@ -37,6 +37,7 @@ class Workbook{
 	const INVALID_WORKSHEET_NAME = '/[\/\\\?\*\[\]]/';
 
 	private $useSharedStrings;
+	private $checkRelsDoubles;
 	private $tempdir;
 	private $created;
 	private $modified;
@@ -58,9 +59,11 @@ class Workbook{
 	 * Workbook constructor.
 	 *
 	 * @param bool $useSharedStrings - принудительно записывать строки как общие. Проверять дубликаты
+	 * @param bool $checkRelsDoubles - проверять дубликаты гиперссылок и картинок
 	 */
-	function __construct(bool $useSharedStrings = false){
+	function __construct(bool $useSharedStrings = false, bool $checkRelsDoubles = false){
 		$this->useSharedStrings = $useSharedStrings;
+		$this->checkRelsDoubles = $checkRelsDoubles;
 		$this->tempdir = sys_get_temp_dir();
 		$this->created = new DateTime();
 		$this->modified = $this->created;
@@ -95,6 +98,13 @@ class Workbook{
 	 */
 	function getUseSharedStrings() : bool{
 		return $this->useSharedStrings;
+	}
+
+	/**
+	 * @return bool - проверять дубликаты гиперссылок и картинок
+	 */
+	function getCheckRelsDoubles() : bool{
+		return $this->checkRelsDoubles;
 	}
 
 	/**
