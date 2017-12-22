@@ -59,11 +59,11 @@ class Workbook{
 	 * Workbook constructor.
 	 *
 	 * @param bool $useSharedStrings - принудительно записывать строки как общие. Проверять дубликаты
-	 * @param bool $checkRelsDoubles - проверять дубликаты гиперссылок и картинок
+	 * @param bool|null $checkRelsDoubles - проверять дубликаты гиперссылок и картинок. По умолчанию = $useSharedStrings
 	 */
-	function __construct(bool $useSharedStrings = false, bool $checkRelsDoubles = false){
+	function __construct(bool $useSharedStrings = false, bool $checkRelsDoubles = null){
 		$this->useSharedStrings = $useSharedStrings;
-		$this->checkRelsDoubles = $checkRelsDoubles;
+		$this->checkRelsDoubles = $checkRelsDoubles ?? $useSharedStrings;
 		$this->tempdir = sys_get_temp_dir();
 		$this->created = new DateTime();
 		$this->modified = $this->created;

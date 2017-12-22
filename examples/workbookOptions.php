@@ -6,6 +6,7 @@
  */
 
 use Topvisor\XlsxCreator\Workbook;
+use Topvisor\XlsxCreator\Structures\Values\HyperlinkValue;
 
 include __DIR__.'/../vendor/autoload.php';
 
@@ -26,6 +27,10 @@ $workbook
 
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 $worksheet->addRow(['test1', 'test2', 3, 4]); // создание строки
+
+$worksheet->addRow([new HyperlinkValue('https://topvisor.ru/', 'topvisor.ru'), new HyperlinkValue('https://topvisor.com/', 'topvisor.com')]);
+$worksheet->addRow([new HyperlinkValue('https://topvisor.com/', 'topvisor.com')]);
+$worksheet->addRow([new HyperlinkValue('https://topvisor.ru/', 'topvisor.ru')]);
 
 $xlsxFilename = __DIR__.'/workbookOptions.xlsx'; // путь, по которому будет создан xlsx файл
 $workbook->toFile($xlsxFilename); // создание xlsx файла
