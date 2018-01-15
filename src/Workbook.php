@@ -377,8 +377,8 @@ class Workbook{
 	 */
 	function toHttp(string $filename, bool $exit = true){
 		if (!$this->committed) $this->commit();
-		if(!preg_match('/\.xlsx$/', $filename)) $filename .= '.xlsx';
-		if(ob_get_level()) ob_end_clean();
+		if (!preg_match('/\.xlsx$/', $filename)) $filename .= '.xlsx';
+		if (ob_get_level()) ob_end_clean();
 
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -391,7 +391,10 @@ class Workbook{
 
 		readfile($this->tempFilename);
 
-		if($exit) exit();
+		if ($exit) {
+			unlink($this->tempFilename);
+			exit();
+		}
 	}
 
 	/**
