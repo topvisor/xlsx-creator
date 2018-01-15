@@ -14,7 +14,7 @@ $workbook = new Workbook(); // инициализация библиотеки
 $worksheet = $workbook->addWorksheet('Sheet1'); // создание таблицы
 $worksheet->addRow(['test1', 'test2', 3, 4]); // создание строки
 
-// Запить xlsx файла в поток вывода (http)
+// Запись xlsx файла в поток вывода (http)
 $xlsxFilename = 'workbookSave.xlsx'; // имя xlsx файла
 $exit = false; // не завершать выполение скрипта после записи xlsx файла в поток
 $workbook->toHttp($xlsxFilename, $exit);
