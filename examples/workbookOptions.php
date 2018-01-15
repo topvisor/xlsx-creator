@@ -6,7 +6,6 @@
  */
 
 use Topvisor\XlsxCreator\Workbook;
-use Topvisor\XlsxCreator\Structures\Values\HyperlinkValue;
 
 include __DIR__.'/../vendor/autoload.php';
 

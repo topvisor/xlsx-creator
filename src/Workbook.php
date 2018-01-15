@@ -4,7 +4,7 @@
  * Библиотека для создания xlsx файлов
  *
  * @author decaseal <decaseal@gmail.com>
- * @version v1.5
+ * @version v1.8
  */
 
 namespace Topvisor\XlsxCreator;
@@ -31,7 +31,7 @@ use ZipArchive;
  * @package Topvisor\XlsxCreator
  */
 class Workbook{
-	const VERSION = "v1.7";
+	const VERSION = "v1.8";
 
 	const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
 	const INVALID_WORKSHEET_NAME = '/[\/\\\?\*\[\]]/';
@@ -371,10 +371,11 @@ class Workbook{
 	 * Записать workbook в stdout и установить необходимые для скачивания заголовки. Фиксирует изменения
 	 *
 	 * @param string name - имя скачеваемого файла
+	 * @param bool exit - завершить выполнение скрипта
 	 * @throws EmptyObjectException
 	 * @throws ObjectCommittedException
 	 */
-	function toHttp(string $filename){
+	function toHttp(string $filename, bool $exit = true){
 		if (!$this->committed) $this->commit();
 		if(!preg_match('/\.xlsx$/', $filename)) $filename .= '.xlsx';
 		if(ob_get_level()) ob_end_clean();
@@ -389,6 +390,8 @@ class Workbook{
 		header('Content-Length: '.stat($this->tempFilename)['size']);
 
 		readfile($this->tempFilename);
+
+		if($exit) exit();
 	}
 
 	/**
