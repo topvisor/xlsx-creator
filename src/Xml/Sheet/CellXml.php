@@ -27,13 +27,13 @@ class CellXml extends BaseXml{
 
 			case Value::TYPE_ERROR:
 				$xml->writeAttribute('t', 'e');
-				$xml->writeElement('v', $model['value']);
+				$xml->writeElement('v', $this->prepareText($model['value']));
 				break;
 
 			case Value::TYPE_STRING:
 				$xml->writeAttribute('t', 'str');
 				$xml->writeAttribute('xml:space', 'preserve');
-				$xml->writeElement('v', preg_replace('/_x\d{4}_/', '_x005F$0', $model['value']));
+				$xml->writeElement('v', $this->prepareText($model['value']));
 				break;
 
 			case Value::TYPE_DATE:
@@ -46,7 +46,7 @@ class CellXml extends BaseXml{
 					$xml->writeElement('v', $model['value']['ssId']);
 				} else {
 					$xml->writeAttribute('t', 'str');
-					$xml->writeElement('v', $model['value']['text']);
+					$xml->writeElement('v', $this->prepareText($model['value']['text']));
 				}
 				break;
 

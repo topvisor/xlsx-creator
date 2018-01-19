@@ -17,7 +17,7 @@ class RichTextXml extends BaseXml{
 			$xml->startElement('r');
 
 			if ($value['font'] ?? false) $fontXml->render($xml, $value['font']);
-			$textXml->render($xml, ['value' => $value['text']]);
+			$textXml->render($xml, ['value' => $this->prepareText($value['text'])]);
 
 			$xml->endElement();
 		}

@@ -4,7 +4,7 @@
  * Библиотека для создания xlsx файлов
  *
  * @author decaseal <decaseal@gmail.com>
- * @version v1.9
+ * @version v1.10
  */
 
 namespace Topvisor\XlsxCreator;
@@ -31,7 +31,7 @@ use ZipArchive;
  * @package Topvisor\XlsxCreator
  */
 class Workbook{
-	const VERSION = "v1.9";
+	const VERSION = "v1.10";
 
 	const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
 	const INVALID_WORKSHEET_NAME = '/[\/\\\?\*\[\]]/';

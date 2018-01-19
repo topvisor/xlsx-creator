@@ -11,7 +11,7 @@ class TextXml extends BaseXml {
 
 		$xml->startElement('t');
 		$xml->writeAttribute('xml:space', 'preserve');
-		$xml->writeElement('v', preg_replace('/_x\d{4}_/', '_x005F$0', $model['value']));
+		$xml->writeElement('v', $this->prepareText($model['value']));
 		$xml->endElement();
 	}
 }

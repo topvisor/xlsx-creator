@@ -32,4 +32,15 @@ abstract class BaseXml{
 
 		return $xml->outputMemory();
 	}
+
+	/**
+	 * Обрабатывает текст перед записью в xlsx файл
+	 * Экранирует excel utf-8 символы
+	 *
+	 * @param string $text
+	 * @return string
+	 */
+	protected function prepareText(string $text) : string{
+		return preg_replace('/_x\d{4}_/', '_x005F$0', $text);
+	}
 }
