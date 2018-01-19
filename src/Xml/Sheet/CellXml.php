@@ -33,7 +33,7 @@ class CellXml extends BaseXml{
 			case Value::TYPE_STRING:
 				$xml->writeAttribute('t', 'str');
 				$xml->writeAttribute('xml:space', 'preserve');
-				$xml->writeElement('v', $model['value']);
+				$xml->writeElement('v', preg_replace('/_x\d{4}_/', '_x005F$0', $model['value']));
 				break;
 
 			case Value::TYPE_DATE:
