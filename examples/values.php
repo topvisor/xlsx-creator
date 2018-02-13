@@ -23,7 +23,7 @@ $stringValue = 'string'; // строка
 $dateValue = new DateTime(); // дата
 $boolValue = true; // булево значение
 $errorValue = new ErrorValue('#NAME?'); // ошибка ('#N/A', '#REF!', '#NAME?', '#DIV/0!', '#NULL!', '#VALUE!', '#NUM!')
-$formulaValue = new FormulaValue('CONCATENATE(A2, A3)'); // формула
+$formulaValue = new FormulaValue('CONCATENATE(B1, C1)'); // формула
 $sharedStringValue = $workbook->addSharedString('topvisor.com'); // общая строка
 
 // число

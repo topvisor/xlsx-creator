@@ -11,7 +11,7 @@ class TextXml extends BaseXml {
 
 		$xml->startElement('t');
 		$xml->writeAttribute('xml:space', 'preserve');
-		$xml->writeElement('v', $this->prepareText($model['value']));
+		$xml->text($this->prepareText($model['value']));
 		$xml->endElement();
 	}
 }
