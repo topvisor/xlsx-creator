@@ -1,4 +1,4 @@
-# XlsxCrealor
+# xlsx-creator
 
 Потоковая PHP библиотека для создания xlsx файлов
 
