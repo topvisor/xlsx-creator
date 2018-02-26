@@ -1,4 +1,4 @@
-# XlsxCrealor
+# xlsx-creator
 
 Потоковая PHP библиотека для создания xlsx файлов
 
@@ -27,20 +27,20 @@ composer install
 php examples/simple.php
 ```
 
-Важнейшей особенностью библиотеки является ее потоковость. [Фиксация изменений](#Фиксация-изменений) выгружает данные в файл, и удаляет их 
+Важнейшей особенностью библиотеки является ее потоковость. [Фиксация изменений](#Фиксация-изменений) выгружает данные в файл, и удаляет их
 из оперативной памяти.
 
 # Пример использования библиотеки
 
 ```php
 $workbook = new \Topvisor\XlsxCreator\Workbook($xlsxFilename); // инициализация библиотеки
- 
+
 $sheetName = 'Sheet1'; // имя таблицы
 $worksheet = $workbook->addWorksheet($sheetName); // создание таблицы
- 
+
 $values = ['test1', 'test2', 3, 4]; // значения ячеек строки
 $worksheet->addRow($values); // создание строки
- 
+
 $xlsxFilename = __DIR__.'/example1.xlsx'; // путь, по которому будет создан xlsx файл
 $workbook->toFile($xlsxFilename); // создание xlsx файла
 ```
@@ -52,10 +52,10 @@ $workbook->toFile($xlsxFilename); // создание xlsx файла
 ```php
 // Фиксирует книгу
 $workbook->commit();
- 
+
 // Фиксирует таблицу
 $worksheet->commit();
- 
+
 // Фиксирует строку (и все предыдущие)
 $row->commit();
 ```
