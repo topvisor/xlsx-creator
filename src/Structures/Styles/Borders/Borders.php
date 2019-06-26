@@ -193,42 +193,42 @@ class Borders implements Serializable{
 		$params = explode(';', $serialized);
 		$search = urlencode(';');
 
-		if ($params[0]) {
+		if ($params[0] !== '') {
 			$this->defaultColor = Color::fromHex();
 			$this->defaultColor->unserialize($params[0]);
 		} else {
 			$this->defaultColor = null;
 		}
 
-		if ($params[1]) {
+		if ($params[1] !== '') {
 			$this->left = new Border('thin');
 			$this->left->unserialize(str_replace($search, ';', $params[1]));
 		} else {
 			$this->left = null;
 		}
 
-		if ($params[2]) {
+		if ($params[2] !== '') {
 			$this->right = new Border('thin');
 			$this->right->unserialize(str_replace($search, ';', $params[2]));
 		} else {
 			$this->right = null;
 		}
 
-		if ($params[3]) {
+		if ($params[3] !== '') {
 			$this->top = new Border('thin');
 			$this->top->unserialize(str_replace($search, ';', $params[3]));
 		} else {
 			$this->top = null;
 		}
 
-		if ($params[4]) {
+		if ($params[4] !== '') {
 			$this->bottom = new Border('thin');
 			$this->bottom->unserialize(str_replace($search, ';', $params[4]));
 		} else {
 			$this->bottom = null;
 		}
 
-		if ($params[5]) {
+		if ($params[5] !== '') {
 			$this->diagonalStyle = new Border('thin');
 			$this->diagonalStyle->unserialize(str_replace($search, ';', $params[5]));
 		} else {
@@ -236,7 +236,7 @@ class Borders implements Serializable{
 		}
 
 		$this
-			->setDiagonalUp((bool) $params[6])
-			->setDiagonalDown((bool) $params[7]);
+			->setDiagonalUp($params[6] !== '')
+			->setDiagonalDown($params[7] !== '');
 	}
 }

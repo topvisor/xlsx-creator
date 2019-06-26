@@ -194,7 +194,7 @@ class Font implements Serializable{
 	public function unserialize($serialized){
 		$params = explode(';', $serialized);
 
-		if ($params[3]) {
+		if ($params[3] !== '') {
 			$this->color = Color::fromHex();
 			$this->color->unserialize($params[3]);
 		} else {
@@ -202,12 +202,12 @@ class Font implements Serializable{
 		}
 
 		$this
-			->setBold((bool) $params[0])
-			->setItalic((bool) $params[1])
-			->setUnderline($params[2] ? self::VALID_UNDERLINE[(int) $params[2]] : null)
-			->setStrike((bool) $params[4])
-			->setSize($params[5] ? (int) $params[5] : null)
-			->setName($params[6] ? str_replace(urlencode(';'), ';', $params[6]) : null)
-			->setVerticalAlign($params[7] ? self::VALID_VERTICAL_ALIGN[(int) $params[7]] : null);
+			->setBold($params[0] !== '')
+			->setItalic($params[1] !== '')
+			->setUnderline($params[2] !== '' ? self::VALID_UNDERLINE[(int) $params[2]] : null)
+			->setStrike($params[4] !== '')
+			->setSize($params[5] !== '' ? (int) $params[5] : null)
+			->setName($params[6] !== '' ? str_replace(urlencode(';'), ';', $params[6]) : null)
+			->setVerticalAlign($params[7] !== '' ? self::VALID_VERTICAL_ALIGN[(int) $params[7]] : null);
 	}
 }

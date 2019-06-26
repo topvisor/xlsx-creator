@@ -57,10 +57,10 @@ $numFmt = '0%';
 $textRotation = TextRotation::fromAngle(-45); // поворот текста (градусы)
 $textRotation = TextRotation::vertical(); // текст по вертикали
 $alignment = (new Alignment())
-    ->setHorizontal('center') // по горизонтали ('left', 'center', 'right', 'fill',
+    ->setHorizontal('left') // по горизонтали ('left', 'center', 'right', 'fill',
                                                 // 'centerContinuous', 'distributed', 'justify')
     ->setVertical('top') // по вертикали ('top', 'center', 'bottom', 'distributed', 'justify')
-    ->setIndent(5) // отступ слева
+//    ->setIndent(5) // отступ слева
     ->setReadingOrder('leftToRight') // направление чтения ('leftToRight', 'rightToLeft')
     ->setWrapText(true) // заполнить ячейку текстом
     ->setTextRotation($textRotation);

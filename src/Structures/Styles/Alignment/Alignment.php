@@ -94,7 +94,7 @@ class Alignment implements Serializable{
 	 */
 	function setIndent(int $indent = null) : self{
 		if (!is_null($indent)) {
-			Validator::validateInRange($indent, 0, 250, '$indent');
+			Validator::validateInRange($indent, 1, 250, '$indent');
 			$this->setHorizontal(null);
 		}
 
@@ -162,7 +162,7 @@ class Alignment implements Serializable{
 	public function unserialize($serialized){
 		$params = explode(';', $serialized);
 
-		if ($params[5]) {
+		if ($params[5] !== '') {
 			$this->textRotation = TextRotation::vertical();
 			$this->textRotation->unserialize($params[5]);
 		} else {
@@ -170,10 +170,10 @@ class Alignment implements Serializable{
 		}
 
 		$this
-			->setHorizontal($params[0] ? self::VALID_HORIZONTAL[(int) $params[0]] : null)
-			->setVertical($params[1] ? self::VALID_VERTICAL[(int) $params[1]] : null)
-			->setWrapText((bool) $params[2])
-			->setIndent($params[3] ? (int) $params[3] : null)
-			->setReadingOrder($params[4] ? self::VALID_READING_ORDER[(int) $params[4]] : null);
+			->setHorizontal($params[0] !== '' ? self::VALID_HORIZONTAL[(int) $params[0]] : null)
+			->setVertical($params[1] !== '' ? self::VALID_VERTICAL[(int) $params[1]] : null)
+			->setWrapText($params[2] !== '')
+			->setIndent($params[3] !== '' ? (int) $params[3] : null)
+			->setReadingOrder($params[4] !== '' ? self::VALID_READING_ORDER[(int) $params[4]] : null);
 	}
 }
