@@ -109,8 +109,8 @@ class Range{
 
 	function getModel() : array{
 		return [
-			'left' => $this->getBottomRightCol(),
-			'right' => $this->getTopLeftCol(),
+			'left' => $this->getTopLeftCol(),
+			'right' => $this->getBottomRightCol(),
 			'top' => $this->getTopLeftRow(),
 			'bottom' => $this->getBottomRightRow()
 		];
