@@ -106,14 +106,14 @@ class Style{
 	}
 
 	function isDefaultStyle() : bool{
-		return $this->numFmt || $this->font || $this->fill || $this->borders || $this->alignment;
+		return is_null($this->numFmt) && !$this->font && !$this->fill && !$this->borders && !$this->alignment;
 	}
 
 	/**
 	 * @return array - модель
 	 */
 	function getStyleModel() : array{
-		if (!$this->numFmt && !$this->font && !$this->fill && !$this->borders && !$this->alignment) return [];
+		if ($this->isDefaultStyle()) return [];
 		
 		return [
 			'numFmt' => $this->numFmt,

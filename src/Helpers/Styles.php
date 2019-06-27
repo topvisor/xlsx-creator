@@ -106,18 +106,18 @@ class Styles{
 	}
 
 	function addStyle(Style $style, int $cellType = null) : int{
-		if (!$style->getNumFmt()) {
+		if (is_null($style->getNumFmt())) {
 			switch ($cellType) {
 				case null:
 				case Value::TYPE_NUMBER: $style->setNumFmt('General'); break;
 				case Value::TYPE_DATE: $style->setNumFmt('mm-dd-yy'); break;
 			}
 		}
-
-		if (!$style->isDefaultStyle()) return 0;
+		
+		if ($style->isDefaultStyle()) return 0;
 
 		$styleKey =
-			($style->getNumFmt()
+			(!is_null($style->getNumFmt())
 				? $this->addIndex($style->getNumFmt(), $this->numFmtIndex, self::NUM_FMT_START_INDEX, self::DEFAULT_NUM_FMT)
 				: ''
 			) . ';' .
