@@ -41,6 +41,26 @@ abstract class BaseXml{
 	 * @return string
 	 */
 	protected function prepareText(string $text) : string{
-		return preg_replace('/_x\d{4}_/', '_x005F$0', $text);
+		$text = preg_replace('/_x\d{4}_/', '_x005F$0', $text);
+		$preparedText = "";
+
+		for ($i = 0; $i < mb_strlen($text); $i++) {
+			$chr = mb_substr($text, $i, 1);
+			$ord = ord($chr);
+
+			$encode = true;
+			if (strlen($chr) > 1) $encode = false;
+			if ($encode && $ord > 0x8 && $ord < 0xb) $encode = false;
+			if ($encode && $ord > 0xc && $ord < 0xe) $encode = false;
+			if ($encode && $ord > 0x1f && $ord < 0x7f) $encode = false;
+			if ($encode && $ord > 0x9f) $encode = false;
+
+			if ($encode)
+				$preparedText .= sprintf("_x%04x_", $ord);
+			else
+				$preparedText .= $chr;
+		}
+
+		return $preparedText;
 	}
 }
