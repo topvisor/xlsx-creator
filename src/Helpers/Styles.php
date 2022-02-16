@@ -2,7 +2,6 @@
 
 namespace Topvisor\XlsxCreator\Helpers;
 
-use Serializable;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
 use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
@@ -10,8 +9,6 @@ use Topvisor\XlsxCreator\Structures\Styles\Font;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\Value;
-use Topvisor\XlsxCreator\Workbook;
-use Topvisor\XlsxCreator\Xml\BaseXml;
 use Topvisor\XlsxCreator\Xml\ListXml;
 use Topvisor\XlsxCreator\Xml\Styles\Border\BorderXml;
 use Topvisor\XlsxCreator\Xml\Styles\Fill\FillXml;
@@ -131,7 +128,7 @@ class Styles{
 
 	private function addIndex($key, array &$indexes, int $startIndex = 0, array $defaults = []) : int{
 		if ($key instanceof Serializable) $key = $key->serialize();
-		elseif (!is_string($key)) throw new InvalidValueException('$key must be string or Serializable');
+		elseif (!is_string($key)) throw new InvalidValueException('$key must be string or Topvisor\XlsxCreator\Helpers\Serializable');
 
 		if (isset($defaults[$key])) return $defaults[$key];
 		if (isset($indexes[$key])) return $indexes[$key];

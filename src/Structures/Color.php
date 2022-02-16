@@ -2,7 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures;
 
-use Serializable;
+use Topvisor\XlsxCreator\Helpers\Serializable;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Helpers\Validator;
 
@@ -11,7 +11,7 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package  Topvisor\XlsxCreator
  */
-class Color implements Serializable {
+class Color implements Serializable{
 	private $model;
 
 	/**

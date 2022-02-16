@@ -2,7 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Styles\Borders;
 
-use Serializable;
+use Topvisor\XlsxCreator\Helpers\Serializable;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Helpers\Validator;
 

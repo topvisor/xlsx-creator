@@ -2,7 +2,7 @@
 
 namespace Topvisor\XlsxCreator\Structures\Styles\Alignment;
 
-use Serializable;
+use Topvisor\XlsxCreator\Helpers\Serializable;
 use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**

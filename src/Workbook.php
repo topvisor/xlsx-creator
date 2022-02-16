@@ -31,10 +31,10 @@ use ZipArchive;
  * @package Topvisor\XlsxCreator
  */
 class Workbook{
-	const VERSION = "v1.12";
+	const VERSION = "v1.18";
 
 	const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
-	const INVALID_WORKSHEET_NAME = '/[\/\\\?\*\[\]]/';
+	const INVALID_WORKSHEET_NAME = '/[\/\\\?*\[\]]/';
 
 	private $useSharedStrings;
 	private $checkRelsDoubles;
