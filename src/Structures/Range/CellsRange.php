@@ -25,7 +25,7 @@ class CellsRange extends Range{
 	 * @throws InvalidValueException
 	 */
 	function __toString(){
-		return Cell::genColStr($this->getTopLeftCol()) . $this->getTopLeftRow() . ':' .
-			Cell::genColStr($this->getBottomRightCol()) . $this->getBottomRightRow();
+		return Cell::genColStr((int)$this->getTopLeftCol()) . $this->getTopLeftRow() . ':' .
+			Cell::genColStr((int)$this->getBottomRightCol()) . $this->getBottomRightRow();
 	}
 }
