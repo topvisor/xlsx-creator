@@ -230,7 +230,7 @@ class Cell extends Style{
 	 */
 	static function genColStr(int $col) : string{
 		if ($col < 1 || $col > 16384) throw new InvalidValueException("$col is out of bounds. Excel supports columns from 1 to 16384");
-		if ($col > 26) return Cell::genColStr(($col - 1) / 26) . chr(($col % 26 ? $col % 26 : 26) + 64);
+		if ($col > 26) return Cell::genColStr((int)(($col - 1) / 26)) . chr(($col % 26 ? $col % 26 : 26) + 64);
 		return chr($col + 64);
 	}
 
