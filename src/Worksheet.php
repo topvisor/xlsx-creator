@@ -105,7 +105,7 @@ class Worksheet{
 		unset($this->sheetRels);
 		unset($this->xml);
 
-		if (file_exists($this->filename)) unlink($this->filename);
+		if ($this->filename && file_exists($this->filename)) unlink($this->filename);
 	}
 
 	/**
