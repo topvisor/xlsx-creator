@@ -6,8 +6,8 @@ use Topvisor\XlsxCreator\Xml\BaseXml;
 use Topvisor\XlsxCreator\Xml\Strings\SharedStringXml;
 use XMLWriter;
 
-class CommentXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class CommentXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		$xml->startElement('comment');
 
 		$xml->writeAttribute('authorId', 0);

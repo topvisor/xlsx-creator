@@ -2,8 +2,8 @@
 
 namespace Topvisor\XlsxCreator\Structures;
 
-use Topvisor\XlsxCreator\Helpers\Serializable;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
+use Topvisor\XlsxCreator\Helpers\Serializable;
 use Topvisor\XlsxCreator\Helpers\Validator;
 
 /**
@@ -11,14 +11,14 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package  Topvisor\XlsxCreator
  */
-class Color implements Serializable{
+class Color implements Serializable {
 	private $model;
 
 	/**
 	 * Color constructor.
 	 * @param array $model - модель цвета
 	 */
-	private function __construct(array $model){
+	private function __construct(array $model) {
 		$this->model = $model;
 	}
 
@@ -30,9 +30,11 @@ class Color implements Serializable{
 	 * @return Color - цвет
 	 * @throws InvalidValueException
 	 */
-	static function fromHex(string $rgb = 'FFFFFF', string $a = 'FF') : self{
+	public static function fromHex(string $rgb = 'FFFFFF', string $a = 'FF'): self {
 		switch (mb_strlen($rgb)) {
-			case 3: $rgb = preg_replace('/./', '$0$0', $rgb); break;
+			case 3: $rgb = preg_replace('/./', '$0$0', $rgb);
+
+			break;
 			case 6: break;
 			default: throw new InvalidValueException('The length $rgb must be 3 or 6');
 		}
@@ -54,7 +56,7 @@ class Color implements Serializable{
 	 * @return Color - цвет
 	 * @throws InvalidValueException
 	 */
-	static function fromInt(int $r = 0, int $g = 0, int $b = 0, int $a = 255) : self{
+	public static function fromInt(int $r = 0, int $g = 0, int $b = 0, int $a = 255): self {
 		Validator::validateInRange($r, 0, 255, '$r');
 		Validator::validateInRange($g, 0, 255, '$g');
 		Validator::validateInRange($b, 0, 255, '$b');
@@ -70,7 +72,7 @@ class Color implements Serializable{
 	 * @return Color - цвет
 	 * @throws InvalidValueException
 	 */
-	static function fromTheme(int $theme) : self{
+	public static function fromTheme(int $theme): self {
 		Validator::validatePositive($theme, '$theme');
 
 		return new self(['theme' => $theme]);
@@ -79,18 +81,17 @@ class Color implements Serializable{
 	/**
 	 * @return array - модель цвета
 	 */
-	function getModel(): array{
+	public function getModel(): array {
 		return $this->model;
 	}
 
-	public function serialize(){
+	public function serialize() {
 		return $this->model['argb'] ? $this->model['argb'] : (string) $this->model['theme'];
 	}
 
-	public function unserialize($serialized){
+	public function unserialize($serialized) {
 		if (preg_match('/^([A-F\d]{2})([A-F\d]{6})$/', $serialized, $matches))
 			$this->model = self::fromHex($matches[2], $matches[1])->getModel();
-		else
-			$this->model = self::fromTheme((int) $serialized)->getModel();
+			else $this->model = self::fromTheme((int) $serialized)->getModel();
 	}
 }

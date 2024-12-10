@@ -9,10 +9,10 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package  Topvisor\XlsxCreator\Structures\Views
  */
-class SplitView extends View{
-	const VALID_ACTIVE_PANE = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
+class SplitView extends View {
+	public const VALID_ACTIVE_PANE = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
 
-	public function __construct(int $xSplit, int $ySplit){
+	public function __construct(int $xSplit, int $ySplit) {
 		$this->model['state'] = 'split';
 
 		$this->model['xSplit'] = $xSplit;
@@ -22,7 +22,7 @@ class SplitView extends View{
 	/**
 	 * @return int - Количество точек слева до границы
 	 */
-	function getXSplit() : int{
+	public function getXSplit(): int {
 		return $this->model['xSplit'];
 	}
 
@@ -30,17 +30,18 @@ class SplitView extends View{
 	 * @param int $xSplit - Количество точек слева до границы
 	 * @return SplitView - $this
 	 */
-	function setXSplit(int $xSplit) : self{
+	public function setXSplit(int $xSplit): self {
 		Validator::validatePositive($xSplit, '$xSplit');
 
 		$this->model['xSplit'] = $xSplit;
+
 		return $this;
 	}
 
 	/**
 	 * @return int - Количество точек сверху до границы
 	 */
-	function getYSplit() : int{
+	public function getYSplit(): int {
 		return $this->model['ySplit'];
 	}
 
@@ -48,17 +49,18 @@ class SplitView extends View{
 	 * @param int $ySplit - Количество точек сверху до границы
 	 * @return SplitView - $this
 	 */
-	function setYSplit(int $ySplit) : self{
+	public function setYSplit(int $ySplit): self {
 		Validator::validatePositive($ySplit, '$ySplit');
 
 		$this->model['ySplit'] = $ySplit;
+
 		return $this;
 	}
 
 	/**
 	 * @return string|null - Левая-верхняя ячейка в нижней правой панели
 	 */
-	function getTopLeftCell(){
+	public function getTopLeftCell() {
 		return $this->model['topLeftCell'] ?? null;
 	}
 
@@ -66,17 +68,18 @@ class SplitView extends View{
 	 * @param string|null $topLeftCell - Левая-верхняя ячейка в нижней правой панели (например, 'A1', 'B10', и т.д.)
 	 * @return SplitView - $this
 	 */
-	function setTopLeftCell(string $topLeftCell = null) : self{
+	public function setTopLeftCell(?string $topLeftCell = null): self {
 		if (!is_null($topLeftCell)) Validator::validateAddress($topLeftCell);
 
 		$this->model['topLeftCell'] = $topLeftCell;
+
 		return $this;
 	}
 
 	/**
 	 * @return string|null - активная панель
 	 */
-	function getActivePane(){
+	public function getActivePane() {
 		return $this->model['activePane'] ?? null;
 	}
 
@@ -84,10 +87,11 @@ class SplitView extends View{
 	 * @param string|null $activePane - активная панель
 	 * @return SplitView - $this
 	 */
-	function setActivePane(string $activePane = null) : self{
+	public function setActivePane(?string $activePane = null): self {
 		if (!is_null($activePane)) Validator::validate($activePane, '$activePane', self::VALID_ACTIVE_PANE);
 
 		$this->model['activePane'] = $activePane;
+
 		return $this;
 	}
 }

@@ -3,10 +3,10 @@
 namespace Topvisor\XlsxCreator\Helpers;
 
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
+use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
 use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
 use Topvisor\XlsxCreator\Structures\Styles\Font;
-use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\Value;
 use Topvisor\XlsxCreator\Xml\ListXml;
@@ -17,8 +17,8 @@ use Topvisor\XlsxCreator\Xml\Styles\NumFmtXml;
 use Topvisor\XlsxCreator\Xml\Styles\Style\StyleXml;
 use XMLWriter;
 
-class Styles{
-	const DEFAULT_NUM_FMT = [
+class Styles {
+	public const DEFAULT_NUM_FMT = [
 		'General' => 0,
 		'0' => 1,
 		'0.00' => 2,
@@ -46,13 +46,13 @@ class Styles{
 		'[h]:mm:ss' => 46,
 		'mmss.0' => 47,
 		'##0.0E+0' => 48,
-		'@' => 49
+		'@' => 49,
 	];
 
-	const NUM_FMT_START_INDEX = 164;
-	const FONT_START_INDEX = 1;
-	const FILL_START_INDEX = 2;
-	const STYLE_START_INDEX = 1;
+	public const NUM_FMT_START_INDEX = 164;
+	public const FONT_START_INDEX = 1;
+	public const FILL_START_INDEX = 2;
+	public const STYLE_START_INDEX = 1;
 
 	private $fontIndex;
 	private $borderIndex;
@@ -60,7 +60,7 @@ class Styles{
 	private $fillIndex;
 	private $numFmtIndex;
 
-	function __construct(){
+	public function __construct() {
 		$this->fontIndex = [];
 		$this->borderIndex = [];
 		$this->fillIndex = [];
@@ -70,7 +70,7 @@ class Styles{
 		$this->addIndex(new Borders(), $this->borderIndex);
 	}
 
-	function writeToFile(string $filename){
+	public function writeToFile(string $filename) {
 		$xml = new XMLWriter();
 		$xml->openURI($filename);
 
@@ -102,19 +102,24 @@ class Styles{
 		unset($xml);
 	}
 
-	function addStyle(Style $style, int $cellType = null) : int{
+	public function addStyle(Style $style, ?int $cellType = null): int {
 		if (is_null($style->getNumFmt())) {
 			switch ($cellType) {
 				case null:
-				case Value::TYPE_NUMBER: $style->setNumFmt('General'); break;
-				case Value::TYPE_DATE: $style->setNumFmt('mm-dd-yy'); break;
+				case Value::TYPE_NUMBER: $style->setNumFmt('General');
+
+				break;
+				case Value::TYPE_DATE: $style->setNumFmt('mm-dd-yy');
+
+				break;
 			}
 		}
-		
+
 		if ($style->isDefaultStyle()) return 0;
 
 		$styleKey =
-			(!is_null($style->getNumFmt())
+			(
+				!is_null($style->getNumFmt())
 				? $this->addIndex($style->getNumFmt(), $this->numFmtIndex, self::NUM_FMT_START_INDEX, self::DEFAULT_NUM_FMT)
 				: ''
 			) . ';' .
@@ -126,7 +131,7 @@ class Styles{
 		return $this->addIndex($styleKey, $this->styleIndex, self::STYLE_START_INDEX);
 	}
 
-	private function addIndex($key, array &$indexes, int $startIndex = 0, array $defaults = []) : int{
+	private function addIndex($key, array &$indexes, int $startIndex = 0, array $defaults = []): int {
 		if ($key instanceof Serializable) $key = $key->serialize();
 		elseif (!is_string($key)) throw new InvalidValueException('$key must be string or Topvisor\XlsxCreator\Helpers\Serializable');
 
@@ -139,19 +144,19 @@ class Styles{
 		return $index;
 	}
 
-	private function renderNumFmts(XMLWriter $xml){
+	private function renderNumFmts(XMLWriter $xml) {
 		$xml->startElement('numFmts');
 		$xml->writeAttribute('count', count($this->numFmtIndex));
 
-		foreach (array_keys($this->numFmtIndex) as $key) (new NumFmtXml())->render($xml, [
+		foreach (array_keys($this->numFmtIndex) as $key)(new NumFmtXml())->render($xml, [
 			'formatCode' => $key,
-			'id' => $this->numFmtIndex[$key]
+			'id' => $this->numFmtIndex[$key],
 		]);
 
 		$xml->endElement();
 	}
 
-	private function renderFonts(XMLWriter $xml){
+	private function renderFonts(XMLWriter $xml) {
 		$xml->startElement('fonts');
 		$xml->writeAttribute('count', count($this->fontIndex) + self::FONT_START_INDEX);
 
@@ -159,7 +164,7 @@ class Styles{
 		$fontXml->render($xml, ['sz' => 11, 'color' => ['theme' => 1], 'name' => 'Calibri', 'family' => 2, 'scheme' => 'minor']);
 
 		$font = new Font();
-		foreach (array_keys($this->fontIndex) as $key){
+		foreach (array_keys($this->fontIndex) as $key) {
 			$font->unserialize($key);
 			$fontXml->render($xml, $font->getModel());
 		}
@@ -167,7 +172,7 @@ class Styles{
 		$xml->endElement();
 	}
 
-	private function renderFills(XMLWriter $xml){
+	private function renderFills(XMLWriter $xml) {
 		$xml->startElement('fills');
 		$xml->writeAttribute('count', count($this->fillIndex) + self::FILL_START_INDEX);
 
@@ -182,20 +187,20 @@ class Styles{
 				'type' => 'pattern',
 				'pattern' => 'solid',
 				'fgColor' => $color->getModel(),
-				'bgColor' => $color->getModel()
+				'bgColor' => $color->getModel(),
 			]);
 		}
 
 		$xml->endElement();
 	}
 
-	private function renderBorders(XMLWriter $xml){
+	private function renderBorders(XMLWriter $xml) {
 		$xml->startElement('borders');
 		$xml->writeAttribute('count', count($this->borderIndex));
 
 		$borderXml = new BorderXml();
 		$border = new Borders();
-		foreach (array_keys($this->borderIndex) as $key){
+		foreach (array_keys($this->borderIndex) as $key) {
 			$border->unserialize($key);
 			$borderXml->render($xml, $border->getModel());
 		}
@@ -203,7 +208,7 @@ class Styles{
 		$xml->endElement();
 	}
 
-	private function renderStyles(XMLWriter $xml){
+	private function renderStyles(XMLWriter $xml) {
 		$xml->startElement('cellXfs');
 		$xml->writeAttribute('count', count($this->styleIndex) + self::STYLE_START_INDEX);
 
@@ -211,13 +216,13 @@ class Styles{
 		$styleXml->render($xml, ['numFmtId' => 0, 'fontId' => 0, 'fillId' => 0, 'borderId' => 0, 'xfId' => 0]);
 
 		$alignment = new Alignment();
-		foreach (array_keys($this->styleIndex) as $key){
+		foreach (array_keys($this->styleIndex) as $key) {
 			$params = explode(';', $key);
 			$model = [
 				'numFmtId' => (int) $params[0],
 				'fontId' => (int) $params[1],
 				'fillId' => (int) $params[2],
-				'borderId' => (int) $params[3]
+				'borderId' => (int) $params[3],
 			];
 
 			if ($params[4]) {
@@ -231,7 +236,7 @@ class Styles{
 		$xml->endElement();
 	}
 
-	private function writeStatic(XMLWriter $xml){
+	private function writeStatic(XMLWriter $xml) {
 		$xml->startElement('cellStyles');
 		$xml->writeAttribute('count', 1);
 

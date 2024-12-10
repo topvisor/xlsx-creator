@@ -6,8 +6,8 @@ use Topvisor\XlsxCreator\Structures\Drawing\Pic\PicXml;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class TwoCellAnchorXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class TwoCellAnchorXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		$xml->startElement('xdr:twoCellAnchor');
 		$xml->writeAttribute('editAs', 'oneCell');
 

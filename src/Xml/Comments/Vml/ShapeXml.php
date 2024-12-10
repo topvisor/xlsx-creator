@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Xml\Comments\Vml;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class ShapeXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class ShapeXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('v:shape');

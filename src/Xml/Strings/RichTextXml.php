@@ -6,8 +6,8 @@ use Topvisor\XlsxCreator\Xml\BaseXml;
 use Topvisor\XlsxCreator\Xml\Styles\Font\FontXml;
 use XMLWriter;
 
-class RichTextXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class RichTextXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$fontXml = new FontXml('rPr', 'rFont');

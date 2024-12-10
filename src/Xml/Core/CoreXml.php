@@ -4,12 +4,11 @@ namespace Topvisor\XlsxCreator\Xml\Core;
 
 use DateTimeZone;
 use Topvisor\XlsxCreator\Xml\BaseXml;
-use Topvisor\XlsxCreator\Xml\Simple\DateXml;
 use Topvisor\XlsxCreator\Xml\Simple\StringXml;
 use XMLWriter;
 
-class CoreXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class CoreXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (is_null($model)) return;
 
 		$xml->startDocument('1.0', 'UTF-8', 'yes');

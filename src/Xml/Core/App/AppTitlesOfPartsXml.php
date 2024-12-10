@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Xml\Core\App;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class AppTitlesOfPartsXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class AppTitlesOfPartsXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (is_null($model)) return;
 
 		$xml->startElement('TitlesOfParts');

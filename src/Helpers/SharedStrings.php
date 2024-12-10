@@ -16,7 +16,7 @@ use XMLWriter;
  *
  * @package Topvisor\XlsxCreator\Helpers
  */
-class SharedStrings{
+class SharedStrings {
 	private $workbook;
 
 	private $empty;
@@ -29,10 +29,8 @@ class SharedStrings{
 
 	/**
 	 * SharedStrings constructor.
-	 *
-	 * @param Workbook $workbook
 	 */
-	function __construct(Workbook $workbook){
+	public function __construct(Workbook $workbook) {
 		$this->workbook = $workbook;
 
 		$this->empty = true;
@@ -41,7 +39,7 @@ class SharedStrings{
 		if ($workbook->getUseSharedStrings()) $this->sharedStrings = [];
 	}
 
-	public function __destruct(){
+	public function __destruct() {
 		unset($this->workbook);
 		unset($this->xml);
 
@@ -51,8 +49,9 @@ class SharedStrings{
 	/**
 	 * @return null|string - путь к временному файлу общих строк
 	 */
-	function getFilename(){
+	public function getFilename() {
 		if ($this->xml ?? false) $this->xml->flush();
+
 		return $this->filename;
 	}
 
@@ -61,7 +60,7 @@ class SharedStrings{
 	 * @return SharedStringValue - общая строка
 	 * @throws InvalidValueException
 	 */
-	function add($value) : SharedStringValue{
+	public function add($value): SharedStringValue {
 		$this->checkCommitted();
 
 		if ($this->empty) $this->startSharedStrings();
@@ -91,14 +90,14 @@ class SharedStrings{
 	/**
 	 * @return bool - файл общих строк пуст
 	 */
-	function isEmpty() : bool{
+	public function isEmpty(): bool {
 		return $this->empty;
 	}
 
 	/**
 	 * @return bool - файл общих строк зафиксирован
 	 */
-	function isCommitted() : bool{
+	public function isCommitted(): bool {
 		return $this->committed;
 	}
 
@@ -107,7 +106,7 @@ class SharedStrings{
 	 *
 	 * @throws ObjectCommittedException
 	 */
-	function commit() {
+	public function commit() {
 		$this->checkCommitted();
 		$this->committed = true;
 
@@ -118,22 +117,23 @@ class SharedStrings{
 	 * @param Value $value - добавить значение в файл общих строк
 	 * @return int - id значения
 	 */
-	private function addToXml(Value $value) : int{
+	private function addToXml(Value $value): int {
 		(new SharedStringXml())->render($this->xml, ['type' => $value->getType(), 'value' => $value->getValue()]);
+
 		return $this->nextId++;
 	}
 
 	/**
 	 * @throws ObjectCommittedException
 	 */
-	private function checkCommitted(){
+	private function checkCommitted() {
 		if ($this->committed) throw new ObjectCommittedException();
 	}
 
 	/**
 	 * Начать файл общих строк.
 	 */
-	private function startSharedStrings(){
+	private function startSharedStrings() {
 		$this->empty = false;
 
 		$this->filename = $this->workbook->genTempFilename();
@@ -149,7 +149,7 @@ class SharedStrings{
 	/**
 	 * Завершить файл общих строк.
 	 */
-	private function endSharedStrings(){
+	private function endSharedStrings() {
 		if ($this->empty) return;
 
 		$this->xml->endElement();

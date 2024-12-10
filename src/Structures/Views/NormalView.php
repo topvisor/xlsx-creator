@@ -7,8 +7,8 @@ namespace Topvisor\XlsxCreator\Structures\Views;
  *
  * @package  Topvisor\XlsxCreator\Structures\Views
  */
-class NormalView extends View{
-	public function __construct(){
+class NormalView extends View {
+	public function __construct() {
 		$this->model['state'] = 'normal';
 	}
 }

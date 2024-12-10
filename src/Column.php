@@ -2,16 +2,16 @@
 
 namespace Topvisor\XlsxCreator;
 
+use Topvisor\XlsxCreator\Helpers\Styles;
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
-use Topvisor\XlsxCreator\Helpers\Styles;
 
 /**
  * Class Column. Содержит методы для работы с колонкой.
  *
  * @package Topvisor\XlsxCreator
  */
-class Column extends Style{
+class Column extends Style {
 	private $worksheet;
 	private $number;
 
@@ -19,13 +19,13 @@ class Column extends Style{
 	private $hidden;
 	private $outlineLevel;
 
-	public function __construct(Worksheet $worksheet, int $number){
-	    $this->width = 8;
+	public function __construct(Worksheet $worksheet, int $number) {
+		$this->width = 8;
 		$this->worksheet = $worksheet;
 		$this->number = $number;
 	}
 
-	function __destruct(){
+	public function __destruct() {
 		parent::__destruct();
 
 		unset($this->worksheet);
@@ -34,21 +34,21 @@ class Column extends Style{
 	/**
 	 * @return Worksheet - таблица
 	 */
-	function getWorksheet() : Worksheet{
+	public function getWorksheet(): Worksheet {
 		return $this->worksheet;
 	}
 
 	/**
 	 * @return int - номер строки
 	 */
-	function getNumber() : int{
+	public function getNumber(): int {
 		return $this->number;
 	}
 
 	/**
 	 * @return int - ширина столбца
 	 */
-	function getWidth() : int{
+	public function getWidth(): int {
 		return $this->width;
 	}
 
@@ -56,17 +56,18 @@ class Column extends Style{
 	 * @param int $width - ширина столбца
 	 * @return Column - $this
 	 */
-	function setWidth(int $width = 8) : self{
+	public function setWidth(int $width = 8): self {
 		Validator::validateInRange($width, 0, 409, '$width');
 
 		$this->width = $width;
+
 		return $this;
 	}
 
 	/**
 	 * @return bool - скрытый ли столбец
 	 */
-	function isHidden() : bool{
+	public function isHidden(): bool {
 		return $this->hidden;
 	}
 
@@ -74,15 +75,16 @@ class Column extends Style{
 	 * @param bool $hidden - скрыть столбец
 	 * @return Column - $this
 	 */
-	function setHidden(bool $hidden) : self{
+	public function setHidden(bool $hidden): self {
 		$this->hidden = $hidden;
+
 		return $this;
 	}
 
 	/**
 	 * @return int - column outline level
 	 */
-	function getOutlineLevel() : int{
+	public function getOutlineLevel(): int {
 		return $this->outlineLevel;
 	}
 
@@ -90,10 +92,11 @@ class Column extends Style{
 	 * @param int $outlineLevel - column outline level
 	 * @return Column - $this
 	 */
-	function setOutlineLevel(int $outlineLevel) : self{
+	public function setOutlineLevel(int $outlineLevel): self {
 		Validator::validateInRange($outlineLevel, 0, 409, '$outlineLevel');
 
 		$this->outlineLevel = $outlineLevel;
+
 		return $this;
 	}
 
@@ -101,8 +104,8 @@ class Column extends Style{
 	 * @param Styles $styles - стили xlsx
 	 * @return array|null - модель
 	 */
-	function prepareToCommit(Styles $styles) : array{
-        $styleId = $styles->addStyle($this);
+	public function prepareToCommit(Styles $styles): array {
+		$styleId = $styles->addStyle($this);
 		$collapsed = (bool) ($this->outlineLevel && $this->outlineLevel > $this->worksheet->getOutlineLevelCol());
 
 		return [
@@ -112,7 +115,7 @@ class Column extends Style{
 			'styleId' => $styleId,
 			'hidden' => $this->hidden,
 			'outlineLevel' => $this->outlineLevel,
-			'collapsed' => $collapsed
+			'collapsed' => $collapsed,
 		];
 	}
 }

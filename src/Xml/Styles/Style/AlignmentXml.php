@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Xml\Styles\Style;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class AlignmentXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class AlignmentXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('alignment');
@@ -23,9 +23,15 @@ class AlignmentXml extends BaseXml{
 		);
 
 		switch ($model['readingOrder'] ?? false) {
-			case 'leftToRight': $readingOrder = 1; break;
-			case 'rightToLeft': $readingOrder = 2; break;
-			default: $readingOrder = false; break;
+			case 'leftToRight': $readingOrder = 1;
+
+			break;
+			case 'rightToLeft': $readingOrder = 2;
+
+			break;
+			default: $readingOrder = false;
+
+			break;
 		}
 
 		if ($readingOrder) $xml->writeAttribute('readingOrder', $readingOrder);

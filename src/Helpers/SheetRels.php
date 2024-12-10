@@ -13,7 +13,7 @@ use XMLWriter;
  *
  * @package  Topvisor\XlsxCreator
  */
-class SheetRels{
+class SheetRels {
 	private $worksheet;
 	private $checkDoubles;
 
@@ -32,7 +32,7 @@ class SheetRels{
 	 * @param Worksheet $worksheet - таблица
 	 * @param bool $checkDoubles - проверять дубликаты
 	 */
-	function __construct(Worksheet $worksheet, bool $checkDoubles){
+	public function __construct(Worksheet $worksheet, bool $checkDoubles) {
 		$this->worksheet = $worksheet;
 		$this->checkDoubles = $checkDoubles;
 
@@ -41,7 +41,7 @@ class SheetRels{
 		$this->rels = [];
 	}
 
-	function __destruct(){
+	public function __destruct() {
 		unset($this->xml);
 		unset($this->hyperlinksXml);
 
@@ -52,16 +52,18 @@ class SheetRels{
 	/**
 	 * @return null|string - путь к временному файлу связей
 	 */
-	function getFilename(){
+	public function getFilename() {
 		if ($this->xml ?? false) $this->xml->flush();
+
 		return $this->filename;
 	}
 
 	/**
 	 * @return null|string - путь к временному файлу гиперссылок
 	 */
-	function getHyperlinksFilename(){
+	public function getHyperlinksFilename() {
 		if ($this->hyperlinksXml ?? false) $this->hyperlinksXml->flush();
+
 		return $this->hyperlinksFilename;
 	}
 
@@ -70,7 +72,7 @@ class SheetRels{
 	 * @param string $address - ячейка таблицы ('A1', 'B5')
 	 * @throws ObjectCommittedException
 	 */
-	function addHyperlink(string $target, string $address){
+	public function addHyperlink(string $target, string $address) {
 		$this->checkCommited();
 
 		$hyperlink = [
@@ -79,7 +81,7 @@ class SheetRels{
 				'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink',
 				$target,
 				'External'
-			)
+			),
 		];
 
 		if (!$this->hyperlinksXml ?? false) $this->startHyperlinks();
@@ -91,7 +93,7 @@ class SheetRels{
 	 * @return string - id связи с vml файлом
 	 * @throws ObjectCommittedException
 	 */
-	function addComments() : string{
+	public function addComments(): string {
 		$this->checkCommited();
 
 		$this->writeRelationship(
@@ -110,7 +112,7 @@ class SheetRels{
 	 * @return string - id связи с файлом рисунков
 	 * @throws ObjectCommittedException
 	 */
-	function addDrawing() : string{
+	public function addDrawing(): string {
 		$this->checkCommited();
 
 		return $this->writeRelationship(
@@ -123,7 +125,7 @@ class SheetRels{
 	 * Зафиксировать файл связей.
 	 * @throws ObjectCommittedException
 	 */
-	function commit() {
+	public function commit() {
 		$this->checkCommited();
 		$this->committed = true;
 
@@ -134,7 +136,7 @@ class SheetRels{
 	/**
 	 *	Начать файл связей.
 	 */
-	private function startSheetRels(){
+	private function startSheetRels() {
 		$this->filename = $this->worksheet->getWorkbook()->genTempFilename();
 
 		$this->xml = new XMLWriter();
@@ -148,7 +150,7 @@ class SheetRels{
 	/**
 	 *	Завершить файл связей.
 	 */
-	private function endSheetRels(){
+	private function endSheetRels() {
 		if (!($this->xml ?? false)) return;
 
 		$this->xml->endElement();
@@ -158,14 +160,14 @@ class SheetRels{
 		unset($this->xml);
 	}
 
-	private function startHyperlinks(){
+	private function startHyperlinks() {
 		$this->hyperlinksFilename = $this->worksheet->getWorkbook()->genTempFilename();
 
 		$this->hyperlinksXml = new XMLWriter();
 		$this->hyperlinksXml->openURI($this->hyperlinksFilename);
 	}
 
-	private function endHyperlinks(){
+	private function endHyperlinks() {
 		if (!($this->hyperlinksXml ?? false)) return;
 
 		$this->hyperlinksXml->flush();
@@ -180,7 +182,7 @@ class SheetRels{
 	 * @param string|null $targetMode - тип связи
 	 * @return string - id связи
 	 */
-	private function writeRelationship(string $type, string $target, string $targetMode = null) : string{
+	private function writeRelationship(string $type, string $target, ?string $targetMode = null): string {
 		if (!($this->xml ?? false)) $this->startSheetRels();
 
 		$key = '';
@@ -189,7 +191,7 @@ class SheetRels{
 			preg_match('/\w*$/', $type, $typeMatches);
 
 			$key = $typeMatches[0] . ';' . $target;
-			if(!is_null($targetMode)) $key .= ';'. $targetMode;
+			if (!is_null($targetMode)) $key .= ';'. $targetMode;
 
 			if (isset($this->rels[$key])) return 'rId' . $this->rels[$key];
 		}
@@ -201,7 +203,7 @@ class SheetRels{
 			'id' => $rIdStr,
 			'type' => $type,
 			'target' => $target,
-			'targetMode' => $targetMode
+			'targetMode' => $targetMode,
 		]);
 
 		if ($this->checkDoubles) $this->rels[$key] = $rId;
@@ -212,7 +214,7 @@ class SheetRels{
 	/**
 	 * @throws ObjectCommittedException
 	 */
-	private function checkCommited(){
+	private function checkCommited() {
 		if ($this->committed) throw new ObjectCommittedException();
 	}
 }

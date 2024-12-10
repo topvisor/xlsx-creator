@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Xml\Sheet;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class PageSetupXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class PageSetupXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('pageSetup');

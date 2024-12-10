@@ -3,18 +3,20 @@
 namespace Topvisor\XlsxCreator;
 
 use OutOfBoundsException;
+use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
 use Topvisor\XlsxCreator\Helpers\Comments;
 use Topvisor\XlsxCreator\Helpers\Drawing;
 use Topvisor\XlsxCreator\Helpers\SheetRels;
+use Topvisor\XlsxCreator\Helpers\Styles;
+use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\PageSetup;
 use Topvisor\XlsxCreator\Structures\Range\CellsRange;
 use Topvisor\XlsxCreator\Structures\Range\Range;
 use Topvisor\XlsxCreator\Structures\Views\NormalView;
 use Topvisor\XlsxCreator\Structures\Views\View;
-use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Xml\ListXml;
 use Topvisor\XlsxCreator\Xml\Sheet\ColumnXml;
 use Topvisor\XlsxCreator\Xml\Sheet\MergeXml;
@@ -24,9 +26,7 @@ use Topvisor\XlsxCreator\Xml\Sheet\RowXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetFormatPropertiesXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetPropertiesXml;
 use Topvisor\XlsxCreator\Xml\Sheet\SheetViewsXml;
-use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Xml\Simple\StringXml;
-use Topvisor\XlsxCreator\Helpers\Styles;
 use XMLWriter;
 
 /**
@@ -34,9 +34,9 @@ use XMLWriter;
  *
  * @package  Topvisor\XlsxCreator
  */
-class Worksheet{
-	const DY_DESCENT = 55;
-	const DEFAULT_ROW_HEIGHT = 15;
+class Worksheet {
+	public const DY_DESCENT = 55;
+	public const DEFAULT_ROW_HEIGHT = 15;
 
 	private $workbook;
 	private $styles;
@@ -71,7 +71,7 @@ class Worksheet{
 	 * @param int $id - ID таблицы в $workbook
 	 * @param string $name - имя таблицы
 	 */
-	function __construct(Workbook $workbook, Styles $styles, int $id, string $name){
+	public function __construct(Workbook $workbook, Styles $styles, int $id, string $name) {
 		$this->workbook = $workbook;
 		$this->styles = $styles;
 		$this->id = $id;
@@ -94,7 +94,7 @@ class Worksheet{
 		$this->sheetRels = new SheetRels($this, $workbook->getCheckRelsDoubles());
 	}
 
-	function __destruct(){
+	public function __destruct() {
 		unset($this->workbook);
 		unset($this->styles);
 		unset($this->view);
@@ -111,28 +111,28 @@ class Worksheet{
 	/**
 	 * @return Workbook - workbook, к которому принадлежит таблица
 	 */
-	function getWorkbook() : Workbook{
+	public function getWorkbook(): Workbook {
 		return $this->workbook;
 	}
 
 	/**
 	 * @return int - ID таблицы в $workbook
 	 */
-	function getId() : int{
+	public function getId(): int {
 		return $this->id;
 	}
 
 	/**
 	 * @return string - имя таблицы
 	 */
-	function getName() : string{
+	public function getName(): string {
 		return $this->name;
 	}
 
 	/**
 	 * @return Color|null - цвет вкладки
 	 */
-	function getTabColor(){
+	public function getTabColor() {
 		return $this->tabColor;
 	}
 
@@ -141,18 +141,19 @@ class Worksheet{
 	 * @return Worksheet - $this
 	 * @throws ObjectCommittedException
 	 */
-	function setTabColor(Color $tabColor = null) : Worksheet{
+	public function setTabColor(?Color $tabColor = null): Worksheet {
 		$this->checkCommitted();
 		$this->checkStarted();
 
 		$this->tabColor = $tabColor;
+
 		return $this;
 	}
 
 	/**
 	 * @return int - worksheet column outline level
 	 */
-	function getOutlineLevelCol() : int{
+	public function getOutlineLevelCol(): int {
 		return $this->outlineLevelCol;
 	}
 
@@ -162,20 +163,21 @@ class Worksheet{
 	 * @throws ObjectCommittedException
 	 * @throws InvalidValueException
 	 */
-	function setOutlineLevelCol(int $outlineLevelCol) : Worksheet{
+	public function setOutlineLevelCol(int $outlineLevelCol): Worksheet {
 		$this->checkCommitted();
 		$this->checkStarted();
 
 		Validator::validatePositive($outlineLevelCol, '$outlineLevelCol');
 
 		$this->outlineLevelCol = $outlineLevelCol;
+
 		return $this;
 	}
 
 	/**
 	 * @return int - worksheet row outline level
 	 */
-	function getOutlineLevelRow() : int{
+	public function getOutlineLevelRow(): int {
 		return $this->outlineLevelRow;
 	}
 
@@ -185,20 +187,21 @@ class Worksheet{
 	 * @throws ObjectCommittedException
 	 * @throws InvalidValueException
 	 */
-	function setOutlineLevelRow(int $outlineLevelRow) : Worksheet{
+	public function setOutlineLevelRow(int $outlineLevelRow): Worksheet {
 		$this->checkCommitted();
 		$this->checkStarted();
 
 		Validator::validatePositive($outlineLevelRow, '$outlineLevelRow');
 
 		$this->outlineLevelRow = $outlineLevelRow;
+
 		return $this;
 	}
 
 	/**
 	 * @return View - представление worksheet
 	 */
-	function getView() : View{
+	public function getView(): View {
 		return $this->view;
 	}
 
@@ -208,20 +211,21 @@ class Worksheet{
 	 * @throws ObjectCommittedException
 	 * @throws InvalidValueException
 	 */
-	function setView(View $view) : Worksheet{
+	public function setView(View $view): Worksheet {
 		$this->checkCommitted();
 		$this->checkStarted();
 
 		if (!is_null($view)) Validator::validateView($view);
 
 		$this->view = $view;
+
 		return $this;
 	}
 
 	/**
 	 * @return PageSetup - параметры печати
 	 */
-	function getPageSetup() : PageSetup{
+	public function getPageSetup(): PageSetup {
 		return $this->pageSetup;
 	}
 
@@ -230,11 +234,12 @@ class Worksheet{
 	 * @return Worksheet - $this
 	 * @throws ObjectCommittedException
 	 */
-	function setPageSetup(PageSetup $pageSetup) : Worksheet{
+	public function setPageSetup(PageSetup $pageSetup): Worksheet {
 		$this->checkCommitted();
 		$this->checkStarted();
 
 		$this->pageSetup = $pageSetup;
+
 		return $this;
 	}
 
@@ -264,22 +269,23 @@ class Worksheet{
 	/**
 	 * @return bool - зафиксированы ли изменения
 	 */
-	function isCommitted() : bool{
+	public function isCommitted(): bool {
 		return $this->committed;
 	}
 
 	/**
 	 * @return null|string - путь к временному файлу таблицы
 	 */
-	function getFilename(){
+	public function getFilename() {
 		if ($this->xml ?? false) $this->xml->flush();
+
 		return $this->filename;
 	}
 
 	/**
 	 * @return string - путь к файлу таблицы внутри xlsx
 	 */
-	function getLocalname() : string{
+	public function getLocalname(): string {
 		return 'xl/worksheets/sheet' . $this->id . '.xml';
 	}
 
@@ -288,7 +294,7 @@ class Worksheet{
 	 *
 	 * @return string - id связи файла таблицы
 	 */
-	function getRId() : string{
+	public function getRId(): string {
 		return $this->rId ?? '';
 	}
 
@@ -298,35 +304,36 @@ class Worksheet{
 	 * @param string $rId - id связи файла таблицы
 	 * @return Worksheet - $this
 	 */
-	function setRId(string $rId) : Worksheet{
+	public function setRId(string $rId): Worksheet {
 		$this->rId = $rId;
+
 		return $this;
 	}
 
 	/**
 	 * @return null|string - временый файл связей таблицы
 	 */
-	function getSheetRelsFilename(){
+	public function getSheetRelsFilename() {
 		return $this->sheetRels->getFilename();
 	}
 
 	/**
 	 * @return array|null - временные файлы комментариев таблицы
 	 */
-	function getCommentsFilenames(){
+	public function getCommentsFilenames() {
 		return !$this->comments->isEmpty() ? [
 			'comments' => $this->comments->getCommentsFilename(),
-			'vml' => $this->comments->getVmlFilename()
+			'vml' => $this->comments->getVmlFilename(),
 		] : null;
 	}
 
 	/**
 	 * @return array|null - временные файлы рисунков таблицы
 	 */
-	function getDrawingFilenames(){
+	public function getDrawingFilenames() {
 		return !$this->drawing->isEmpty() ? [
 			'drawing' => $this->drawing->getFilename(),
-			'rels' => $this->drawing->getRelsFilename()
+			'rels' => $this->drawing->getRelsFilename(),
 		] : null;
 	}
 
@@ -336,7 +343,7 @@ class Worksheet{
 	 * @throws InvalidValueException
 	 * @throws ObjectCommittedException
 	 */
-	function getColumn(int $col) : Column{
+	public function getColumn(int $col): Column {
 		Validator::validateInRange($col, 1, 16384, '$col');
 
 		$this->checkCommitted();
@@ -353,7 +360,7 @@ class Worksheet{
 	 * @return Column - колонка
 	 * @throws ObjectCommittedException
 	 */
-	function addColumn() : Column{
+	public function addColumn(): Column {
 		$this->checkCommitted();
 		$this->checkStarted();
 		if (count($this->columns) >= 16384) throw new OutOfBoundsException('Excel supports columns from 1 to 16384');
@@ -370,10 +377,10 @@ class Worksheet{
 	 * @throws ObjectCommittedException
 	 * @throws InvalidValueException
 	 */
-	function getRow(int $row) : Row{
+	public function getRow(int $row): Row {
 		$this->checkCommitted();
 
-		Validator::validateInRange($row, 1, 1048576,'$row');
+		Validator::validateInRange($row, 1, 1048576, '$row');
 		if ($row < $this->lastUncommittedRow) throw new ObjectCommittedException('Row is committed');
 
 		if ($row >= $this->lastUncommittedRow + count($this->rows))
@@ -389,7 +396,7 @@ class Worksheet{
 	 * @throws ObjectCommittedException
 	 * @throws InvalidValueException
 	 */
-	function addRow(array $values = null) : Row{
+	public function addRow(?array $values = null): Row {
 		$this->checkCommitted();
 		if ($this->lastUncommittedRow + count($this->rows) > 1048576) throw new OutOfBoundsException('Excel supports rows from 1 to 1048576');
 
@@ -408,7 +415,7 @@ class Worksheet{
 	 * @throws ObjectCommittedException
 	 * @throws InvalidValueException
 	 */
-	function getCell(int $row, int $col) : Cell{
+	public function getCell(int $row, int $col): Cell {
 		$this->checkCommitted();
 
 		return $this->getRow($row)->getCell($col);
@@ -423,7 +430,7 @@ class Worksheet{
 	 * @param string $imageName - имя картинки
 	 * @throws InvalidValueException
 	 */
-	function addImage(Range $position, string $filename, string $extension = '', string $imageName = ''){
+	public function addImage(Range $position, string $filename, string $extension = '', string $imageName = '') {
 		$this->drawing->addImage($this->workbook->addImage($filename, $extension), $position, $imageName);
 	}
 
@@ -434,7 +441,7 @@ class Worksheet{
 	 * @throws InvalidValueException
 	 * @throws ObjectCommittedException
 	 */
-	function mergeCells(CellsRange $range) {
+	public function mergeCells(CellsRange $range) {
 		$this->checkCommitted();
 
 		$master = $this->getCell($range->getTopLeftRow(), $range->getTopLeftCol());
@@ -463,7 +470,7 @@ class Worksheet{
 	 * @throws InvalidValueException
 	 * @throws ObjectCommittedException
 	 */
-	function unMergeCells(CellsRange $range) {
+	public function unMergeCells(CellsRange $range) {
 		$this->checkCommitted();
 
 		$this->getCell($range->getTopLeftRow(), $range->getTopLeftCol());
@@ -473,6 +480,7 @@ class Worksheet{
 		foreach ($this->merges as $mergeIndex => $merge) {
 			if ($merge == $range) {
 				$found = $mergeIndex;
+
 				break;
 			}
 		}
@@ -494,7 +502,7 @@ class Worksheet{
 	 * @throws ObjectCommittedException
 	 * @throws EmptyObjectException
 	 */
-	function commit(){
+	public function commit() {
 		if (!$this->rows && $this->lastUncommittedRow == 1) throw new EmptyObjectException('Worksheet is empty');
 
 		$this->commitRows();
@@ -511,7 +519,7 @@ class Worksheet{
 	 * @param int|null $lastRow - последняя фиксируемая строка
 	 * @throws ObjectCommittedException
 	 */
-	function commitRows(int $lastRow = null){
+	public function commitRows(?int $lastRow = null) {
 		$this->checkCommitted();
 		if (!$this->rows) return;
 
@@ -531,21 +539,21 @@ class Worksheet{
 	/**
 	 * @return array - модель таблицы
 	 */
-	function getModel() : array{
+	public function getModel(): array {
 		return [
 			'id' => $this->id,
 			'name' => $this->name,
 			'rId' => $this->rId ?? '',
 			'partName' => $this->getLocalname(),
 			'useComments' => !$this->comments->isEmpty(),
-			'useDrawing' => !$this->drawing->isEmpty()
+			'useDrawing' => !$this->drawing->isEmpty(),
 		];
 	}
 
 	/**
 	 *	Начать файл таблицы.
 	 */
-	private function startWorksheet(){
+	private function startWorksheet() {
 		$this->filename = $this->workbook->genTempFilename();
 		$this->xml = new XMLWriter();
 		$this->xml->openURI($this->filename);
@@ -561,7 +569,7 @@ class Worksheet{
 
 		(new SheetPropertiesXml())->render($this->xml, [
 			'tabColor' => $this->tabColor ? $this->tabColor->getModel() : null,
-			'pageSetup' => $this->pageSetup->getModel()
+			'pageSetup' => $this->pageSetup->getModel(),
 		]);
 
 		(new SheetViewsXml())->render($this->xml, $this->view->getModel());
@@ -570,10 +578,10 @@ class Worksheet{
 			'defaultRowHeight' => self::DEFAULT_ROW_HEIGHT,
 			'outlineLevelCol' => $this->outlineLevelCol,
 			'outlineLevelRow' => $this->outlineLevelRow,
-			'dyDescent' => self::DY_DESCENT
+			'dyDescent' => self::DY_DESCENT,
 		]);
 
-		(new ListXml('cols', new ColumnXml()))->render($this->xml, array_map(function($column){
+		(new ListXml('cols', new ColumnXml()))->render($this->xml, array_map(function ($column) {
 			return $column->prepareToCommit($this->styles);
 		}, $this->columns));
 
@@ -585,13 +593,13 @@ class Worksheet{
 	 *
 	 * @throws ObjectCommittedException
 	 */
-	private function endWorksheet(){
+	private function endWorksheet() {
 		if (!($this->xml ?? false)) return;
 
 		$this->xml->endElement();
 
 //		(new AutoFilterXml())->render($this->xml, [$this->autoFilter]);
-		(new ListXml('mergeCells', new MergeXml(), [], false, true))->render($this->xml, array_map(function($merge){
+		(new ListXml('mergeCells', new MergeXml(), [], false, true))->render($this->xml, array_map(function ($merge) {
 			return [(string) $merge];
 		}, $this->merges));
 
@@ -608,12 +616,10 @@ class Worksheet{
 		(new PageMargins())->render($this->xml, $this->pageSetup->getModel()['margins'] ?? null);
 		(new PageSetupXml())->render($this->xml, $this->pageSetup->getModel());
 
-		if (!$this->drawing->isEmpty())
-			(new StringXml('drawing', [], 'r:id'))
+		if (!$this->drawing->isEmpty())(new StringXml('drawing', [], 'r:id'))
 				->render($this->xml, [$this->sheetRels->addDrawing()]);
 
-		if (!$this->comments->isEmpty())
-			(new StringXml('legacyDrawing', [], 'r:id'))
+		if (!$this->comments->isEmpty())(new StringXml('legacyDrawing', [], 'r:id'))
 				->render($this->xml, [$this->sheetRels->addComments()]);
 
 		$this->xml->endElement();
@@ -630,14 +636,14 @@ class Worksheet{
 	/**
 	 * @throws ObjectCommittedException
 	 */
-	private function checkCommitted(){
+	private function checkCommitted() {
 		if ($this->committed) throw new ObjectCommittedException('Worksheet is committed');
 	}
 
 	/**
 	 * @throws ObjectCommittedException
 	 */
-	private function checkStarted(){
+	private function checkStarted() {
 		if ($this->rows) throw new ObjectCommittedException('Worksheet properties is committed');
 	}
 }

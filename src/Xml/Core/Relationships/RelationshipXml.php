@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Xml\Core\Relationships;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class RelationshipXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class RelationshipXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (is_null($model)) return;
 
 		$xml->startElement('Relationship');

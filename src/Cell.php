@@ -5,19 +5,19 @@ namespace Topvisor\XlsxCreator;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Helpers\Comments;
 use Topvisor\XlsxCreator\Helpers\SheetRels;
+use Topvisor\XlsxCreator\Helpers\Styles;
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\HyperlinkValue;
 use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\Value;
-use Topvisor\XlsxCreator\Helpers\Styles;
 
 /**
  * Class Cell. Содержит методы для работы c ячейкой.
  *
  * @package  Topvisor\XlsxCreator
  */
-class Cell extends Style{
+class Cell extends Style {
 	private $row;
 	private $col;
 	private $style;
@@ -35,7 +35,7 @@ class Cell extends Style{
 	 * @param Row $row - строка
 	 * @param int $col - номер колонки
 	 */
-	function __construct(Row $row, int $col){
+	public function __construct(Row $row, int $col) {
 		$this->row = $row;
 		$this->col = $col;
 		$this->style = [];
@@ -46,7 +46,7 @@ class Cell extends Style{
 		$this->value = Value::parse(null);
 	}
 
-	function __destruct(){
+	public function __destruct() {
 		parent::__destruct();
 
 		unset($this->row);
@@ -57,7 +57,7 @@ class Cell extends Style{
 	/**
 	 * @return Value - значение ячейки
 	 */
-	function getValue() : Value{
+	public function getValue(): Value {
 		return $this->value;
 	}
 
@@ -66,7 +66,7 @@ class Cell extends Style{
 	 * @throws InvalidValueException
 	 * @return Cell - $this
 	 */
-	function setValue($value) : self{
+	public function setValue($value): self {
 		if (!($value instanceof Value)) $value = Value::parse($value);
 
 		if ($this->master) $this->master->setValue($value);
@@ -78,7 +78,7 @@ class Cell extends Style{
 	/**
 	 * @return int - ширина комментария
 	 */
-	function getCommentWidth() : int{
+	public function getCommentWidth(): int {
 		return $this->commentWidth;
 	}
 
@@ -86,7 +86,7 @@ class Cell extends Style{
 	 * @param int $width - ширина комментария
 	 * @return Cell - $this
 	 */
-	function setCommentWidth(int $width) : self{
+	public function setCommentWidth(int $width): self {
 		Validator::validateInRange($width, 1, 409, '$width');
 
 		if ($this->master) $this->master->setCommentWidth($width);
@@ -98,7 +98,7 @@ class Cell extends Style{
 	/**
 	 * @return int - высота комментария
 	 */
-	public function getCommentHeight(): int{
+	public function getCommentHeight(): int {
 		return $this->commentHeight;
 	}
 
@@ -106,7 +106,7 @@ class Cell extends Style{
 	 * @param int $height - высота комментария
 	 * @return Cell - $this
 	 */
-	function setCommentHeight(int $height) : self{
+	public function setCommentHeight(int $height): self {
 		Validator::validateInRange($height, 1, 409, '$height');
 
 		if ($this->master) $this->master->setCommentHeight($height);
@@ -118,7 +118,7 @@ class Cell extends Style{
 	/**
 	 * @return Value|null - комментарий
 	 */
-	function getComment(){
+	public function getComment() {
 		return $this->comment;
 	}
 
@@ -127,8 +127,8 @@ class Cell extends Style{
 	 * @return Cell - $this
 	 * @throws InvalidValueException
 	 */
-	function setComment($comment) : self{
-		if (!is_null($comment) && !($comment instanceof Value)){
+	public function setComment($comment): self {
+		if (!is_null($comment) && !($comment instanceof Value)) {
 			$comment = Value::parse($comment);
 			if ($comment->getType() !== Value::TYPE_STRING && $comment->getType() !== Value::TYPE_RICH_TEXT)
 				throw new InvalidValueException('$comment must be string or rich text');
@@ -143,21 +143,21 @@ class Cell extends Style{
 	/**
 	 * @return Row - строка
 	 */
-	function getRow() : Row{
+	public function getRow(): Row {
 		return $this->row;
 	}
 
 	/**
 	 * @return int - колонка
 	 */
-	function getCol() : int{
+	public function getCol(): int {
 		return $this->col;
 	}
 
 	/**
 	 * @return int - тип значения ячейки
 	 */
-	function getType() : int{
+	public function getType(): int {
 		return $this->value->getType();
 	}
 
@@ -167,14 +167,15 @@ class Cell extends Style{
 	 * @param Comments $comments - комментарии таблицы
 	 * @return array - модель ячейки
 	 */
-	function prepareToCommit(Styles $styles, SheetRels $sheetRels, Comments $comments) : array{
+	public function prepareToCommit(Styles $styles, SheetRels $sheetRels, Comments $comments): array {
 		$workbook = $this->row->getWorksheet()->getWorkbook();
 		$value = $this->value;
 
-		if ($workbook->getUseSharedStrings()){
+		if ($workbook->getUseSharedStrings()) {
 			switch ($value->getType()) {
 				case Value::TYPE_STRING:
 					$value = $workbook->addSharedString($value);
+
 					break;
 
 				case Value::TYPE_HYPERLINK:
@@ -190,7 +191,7 @@ class Cell extends Style{
 			'address' => $this->getAddress(),
 			'value' => $value->getValue(),
 			'type' => $value->getType(),
-			'styleId' => $styles->addStyle($this, $this->getType())
+			'styleId' => $styles->addStyle($this, $this->getType()),
 		];
 
 		if ($this->master) $model['master'] = $this->master->prepareToCommit($styles, $sheetRels, $comments);
@@ -208,7 +209,7 @@ class Cell extends Style{
 	/**
 	 * @return string - адрес ячейки ('A1', 'D23')
 	 */
-	function getAddress() : string{
+	public function getAddress(): string {
 		return Cell::genAddress($this->col, $this->row->getNumber());
 	}
 
@@ -217,7 +218,7 @@ class Cell extends Style{
 	 *
 	 * @param Cell|null $master - главная ячейка
 	 */
-	function setMaster(Cell $master = null){
+	public function setMaster(?Cell $master = null) {
 		$this->master = $master;
 	}
 
@@ -228,9 +229,10 @@ class Cell extends Style{
 	 * @return string - строка колонки
 	 * @throws InvalidValueException - ошибочный номер колонки
 	 */
-	static function genColStr(int $col) : string{
+	public static function genColStr(int $col): string {
 		if ($col < 1 || $col > 16384) throw new InvalidValueException("$col is out of bounds. Excel supports columns from 1 to 16384");
 		if ($col > 26) return Cell::genColStr((int)(($col - 1) / 26)) . chr(($col % 26 ? $col % 26 : 26) + 64);
+
 		return chr($col + 64);
 	}
 
@@ -241,12 +243,12 @@ class Cell extends Style{
 	 * @return int - номер колонки
 	 * @throws InvalidValueException - ошибочная строка колонки
 	 */
-	static function genColNum(string $col) : int{
+	public static function genColNum(string $col): int {
 		$len = strlen($col);
 		if ($len < 1 || $len > 3) throw new InvalidValueException("Out of bounds. Invalid column $col");
 
 		$result = 0;
-		for ($i = 0; $i < $len; $i++){
+		for ($i = 0; $i < $len; $i++) {
 			$charCode = ord(substr($col, -$i - 1, 1));
 			if ($charCode < 65 || $charCode > 90) throw new InvalidValueException("Out of bounds. Invalid column $col");
 
@@ -262,8 +264,9 @@ class Cell extends Style{
 	 * @return string - адрес ячейки ('A1', 'D23')
 	 * @throws InvalidValueException - ошибочный номер колонки/строки
 	 */
-	static function genAddress(int $col, int $row) : string{
+	public static function genAddress(int $col, int $row): string {
 		if ($row < 1 || $row > 1048576) throw new InvalidValueException("$row is out of bounds. Excel supports rows from 1 to 1048576");
+
 		return self::genColStr($col) . $row;
 	}
 }

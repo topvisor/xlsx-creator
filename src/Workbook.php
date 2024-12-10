@@ -10,10 +10,11 @@
 namespace Topvisor\XlsxCreator;
 
 use DateTime;
+use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
-use Topvisor\XlsxCreator\Exceptions\EmptyObjectException;
 use Topvisor\XlsxCreator\Helpers\SharedStrings;
+use Topvisor\XlsxCreator\Helpers\Styles;
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
 use Topvisor\XlsxCreator\Structures\Values\SharedStringValue;
@@ -22,7 +23,6 @@ use Topvisor\XlsxCreator\Xml\Core\App\AppXml;
 use Topvisor\XlsxCreator\Xml\Core\ContentTypesXml;
 use Topvisor\XlsxCreator\Xml\Core\CoreXml;
 use Topvisor\XlsxCreator\Xml\Core\Relationships\RelationshipsXml;
-use Topvisor\XlsxCreator\Helpers\Styles;
 use ZipArchive;
 
 /**
@@ -30,11 +30,11 @@ use ZipArchive;
  *
  * @package Topvisor\XlsxCreator
  */
-class Workbook{
-	const VERSION = "v1.18";
+class Workbook {
+	public const VERSION = "v1.18";
 
-	const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
-	const INVALID_WORKSHEET_NAME = '/[\/\\\?*\[\]]/';
+	public const VALID_IMAGES_EXTENSION = ['jpeg', 'png', 'gif'];
+	public const INVALID_WORKSHEET_NAME = '/[\/\\\?*\[\]]/';
 
 	private $useSharedStrings;
 	private $checkRelsDoubles;
@@ -61,7 +61,7 @@ class Workbook{
 	 * @param bool $useSharedStrings - принудительно записывать строки как общие. Проверять дубликаты
 	 * @param bool|null $checkRelsDoubles - проверять дубликаты гиперссылок и картинок. По умолчанию = $useSharedStrings
 	 */
-	function __construct(bool $useSharedStrings = false, bool $checkRelsDoubles = null){
+	public function __construct(bool $useSharedStrings = false, ?bool $checkRelsDoubles = null) {
 		$this->useSharedStrings = $useSharedStrings;
 		$this->checkRelsDoubles = $checkRelsDoubles ?? $useSharedStrings;
 		$this->tempdir = sys_get_temp_dir();
@@ -81,14 +81,14 @@ class Workbook{
 		$this->tempFilenames = [];
 	}
 
-	function __destruct(){
+	public function __destruct() {
 		unset($this->created);
 		unset($this->modified);
 		unset($this->sharedStrings);
 		unset($this->styles);
 		unset($this->worksheets);
 
-		if($this->tempFilename && file_exists($this->tempFilename)) unlink($this->tempFilename);
+		if ($this->tempFilename && file_exists($this->tempFilename)) unlink($this->tempFilename);
 
 		$this->unlinkTempFiles();
 	}
@@ -96,21 +96,21 @@ class Workbook{
 	/**
 	 * @return bool - принудительно записывать строки как общие. Проверять дубликаты
 	 */
-	function getUseSharedStrings() : bool{
+	public function getUseSharedStrings(): bool {
 		return $this->useSharedStrings;
 	}
 
 	/**
 	 * @return bool - проверять дубликаты гиперссылок и картинок
 	 */
-	function getCheckRelsDoubles() : bool{
+	public function getCheckRelsDoubles(): bool {
 		return $this->checkRelsDoubles;
 	}
 
 	/**
 	 * @return string - путь к директории для хранения временных файлов
 	 */
-	function getTempdir() : string{
+	public function getTempdir(): string {
 		return $this->tempdir;
 	}
 
@@ -119,17 +119,18 @@ class Workbook{
 	 * @return Workbook - $this
 	 * @throws ObjectCommittedException
 	 */
-	function setTempdir(string $tempdir) : Workbook{
+	public function setTempdir(string $tempdir): Workbook {
 		$this->checkCommitted();
 
 		$this->tempdir = $tempdir;
+
 		return $this;
 	}
 
 	/**
 	 * @return DateTime - время создания файла
 	 */
-	function getCreated() : DateTime{
+	public function getCreated(): DateTime {
 		return $this->created;
 	}
 
@@ -138,17 +139,18 @@ class Workbook{
 	 * @return Workbook - $this
 	 * @throws ObjectCommittedException
 	 */
-	function setCreated(DateTime $created) : Workbook{
+	public function setCreated(DateTime $created): Workbook {
 		$this->checkCommitted();
 
 		$this->created = $created;
+
 		return $this;
 	}
 
 	/**
 	 * @return DateTime - время изменения файла
 	 */
-	function getModified() : DateTime{
+	public function getModified(): DateTime {
 		return $this->modified;
 	}
 
@@ -157,17 +159,18 @@ class Workbook{
 	 * @return Workbook - $this
 	 * @throws ObjectCommittedException
 	 */
-	function setModified(DateTime $modified) : Workbook{
+	public function setModified(DateTime $modified): Workbook {
 		$this->checkCommitted();
 
 		$this->modified = $modified;
+
 		return $this;
 	}
 
 	/**
 	 * @return string - автор файла
 	 */
-	function getCreator() : string{
+	public function getCreator(): string {
 		return $this->creator;
 	}
 
@@ -176,17 +179,18 @@ class Workbook{
 	 * @return Workbook - $this
 	 * @throws ObjectCommittedException
 	 */
-	function setCreator(string $creator) : Workbook{
+	public function setCreator(string $creator): Workbook {
 		$this->checkCommitted();
 
 		$this->creator = $creator;
+
 		return $this;
 	}
 
 	/**
 	 * @return string - автор последнего изменения файла
 	 */
-	function getLastModifiedBy() : string{
+	public function getLastModifiedBy(): string {
 		return $this->lastModifiedBy;
 	}
 
@@ -195,17 +199,18 @@ class Workbook{
 	 * @return Workbook - $this
 	 * @throws ObjectCommittedException
 	 */
-	function setLastModifiedBy(string $lastModifiedBy) : Workbook{
+	public function setLastModifiedBy(string $lastModifiedBy): Workbook {
 		$this->checkCommitted();
 
 		$this->lastModifiedBy = $lastModifiedBy;
+
 		return $this;
 	}
 
 	/**
 	 * @return string - компания
 	 */
-	function getCompany() : string{
+	public function getCompany(): string {
 		return $this->company;
 	}
 
@@ -214,17 +219,18 @@ class Workbook{
 	 * @return Workbook - $this
 	 * @throws ObjectCommittedException
 	 */
-	function setCompany(string $company) : Workbook{
+	public function setCompany(string $company): Workbook {
 		$this->checkCommitted();
 
 		$this->company = $company;
+
 		return $this;
 	}
 
 	/**
 	 * @return string|null - менеджер
 	 */
-	function getManager(){
+	public function getManager() {
 		return $this->manager;
 	}
 
@@ -233,10 +239,11 @@ class Workbook{
 	 * @return Workbook - $this
 	 * @throws ObjectCommittedException
 	 */
-	function setManager(string $manager = null) : Workbook{
+	public function setManager(?string $manager = null): Workbook {
 		$this->checkCommitted();
 
 		$this->manager = $manager;
+
 		return $this;
 	}
 
@@ -245,7 +252,7 @@ class Workbook{
 	 * @return SharedStringValue - общая строка
 	 * @throws InvalidValueException
 	 */
-	function addSharedString($value) : SharedStringValue{
+	public function addSharedString($value): SharedStringValue {
 		return $this->sharedStrings->add($value);
 	}
 
@@ -257,7 +264,7 @@ class Workbook{
 	 * @return array - картинка
 	 * @throws InvalidValueException
 	 */
-	function addImage(string $filename, string $extension = '') : array{
+	public function addImage(string $filename, string $extension = ''): array {
 		$filename = realpath($filename);
 		if (!$filename || !file_exists($filename)) throw new InvalidValueException('Invalid $filename');
 
@@ -280,10 +287,10 @@ class Workbook{
 	 * @throws ObjectCommittedException
 	 * @throws InvalidValueException
 	 */
-	function addWorksheet(string $name) : Worksheet{
+	public function addWorksheet(string $name): Worksheet {
 		$this->checkCommitted();
 
-		if(mb_strlen($name) > 31) throw new InvalidValueException('The length $name must be less than 31');
+		if (mb_strlen($name) > 31) throw new InvalidValueException('The length $name must be less than 31');
 		Validator::validateString($name, self::INVALID_WORKSHEET_NAME, '$name');
 
 		$id = count($this->worksheets) + 1;
@@ -301,7 +308,7 @@ class Workbook{
 	 * @param string $name - имя таблицы
 	 * @return Worksheet - таблица
 	 */
-	function getWorksheetByName(string $name) : Worksheet{
+	public function getWorksheetByName(string $name): Worksheet {
 		return $this->worksheets[$this->worksheetsIds[$name] - 1];
 	}
 
@@ -311,7 +318,7 @@ class Workbook{
 	 * @param int $id - id таблицы
 	 * @return Worksheet - таблица
 	 */
-	function getWorksheetById(int $id) : Worksheet{
+	public function getWorksheetById(int $id): Worksheet {
 		return $this->worksheets[$id - 1];
 	}
 
@@ -320,14 +327,14 @@ class Workbook{
 	 *
 	 * @return array - массив таблиц
 	 */
-	function getWorksheets() : array{
+	public function getWorksheets(): array {
 		return $this->worksheets;
 	}
 
 	/**
 	 * @return bool - зафиксированы ли изменения
 	 */
-	function isCommitted() : bool{
+	public function isCommitted(): bool {
 		return $this->committed;
 	}
 
@@ -337,7 +344,7 @@ class Workbook{
 	 * @throws EmptyObjectException
 	 * @throws ObjectCommittedException
 	 */
-	function commit(){
+	public function commit() {
 		$this->checkCommitted();
 		if (!count($this->worksheets)) throw new EmptyObjectException('Workbook is empty');
 
@@ -362,7 +369,7 @@ class Workbook{
 	 * @throws EmptyObjectException
 	 * @throws ObjectCommittedException
 	 */
-	function toFile(string $filename){
+	public function toFile(string $filename) {
 		if (!$this->committed) $this->commit();
 		copy($this->tempFilename, $filename);
 	}
@@ -375,7 +382,7 @@ class Workbook{
 	 * @throws EmptyObjectException
 	 * @throws ObjectCommittedException
 	 */
-	function toHttp(string $filename, bool $exit = true){
+	public function toHttp(string $filename, bool $exit = true) {
 		if (!$this->committed) $this->commit();
 		if (!preg_match('/\.xlsx$/', $filename)) $filename .= '.xlsx';
 		if (ob_get_level()) ob_end_clean();
@@ -400,7 +407,7 @@ class Workbook{
 	/**
 	 * Удалить все временные файлы
 	 */
-	function unlinkTempFiles(){
+	public function unlinkTempFiles() {
 		foreach ($this->tempFilenames as $tempFilename) if (file_exists($tempFilename)) unlink($tempFilename);
 	}
 
@@ -410,11 +417,12 @@ class Workbook{
 	 * @param bool $autoUnlink - удалять временный файл при создании фиксации workbook
 	 * @param string $ext - расширение файла
 	 */
-	function genTempFilename(bool $autoUnlink = true, string $ext = 'xml'){
+	public function genTempFilename(bool $autoUnlink = true, string $ext = 'xml') {
 		$filename = $this->tempdir . '/xlsxcreator_' . base64_encode(rand()) . ".$ext";
-		if(file_exists($filename)) return $this->genTempFilename();
+		if (file_exists($filename)) return $this->genTempFilename();
 
-		if($autoUnlink) $this->tempFilenames[] = $filename;
+		if ($autoUnlink) $this->tempFilenames[] = $filename;
+
 		return $filename;
 	}
 
@@ -424,8 +432,8 @@ class Workbook{
 	 * @param ZipArchive $zip - xlsx файл
 	 * @throws ObjectCommittedException
 	 */
-	private function addFilesToZip(ZipArchive $zip){
-		foreach ($this->worksheets as $worksheet){
+	private function addFilesToZip(ZipArchive $zip) {
+		foreach ($this->worksheets as $worksheet) {
 			if (!$worksheet->isCommitted()) $worksheet->commit();
 			$zip->addFile($worksheet->getFilename(), $worksheet->getLocalname());
 
@@ -458,11 +466,11 @@ class Workbook{
 	 *
 	 * @param ZipArchive $zip - xlsx файл
 	 */
-	private function addStringsToZip(ZipArchive $zip){
+	private function addStringsToZip(ZipArchive $zip) {
 		$zip->addFromString('_rels/.rels', (new RelationshipsXml())->toXml([
 			['id' => 'rId1', 'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument', 'target' => 'xl/workbook.xml'],
 			['id' => 'rId2', 'type' => 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties', 'target' => 'docProps/core.xml'],
-			['id' => 'rId3', 'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'target' => 'docProps/app.xml']
+			['id' => 'rId3', 'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties', 'target' => 'docProps/app.xml'],
 		]));
 
 		$zip->addFromString('[Content_Types].xml', (new ContentTypesXml())->toXml($this->getWorksheetsModels()));
@@ -470,7 +478,7 @@ class Workbook{
 		$zip->addFromString('docProps/app.xml', (new AppXml())->toXml([
 			'worksheets' => $this->getWorksheetsModels(),
 			'company' => $this->company,
-			'manager' => $this->manager
+			'manager' => $this->manager,
 		]));
 
 		$zip->addFromString('docProps/core.xml', (new CoreXml())->toXml($this->getModel()));
@@ -483,19 +491,19 @@ class Workbook{
 	 *
 	 * @return array - связи между файлами
 	 */
-	private function genRelationships() : array{
+	private function genRelationships(): array {
 		$count = 1;
 
 		$relationships = [[
 			'id' => 'rId' . $count++,
 			'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
-			'target' => 'styles.xml'
+			'target' => 'styles.xml',
 		]];
 
 		if (!$this->sharedStrings->isEmpty()) $relationships[] = [
 			'id' => 'rId' . $count++,
 			'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
-			'target' => 'sharedStrings.xml'
+			'target' => 'sharedStrings.xml',
 		];
 
 		foreach ($this->worksheets as $worksheet) {
@@ -504,7 +512,7 @@ class Workbook{
 			$relationships[] = [
 				'id' => $worksheet->getRId(),
 				'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
-				'target' => 'worksheets/sheet' . $worksheet->getId() . '.xml'
+				'target' => 'worksheets/sheet' . $worksheet->getId() . '.xml',
 			];
 		}
 
@@ -514,9 +522,9 @@ class Workbook{
 	/**
 	 * @return array - массив моделей worksheets
 	 */
-	private function getWorksheetsModels() : array{
+	private function getWorksheetsModels(): array {
 		return array_map(
-			function($worksheet){
+			function ($worksheet) {
 				return $worksheet->getModel();
 			},
 			$this->worksheets
@@ -526,19 +534,19 @@ class Workbook{
 	/**
 	 * @return array - модель workbook
 	 */
-	private function getModel(){
+	private function getModel() {
 		return [
 			'creator' => $this->creator,
 			'lastModifiedBy' => $this->lastModifiedBy,
 			'created' => $this->created,
-			'modified' => $this->modified
+			'modified' => $this->modified,
 		];
 	}
 
 	/**
 	 * @throws ObjectCommittedException
 	 */
-	private function checkCommitted(){
+	private function checkCommitted() {
 		if ($this->committed) throw new ObjectCommittedException("Workbook is committed");
 	}
 }

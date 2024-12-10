@@ -6,7 +6,7 @@ use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class MergeXml extends BaseXml {
-	function render(XMLWriter $xml, array $model = null){
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model || !($model[0] ?? false)) return;
 
 		$xml->startElement('mergeCell');

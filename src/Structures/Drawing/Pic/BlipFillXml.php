@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Structures\Drawing\Pic;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class BlipFillXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class BlipFillXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('xdr:blipFill');

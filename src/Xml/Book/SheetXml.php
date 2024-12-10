@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Xml\Book;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class SheetXml extends BaseXml{
-	function render(XMLWriter $xml, ?array $model = null){
+class SheetXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('sheet');

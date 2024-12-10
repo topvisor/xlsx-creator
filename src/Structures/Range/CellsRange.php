@@ -5,7 +5,7 @@ namespace Topvisor\XlsxCreator\Structures\Range;
 use Topvisor\XlsxCreator\Cell;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 
-class CellsRange extends Range{
+class CellsRange extends Range {
 
 	/**
 	 * CellsRange constructor.
@@ -16,7 +16,7 @@ class CellsRange extends Range{
 	 * @param int $col2 - номер второго столбца
 	 * @throws InvalidValueException
 	 */
-	function __construct(int $row1, int $col1, int $row2, int $col2){
+	public function __construct(int $row1, int $col1, int $row2, int $col2) {
 		parent::__construct($row1, $col1, $row2, $col2);
 	}
 
@@ -24,7 +24,7 @@ class CellsRange extends Range{
 	 * @return string
 	 * @throws InvalidValueException
 	 */
-	function __toString(){
+	public function __toString() {
 		return Cell::genColStr((int)$this->getTopLeftCol()) . $this->getTopLeftRow() . ':' .
 			Cell::genColStr((int)$this->getBottomRightCol()) . $this->getBottomRightRow();
 	}

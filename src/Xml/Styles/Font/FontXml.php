@@ -8,16 +8,16 @@ use Topvisor\XlsxCreator\Xml\Simple\StringXml;
 use Topvisor\XlsxCreator\Xml\Styles\ColorXml;
 use XMLWriter;
 
-class FontXml extends BaseXml{
+class FontXml extends BaseXml {
 	private $tag;
 	private $fontNameTag;
 
-	function __construct(string $tag = 'font', string $fontNameTag = 'name'){
+	public function __construct(string $tag = 'font', string $fontNameTag = 'name') {
 		$this->tag = $tag;
 		$this->fontNameTag = $fontNameTag;
 	}
 
-	function render(XMLWriter $xml, array $model = null){
+	public function render(XMLWriter $xml, ?array $model = null) {
 		$xml->startElement($this->tag);
 
 		if ($model) {

@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Structures\Drawing\Pic;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class PicXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class PicXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('xdr:pic');

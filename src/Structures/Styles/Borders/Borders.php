@@ -10,7 +10,7 @@ use Topvisor\XlsxCreator\Structures\Color;
  *
  * @package Topvisor\XlsxCreator\Structures\Styles\Borders
  */
-class Borders implements Serializable{
+class Borders implements Serializable {
 	private $defaultColor;
 	private $left;
 	private $right;
@@ -20,7 +20,7 @@ class Borders implements Serializable{
 	private $diagonalUp;
 	private $diagonalDown;
 
-	public function __destruct(){
+	public function __destruct() {
 		unset($this->defaultColor);
 		unset($this->left);
 		unset($this->right);
@@ -32,7 +32,7 @@ class Borders implements Serializable{
 	/**
 	 * @return Color|null - цвет границ по умолчанию
 	 */
-	function getDefaultColor(){
+	public function getDefaultColor() {
 		return $this->defaultColor;
 	}
 
@@ -40,15 +40,16 @@ class Borders implements Serializable{
 	 * @param Color|null $color - цвет границ по умолчанию
 	 * @return Borders - $this
 	 */
-	function setDefaultColor(Color $color = null) : self{
+	public function setDefaultColor(?Color $color = null): self {
 		$this->defaultColor = $color;
+
 		return $this;
 	}
 
 	/**
 	 * @return Border|null - левая граница
 	 */
-	function getTopLeftCol(){
+	public function getTopLeftCol() {
 		return $this->left;
 	}
 
@@ -56,15 +57,16 @@ class Borders implements Serializable{
 	 * @param Border|null $border - левая граница
 	 * @return Borders - $this
 	 */
-	function setLeft(Border $border = null) : self{
+	public function setLeft(?Border $border = null): self {
 		$this->left = $border;
+
 		return $this;
 	}
 
 	/**
 	 * @return Border|null - правая граница
 	 */
-	function getBottomRightCol(){
+	public function getBottomRightCol() {
 		return $this->right;
 	}
 
@@ -72,15 +74,16 @@ class Borders implements Serializable{
 	 * @param Border|null $border - правая граница
 	 * @return Borders - $this
 	 */
-	function setRight(Border $border = null) : self{
+	public function setRight(?Border $border = null): self {
 		$this->right = $border;
+
 		return $this;
 	}
 
 	/**
 	 * @return Border|null - верхняя граница
 	 */
-	function getTopLeftRow(){
+	public function getTopLeftRow() {
 		return $this->top ?? null;
 	}
 
@@ -88,15 +91,16 @@ class Borders implements Serializable{
 	 * @param Border|null $border - верхняя граница
 	 * @return Borders - $this
 	 */
-	function setTop(Border $border = null) : self{
+	public function setTop(?Border $border = null): self {
 		$this->top = $border;
+
 		return $this;
 	}
 
 	/**
 	 * @return Border|null - нижняя граница
 	 */
-	function getBottomRightRow(){
+	public function getBottomRightRow() {
 		return $this->bottom ?? null;
 	}
 
@@ -104,15 +108,16 @@ class Borders implements Serializable{
 	 * @param Border|null $border - нижняя граница
 	 * @return Borders - $this
 	 */
-	function setBottom(Border $border = null) : self{
+	public function setBottom(?Border $border = null): self {
 		$this->bottom = $border;
+
 		return $this;
 	}
 
 	/**
 	 * @return Border|null - стиль диагрнальных границ
 	 */
-	function getDiagonalStyle(){
+	public function getDiagonalStyle() {
 		return $this->diagonalStyle ?? null;
 	}
 
@@ -120,15 +125,16 @@ class Borders implements Serializable{
 	 * @param Border|null $border - стиль диагональных границ
 	 * @return Borders - $this
 	 */
-	function setDiagonalStyle(Border $border = null) : self{
+	public function setDiagonalStyle(?Border $border = null): self {
 		$this->diagonalStyle = $border;
+
 		return $this;
 	}
 
 	/**
 	 * @return bool - показывать диагональную границу (из левого верхнего угла)
 	 */
-	function getDiagonalUp() : bool{
+	public function getDiagonalUp(): bool {
 		return $this->diagonalUp ?? false;
 	}
 
@@ -136,15 +142,16 @@ class Borders implements Serializable{
 	 * @param bool $diagonalUp - показывать диагональную границу (из левого верхнего угла)
 	 * @return Borders - $this
 	 */
-	function setDiagonalUp(bool $diagonalUp) : self{
+	public function setDiagonalUp(bool $diagonalUp): self {
 		$this->diagonalUp = $diagonalUp;
+
 		return $this;
 	}
 
 	/**
 	 * @return bool - показывать диагональную границу (в левый нижний угол)
 	 */
-	function getDiagonalDown() : bool{
+	public function getDiagonalDown(): bool {
 		return $this->diagonalDown ?? false;
 	}
 
@@ -152,15 +159,16 @@ class Borders implements Serializable{
 	 * @param bool $diagonalDown - показывать диагональную границу (в правый нижний угол)
 	 * @return Borders - $this
 	 */
-	function setDiagonalDown(bool $diagonalDown) : self{
+	public function setDiagonalDown(bool $diagonalDown): self {
 		$this->diagonalDown = $diagonalDown;
+
 		return $this;
 	}
 
 	/**
 	 * @return array - модель
 	 */
-	function getModel() : array{
+	public function getModel(): array {
 		$diagonal = null;
 
 		if ($this->diagonalStyle && ($this->getDiagonalUp() || $this->diagonalDown))
@@ -176,7 +184,7 @@ class Borders implements Serializable{
 		];
 	}
 
-	public function serialize(){
+	public function serialize() {
 		$replace = urlencode(';');
 
 		return ($this->defaultColor ? $this->defaultColor->serialize() : '') . ';' .
@@ -189,7 +197,7 @@ class Borders implements Serializable{
 			($this->diagonalDown ? '1' : '');
 	}
 
-	public function unserialize($serialized){
+	public function unserialize($serialized) {
 		$params = explode(';', $serialized);
 		$search = urlencode(';');
 

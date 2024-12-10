@@ -6,8 +6,8 @@ use Topvisor\XlsxCreator\Cell;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class SheetViewsXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class SheetViewsXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model || count($model) === 1 && ($model['state'] ?? '') == 'normal') return;
 
 		$xml->startElement('sheetViews');
@@ -31,12 +31,18 @@ class SheetViewsXml extends BaseXml{
 
 		switch ($model['state'] ?? 'normal') {
 			case 'frozen':
-				$topLeftCell = $topLeftCell ?? Cell::genAddress($xSplit + 1, $ySplit + 1);
+				$topLeftCell ??= Cell::genAddress($xSplit + 1, $ySplit + 1);
 
 				switch (true) {
-					case ($xSplit && $ySplit): $activePane = 'bottomRight'; break;
-					case $xSplit: $activePane = 'topRight'; break;
-					default: $activePane = 'bottomLeft'; break;
+					case ($xSplit && $ySplit): $activePane = 'bottomRight';
+
+					break;
+					case $xSplit: $activePane = 'topRight';
+
+					break;
+					default: $activePane = 'bottomLeft';
+
+					break;
 				}
 
 				$xml->startElement('pane');
@@ -49,6 +55,7 @@ class SheetViewsXml extends BaseXml{
 				$xml->writeAttribute('state', 'frozen');
 
 				$xml->endElement();
+
 				break;
 
 			case 'split':
@@ -62,10 +69,12 @@ class SheetViewsXml extends BaseXml{
 				if ($activePane) $xml->writeAttribute('activePane', $activePane);
 
 				$xml->endElement();
+
 				break;
 
 			default:
 				$activePane = "";
+
 				break;
 		}
 

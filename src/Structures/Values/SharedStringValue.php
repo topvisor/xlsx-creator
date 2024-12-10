@@ -9,13 +9,13 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package Topvisor\XlsxCreator\Structures\Values
  */
-class SharedStringValue extends Value{
+class SharedStringValue extends Value {
 	/**
 	 * SharedStringValue constructor.
 	 *
 	 * @param int $id - ид общей строки
 	 */
-	function __construct(int $id){
+	public function __construct(int $id) {
 		Validator::validatePositive($id, '$id');
 
 		parent::__construct($id, Value::TYPE_SHARED_STRING);
@@ -25,7 +25,7 @@ class SharedStringValue extends Value{
 	 * @param $value - модель
 	 * @return Value - значение ячейки
 	 */
-	static function parse($value): Value{
+	public static function parse($value): Value {
 		return new self($value);
 	}
 }

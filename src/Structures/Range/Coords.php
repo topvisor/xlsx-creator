@@ -1,6 +1,7 @@
 <?php
 
 namespace Topvisor\XlsxCreator\Structures\Range;
+
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Helpers\Validator;
 
@@ -9,7 +10,7 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package Topvisor\XlsxCreator\Structures
  */
-class Coords{
+class Coords {
 	private $row;
 	private $col;
 
@@ -20,7 +21,7 @@ class Coords{
 	 * @param float $col - номер столбца
 	 * @throws InvalidValueException
 	 */
-	function __construct(float $row, float $col){
+	public function __construct(float $row, float $col) {
 		Validator::validateInRange($row, 1, 1048576, '$row');
 		Validator::validateInRange($col, 1, 16384, '$col');
 
@@ -31,15 +32,14 @@ class Coords{
 	/**
 	 * @return float - строка
 	 */
-	function getRow() : float{
+	public function getRow(): float {
 		return $this->row;
 	}
 
 	/**
 	 * @return float - колонка
 	 */
-	function getCol() : float{
+	public function getCol(): float {
 		return $this->col;
 	}
 }
-

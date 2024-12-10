@@ -10,18 +10,18 @@ use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
  *
  * @package  Topvisor\XlsxCreator\Structures\Values
  */
-class Value{
+class Value {
 	// Типы значений ячеек
-	const TYPE_NULL = 0;
-	const TYPE_NUMBER = 1;
-	const TYPE_STRING = 2;
-	const TYPE_DATE = 3;
-	const TYPE_HYPERLINK = 4;
-	const TYPE_FORMULA = 5;
-	const TYPE_SHARED_STRING = 6;
-	const TYPE_RICH_TEXT = 7;
-	const TYPE_BOOL = 8;
-	const TYPE_ERROR = 9;
+	public const TYPE_NULL = 0;
+	public const TYPE_NUMBER = 1;
+	public const TYPE_STRING = 2;
+	public const TYPE_DATE = 3;
+	public const TYPE_HYPERLINK = 4;
+	public const TYPE_FORMULA = 5;
+	public const TYPE_SHARED_STRING = 6;
+	public const TYPE_RICH_TEXT = 7;
+	public const TYPE_BOOL = 8;
+	public const TYPE_ERROR = 9;
 
 	protected $type;
 	protected $value;
@@ -32,7 +32,7 @@ class Value{
 	 * @param $value - Значение ячейки
 	 * @param int $type - Тип ячейки
 	 */
-	protected function __construct($value, int $type){
+	protected function __construct($value, int $type) {
 		$this->value = $value;
 		$this->type = $type;
 	}
@@ -41,33 +41,38 @@ class Value{
 	 * Создает объект Value, определяет его тип
 	 *
 	 * @param $value - значение
-	 * @return Value
 	 * @throws InvalidValueException
 	 */
-	static function parse($value) : self{
+	public static function parse($value): self {
 		switch (true) {
 			case is_null($value):
 				$type = self::TYPE_NULL;
+
 				break;
 
 			case is_string($value):
 				$type = self::TYPE_STRING;
+
 				break;
 
 			case is_numeric($value):
 				$type = self::TYPE_NUMBER;
+
 				break;
 
 			case is_bool($value):
 				$type = self::TYPE_BOOL;
+
 				break;
 
 			case ($value instanceof DateTime):
 				$type = self::TYPE_DATE;
+
 				break;
 
 			default:
 				throw new InvalidValueException('$value must be null, string, numeric, bool or DateTime');
+
 				break;
 		}
 
@@ -77,14 +82,14 @@ class Value{
 	/**
 	 * @return mixed - значение
 	 */
-	function getValue(){
+	public function getValue() {
 		return $this->value;
 	}
 
 	/**
 	 * @return int - тип
 	 */
-	function getType() : int{
+	public function getType(): int {
 		return $this->type;
 	}
 }

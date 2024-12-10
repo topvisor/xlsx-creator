@@ -7,7 +7,7 @@ use Topvisor\XlsxCreator\Structures\Views\FrozenView;
 use Topvisor\XlsxCreator\Structures\Views\SplitView;
 use Topvisor\XlsxCreator\Structures\Views\View;
 
-class Validator{
+class Validator {
 	/**
 	 * Проверка, присутствует ли значение в массиве
 	 *
@@ -16,7 +16,7 @@ class Validator{
 	 * @param array $validArray - массив правильных значений
 	 * @throws InvalidValueException
 	 */
-	static function validate($val, string $varName, array $validArray){
+	public static function validate($val, string $varName, array $validArray) {
 		if (!in_array($val, $validArray)) throw new InvalidValueException(self::genMustBeInErrorMessage($varName, $validArray));
 	}
 
@@ -26,7 +26,7 @@ class Validator{
 	 * @param string $address - адрес ячейки
 	 * @throws InvalidValueException
 	 */
-	static function validateAddress(string $address){
+	public static function validateAddress(string $address) {
 		if (!preg_match('/^[A-Z]{1,3}(\d{1,5})$/', $address, $matches)) throw new InvalidValueException('Unavailable address format');
 		if ($matches[1] < 1 || $matches[1] > 1048576) throw new InvalidValueException('Row is out of bounds. Excel supports rows from 1 to 1048576');
 	}
@@ -38,7 +38,7 @@ class Validator{
 	 * @param string $varName - имя переменной
 	 * @throws InvalidValueException
 	 */
-	static function validatePositive($positive, string $varName){
+	public static function validatePositive($positive, string $varName) {
 		if ($positive < 0) throw new InvalidValueException("$varName must be a positive");
 	}
 
@@ -51,17 +51,16 @@ class Validator{
 	 * @param string $varName - имя переменной
 	 * @throws InvalidValueException
 	 */
-	static function validateInRange($numeric, $from, $to, string $varName){
+	public static function validateInRange($numeric, $from, $to, string $varName) {
 		if ($numeric < $from || $numeric > $to) throw new InvalidValueException("$varName must be in [$from;$to]");
 	}
 
 	/**
 	 * Пороверка View
 	 *
-	 * @param View $view
 	 * @throws InvalidValueException
 	 */
-	static function validateView(View $view){
+	public static function validateView(View $view) {
 		$viewName = 'View';
 		$needCheckSplits = false;
 
@@ -69,11 +68,13 @@ class Validator{
 			case ($view instanceof SplitView):
 				$viewName = 'SplitView';
 				$needCheckSplits = true;
+
 				break;
 
 			case ($view instanceof FrozenView):
 				$viewName = 'FrozenView';
 				$needCheckSplits = true;
+
 				break;
 		}
 
@@ -98,8 +99,8 @@ class Validator{
 	 * @param string $varName - имя переменной
 	 * @throws InvalidValueException
 	 */
-	static function validateString(string $str, string $invalidRegexp, string $varName){
-		if(preg_match($invalidRegexp, $str)) throw new InvalidValueException("$varName must not be '$invalidRegexp'");
+	public static function validateString(string $str, string $invalidRegexp, string $varName) {
+		if (preg_match($invalidRegexp, $str)) throw new InvalidValueException("$varName must not be '$invalidRegexp'");
 	}
 
 	/**
@@ -107,7 +108,7 @@ class Validator{
 	 * @param array $in - массив с правильными значениями
 	 * @return string - сообщение об ошибке
 	 */
-	static function genMustBeInErrorMessage(string $var, array $in) : string{
+	public static function genMustBeInErrorMessage(string $var, array $in): string {
 		return "$var must be in ['" . implode("','", $in) . "']";
 	}
 
@@ -116,7 +117,7 @@ class Validator{
 	 * @param string $varName - название параметра
 	 * @throws InvalidValueException
 	 */
-	static function validateHex(string $hex, string $varName){
+	public static function validateHex(string $hex, string $varName) {
 		if (preg_match('/[^\dA-F]/i', $hex, $matches))
 			throw new InvalidValueException("Invalid character '$matches[0]' in $varName: $varName must be hex");
 	}

@@ -5,15 +5,15 @@ namespace Topvisor\XlsxCreator\Xml\Styles\Style;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class StyleXml extends BaseXml{
+class StyleXml extends BaseXml {
 	private $isXfId;
 
-	public function __construct(bool $isXfId = true){
+	public function __construct(bool $isXfId = true) {
 		$this->isXfId = $isXfId;
 	}
 
-	function render(XMLWriter $xml, array $model = null){
-		$model = $model ?? [];
+	public function render(XMLWriter $xml, ?array $model = null) {
+		$model ??= [];
 
 		$xml->startElement('xf');
 

@@ -6,16 +6,16 @@ use Topvisor\XlsxCreator\Xml\BaseXml;
 use Topvisor\XlsxCreator\Xml\Styles\ColorXml;
 use XMLWriter;
 
-class PatternFillXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class PatternFillXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('patternFill');
 
 		$xml->writeAttribute('patternType', $model['pattern']);
 
-		if ($model['fgColor'] ?? false) (new ColorXml('fgColor'))->render($xml, $model['fgColor']);
-		if ($model['bgColor'] ?? false) (new ColorXml('bgColor'))->render($xml, $model['bgColor']);
+		if ($model['fgColor'] ?? false)(new ColorXml('fgColor'))->render($xml, $model['fgColor']);
+		if ($model['bgColor'] ?? false)(new ColorXml('bgColor'))->render($xml, $model['bgColor']);
 
 		$xml->endElement();
 	}

@@ -5,11 +5,11 @@ namespace Topvisor\XlsxCreator\Xml\Styles\Border;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class BorderXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class BorderXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		$xml->startElement('border');
 
-		$model = $model ?? [];
+		$model ??= [];
 		$defaultColor = $model['color'] ?? null;
 
 		if (($model['diagonal'] ?? false) && ($model['diagonal']['style'] ?? false)) {

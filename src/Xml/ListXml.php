@@ -4,7 +4,7 @@ namespace Topvisor\XlsxCreator\Xml;
 
 use XMLWriter;
 
-class ListXml extends BaseXml{
+class ListXml extends BaseXml {
 	private $tag;
 	private $baseXml;
 	private $attributes;
@@ -12,8 +12,14 @@ class ListXml extends BaseXml{
 	private $isCount;
 	private $countAttributeName;
 
-	function __construct(string $tag, BaseXml $baseXml, array $attributes = [], bool $isEmpty = false,
-						 bool $isCount = false, string $countAttributeName = 'count'){
+	public function __construct(
+		string $tag,
+		BaseXml $baseXml,
+		array $attributes = [],
+		bool $isEmpty = false,
+		bool $isCount = false,
+		string $countAttributeName = 'count'
+	) {
 
 		$this->tag = $tag;
 		$this->baseXml = $baseXml;
@@ -23,11 +29,11 @@ class ListXml extends BaseXml{
 		$this->countAttributeName = $countAttributeName;
 	}
 
-	public function __destruct(){
+	public function __destruct() {
 		unset($this->baseXml);
 	}
 
-	function render(XMLWriter $xml, array $model = null){
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if ($this->isEmpty) {
 			$xml->writeElement($this->tag);
 		} else {

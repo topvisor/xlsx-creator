@@ -3,14 +3,10 @@
 namespace Topvisor\XlsxCreator\Helpers;
 
 use Topvisor\XlsxCreator\Cell;
-use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Exceptions\ObjectCommittedException;
-use Topvisor\XlsxCreator\Structures\Values\RichText\RichTextValue;
-use Topvisor\XlsxCreator\Structures\Values\Value;
 use Topvisor\XlsxCreator\Worksheet;
 use Topvisor\XlsxCreator\Xml\Comments\CommentXml;
 use Topvisor\XlsxCreator\Xml\Comments\Vml\ShapeXml;
-use Topvisor\XlsxCreator\Xml\Strings\SharedStringXml;
 use XMLWriter;
 
 /**
@@ -18,7 +14,7 @@ use XMLWriter;
  *
  * @package Topvisor\XlsxCreator\Helpers
  */
-class Comments{
+class Comments {
 	private $worksheet;
 
 	private $empty;
@@ -36,7 +32,7 @@ class Comments{
 	 *
 	 * @param Worksheet $worksheet - таблица
 	 */
-	function __construct(Worksheet $worksheet){
+	public function __construct(Worksheet $worksheet) {
 		$this->worksheet = $worksheet;
 
 		$this->empty = true;
@@ -44,7 +40,7 @@ class Comments{
 		$this->nextShapeId = 1;
 	}
 
-	public function __destruct(){
+	public function __destruct() {
 		unset($this->worksheet);
 		unset($this->commentsXml);
 		unset($this->vmlXml);
@@ -56,29 +52,31 @@ class Comments{
 	/**
 	 * @return string|null - имя файла с текстом комментариев
 	 */
-	function getCommentsFilename(){
+	public function getCommentsFilename() {
 		if ($this->commentsXml ?? false) $this->commentsXml->flush();
+
 		return $this->commentsFilename;
 	}
 
 	/**
 	 * @return string|null - имя файла с положением и размерами комментариев
 	 */
-	function getVmlFilename(){
+	public function getVmlFilename() {
 		if ($this->vmlXml ?? false) $this->vmlXml->flush();
+
 		return $this->vmlFilename;
 	}
 
 	/**
 	 * @param Cell $cell - ячейка
 	 */
-	function addComment(Cell $cell){
+	public function addComment(Cell $cell) {
 		if ($this->empty) $this->startComments();
 
 		(new CommentXml())->render($this->commentsXml, [
 			'address' => $cell->getAddress(),
 			'type' => $cell->getComment()->getType(),
-			'value' => $cell->getComment()->getValue()
+			'value' => $cell->getComment()->getValue(),
 		]);
 
 		(new ShapeXml())->render($this->vmlXml, [
@@ -86,21 +84,21 @@ class Comments{
 			'col' => $cell->getCol(),
 			'row' => $cell->getRow()->getNumber(),
 			'width' => $cell->getCommentWidth(),
-			'height' => $cell->getCommentHeight()
+			'height' => $cell->getCommentHeight(),
 		]);
 	}
 
 	/**
 	 * @return bool - комментариев нет
 	 */
-	function isEmpty() : bool{
+	public function isEmpty(): bool {
 		return $this->empty;
 	}
 
 	/**
 	 * Зафиксировать комментарии.
 	 */
-	function commit(){
+	public function commit() {
 		$this->checkCommitted();
 		$this->committed = true;
 
@@ -110,7 +108,7 @@ class Comments{
 	/**
 	 * Начать файлы комментариев.
 	 */
-	private function startComments(){
+	private function startComments() {
 		$this->empty = false;
 
 		$this->startCommentsXml();
@@ -120,7 +118,7 @@ class Comments{
 	/**
 	 * Начать файл с текстом комментариев.
 	 */
-	private function startCommentsXml(){
+	private function startCommentsXml() {
 		$this->commentsFilename = $this->worksheet->getWorkbook()->genTempFilename();
 
 		$this->commentsXml = new XMLWriter();
@@ -142,7 +140,7 @@ class Comments{
 	/**
 	 * Начать файл с положением и размерами комментариев.
 	 */
-	private function startVmlXml(){
+	private function startVmlXml() {
 		$this->vmlFilename = $this->worksheet->getWorkbook()->genTempFilename();
 
 		$this->vmlXml = new XMLWriter();
@@ -174,7 +172,7 @@ class Comments{
 	/**
 	 * Закончить файлы комментариев.
 	 */
-	private function endComments(){
+	private function endComments() {
 		if ($this->empty) return;
 
 		$this->commentsXml->endElement();
@@ -194,7 +192,7 @@ class Comments{
 	/**
 	 * @throws ObjectCommittedException
 	 */
-	private function checkCommitted(){
+	private function checkCommitted() {
 		if ($this->committed) throw new ObjectCommittedException();
 	}
 }

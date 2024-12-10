@@ -9,8 +9,8 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package  Topvisor\XlsxCreator\Structures\Views
  */
-class FrozenView extends View{
-	public function __construct(int $xSplit, int $ySplit){
+class FrozenView extends View {
+	public function __construct(int $xSplit, int $ySplit) {
 		$this->model['state'] = 'frozen';
 
 		$this->model['xSplit'] = $xSplit;
@@ -20,7 +20,7 @@ class FrozenView extends View{
 	/**
 	 * @return int - Сколько столбцов "заморожено"
 	 */
-	function getXSplit(){
+	public function getXSplit() {
 		return $this->model['xSplit'];
 	}
 
@@ -28,17 +28,18 @@ class FrozenView extends View{
 	 * @param int $xSplit - Сколько столбцов "заморожено"
 	 * @return FrozenView - $this
 	 */
-	function setXSplit(int $xSplit) : self{
+	public function setXSplit(int $xSplit): self {
 		Validator::validateInRange($xSplit, 1, 16384, '$xSplit');
 
 		$this->model['xSplit'] = $xSplit;
+
 		return $this;
 	}
 
 	/**
 	 * @return int - Сколько строк "заморожено"
 	 */
-	function getYSplit(){
+	public function getYSplit() {
 		return $this->model['ySplit'];
 	}
 
@@ -46,17 +47,18 @@ class FrozenView extends View{
 	 * @param int|null $ySplit - Сколько строк "заморожено"
 	 * @return FrozenView - $this
 	 */
-	function setYSplit(int $ySplit) : self{
+	public function setYSplit(int $ySplit): self {
 		Validator::validateInRange($ySplit, 1, 1048576, '$ySplit');
 
 		$this->model['ySplit'] = $ySplit;
+
 		return $this;
 	}
 
 	/**
 	 * @return string|null - Левая-верхняя ячейка в "незамороженной" панели
 	 */
-	function getTopLeftCell(){
+	public function getTopLeftCell() {
 		return $this->model['topLeftCell'] ?? null;
 	}
 
@@ -64,10 +66,11 @@ class FrozenView extends View{
 	 * @param string|null $topLeftCell - Левая-верхняя ячейка в "незамороженной" панели (например, 'D4', 'G15', и т.д.)
 	 * @return FrozenView - $this
 	 */
-	function setTopLeftCell(string $topLeftCell = null) : self{
+	public function setTopLeftCell(?string $topLeftCell = null): self {
 		if (!is_null($topLeftCell)) Validator::validateAddress($topLeftCell);
 
 		$this->model['topLeftCell'] = $topLeftCell;
+
 		return $this;
 	}
 }

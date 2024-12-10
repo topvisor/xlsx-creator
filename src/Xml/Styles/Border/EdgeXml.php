@@ -10,12 +10,12 @@ class EdgeXml extends BaseXml {
 	private $tag;
 	private $defaultColor;
 
-	function __construct(string $tag, array $defaultColor = null){
+	public function __construct(string $tag, ?array $defaultColor = null) {
 		$this->tag = $tag;
 		$this->defaultColor = $defaultColor;
 	}
 
-	function render(XMLWriter $xml, array $model = null){
+	public function render(XMLWriter $xml, ?array $model = null) {
 		$colorXml = new ColorXml();
 		$colorModel = $model['color'] ?? $this->defaultColor;
 

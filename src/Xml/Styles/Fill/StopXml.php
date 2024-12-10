@@ -6,8 +6,8 @@ use Topvisor\XlsxCreator\Xml\BaseXml;
 use Topvisor\XlsxCreator\Xml\Styles\ColorXml;
 use XMLWriter;
 
-class StopXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class StopXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('stop');

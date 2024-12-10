@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Xml\Comments\Vml;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class NoteClientDataXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class NoteClientDataXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('x:ClientData');
@@ -22,7 +22,7 @@ class NoteClientDataXml extends BaseXml{
 			3 + $model['col'] + $model['width'],
 			15,
 			1 + $model['row'] + $model['height'],
-			4
+			4,
 		]));
 		$xml->writeElement('x:AutoFill', 'False');
 		$xml->writeElement('x:Row', $model['row'] - 1);

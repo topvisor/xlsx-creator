@@ -5,8 +5,8 @@ namespace Topvisor\XlsxCreator\Xml\Styles\Fill;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class GradientFillXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class GradientFillXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement('gradientFill');
@@ -14,6 +14,7 @@ class GradientFillXml extends BaseXml{
 		switch ($model['gradient']) {
 			case 'angle':
 				$xml->writeAttribute('degree', $model['degree']);
+
 				break;
 
 			case 'path':

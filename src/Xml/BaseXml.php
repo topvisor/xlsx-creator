@@ -9,14 +9,14 @@ use XMLWriter;
  *
  * @package  Topvisor\XlsxCreator\Xml
  */
-abstract class BaseXml{
+abstract class BaseXml {
 	/**
 	 * Создает xml код согласно $model используя XMLWriter $xml
 	 *
 	 * @param XMLWriter $xml - поток для записи xml кода
 	 * @param array|null $model - модель, согласно которой генерируется xml код
 	 */
-	abstract function render(XMLWriter $xml, array $model = null);
+	abstract public function render(XMLWriter $xml, ?array $model = null);
 
 	/**
 	 * Создает xml код согласно $model
@@ -24,7 +24,7 @@ abstract class BaseXml{
 	 * @param null $model - модель, согласно которой генерируется xml код
 	 * @return string - xml код
 	 */
-	function toXml($model = null) : string{
+	public function toXml($model = null): string {
 		$xml = new XMLWriter();
 		$xml->openMemory();
 
@@ -36,11 +36,8 @@ abstract class BaseXml{
 	/**
 	 * Обрабатывает текст перед записью в xlsx файл
 	 * Экранирует excel utf-8 символы
-	 *
-	 * @param string $text
-	 * @return string
 	 */
-	protected function prepareText(string $text) : string{
+	protected function prepareText(string $text): string {
 		$text = preg_replace('/_x\d{4}_/', '_x005F$0', $text);
 		$preparedText = "";
 
@@ -57,8 +54,7 @@ abstract class BaseXml{
 
 			if ($encode)
 				$preparedText .= sprintf("_x%04x_", $ord);
-			else
-				$preparedText .= $chr;
+				else $preparedText .= $chr;
 		}
 
 		return $preparedText;

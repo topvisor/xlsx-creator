@@ -14,7 +14,7 @@ use XMLWriter;
  *
  * @package Topvisor\XlsxCreator\Helpers
  */
-class Drawing{
+class Drawing {
 	private $worksheet;
 
 	private $empty;
@@ -33,7 +33,7 @@ class Drawing{
 	 *
 	 * @param Worksheet $worksheet - таблица
 	 */
-	function __construct(Worksheet $worksheet){
+	public function __construct(Worksheet $worksheet) {
 		$this->worksheet = $worksheet;
 
 		$this->empty = true;
@@ -42,7 +42,7 @@ class Drawing{
 		$this->nextImageId = 2;
 	}
 
-	function __destruct(){
+	public function __destruct() {
 		unset($this->worksheet);
 		unset($this->xml);
 		unset($this->relsXml);
@@ -51,23 +51,25 @@ class Drawing{
 	/**
 	 * @return bool - рисунков нет
 	 */
-	function isEmpty(): bool{
+	public function isEmpty(): bool {
 		return $this->empty;
 	}
 
 	/**
 	 * @return string|null - имя файла рисунков
 	 */
-	function getFilename(){
+	public function getFilename() {
 		if ($this->xml ?? false) $this->xml->flush();
+
 		return $this->filename;
 	}
 
 	/**
 	 * @return string|null - имя файла связей рисунков
 	 */
-	function getRelsFilename(){
+	public function getRelsFilename() {
 		if ($this->relsXml ?? false) $this->relsXml->flush();
+
 		return $this->relsFilename;
 	}
 
@@ -76,7 +78,7 @@ class Drawing{
 	 * @param Range $position - местоположение в таблице
 	 * @param string $name - имя картинки
 	 */
-	function addImage(array $image, Range $position, string $name = ''){
+	public function addImage(array $image, Range $position, string $name = '') {
 		$this->checkCommited();
 		if ($this->empty) $this->startDrawing();
 
@@ -86,7 +88,7 @@ class Drawing{
 		(new RelationshipXml())->render($this->relsXml, [
 			'id' => $rId,
 			'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-			'target' => "../media/$image[localname]"
+			'target' => "../media/$image[localname]",
 		]);
 
 		(new TwoCellAnchorXml())->render($this->xml, [
@@ -95,14 +97,14 @@ class Drawing{
 				'name' => $name,
 				'rId' => $rId,
 			],
-			'position' => $position->getModel()
+			'position' => $position->getModel(),
 		]);
 	}
 
 	/**
 	 * Зафиксировать рисунки
 	 */
-	function commit(){
+	public function commit() {
 		$this->checkCommited();
 		$this->committed = true;
 
@@ -112,7 +114,7 @@ class Drawing{
 	/**
 	 * Начать файлы рисунков и связей рисунков
 	 */
-	private function startDrawing(){
+	private function startDrawing() {
 		$this->empty = false;
 
 		$this->filename = $this->worksheet->getWorkbook()->genTempFilename();
@@ -136,7 +138,7 @@ class Drawing{
 	/**
 	 * Закончить файлы рисунков и связей рисунков
 	 */
-	private function endDrawing(){
+	private function endDrawing() {
 		if ($this->empty) return;
 
 		$this->xml->endElement();
@@ -155,7 +157,7 @@ class Drawing{
 	/**
 	 * @throws ObjectCommittedException
 	 */
-	private function checkCommited(){
+	private function checkCommited() {
 		if ($this->committed) throw new ObjectCommittedException();
 	}
 }

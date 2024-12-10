@@ -5,6 +5,7 @@ namespace Topvisor\XlsxCreator;
 use Topvisor\XlsxCreator\Exceptions\InvalidValueException;
 use Topvisor\XlsxCreator\Helpers\Comments;
 use Topvisor\XlsxCreator\Helpers\SheetRels;
+use Topvisor\XlsxCreator\Helpers\Styles;
 use Topvisor\XlsxCreator\Helpers\Validator;
 use Topvisor\XlsxCreator\Structures\Color;
 use Topvisor\XlsxCreator\Structures\Styles\Alignment\Alignment;
@@ -12,14 +13,13 @@ use Topvisor\XlsxCreator\Structures\Styles\Borders\Borders;
 use Topvisor\XlsxCreator\Structures\Styles\Font;
 use Topvisor\XlsxCreator\Structures\Styles\Style;
 use Topvisor\XlsxCreator\Structures\Values\Value;
-use Topvisor\XlsxCreator\Helpers\Styles;
 
 /**
  * Class Row. Содержит методы для работы со строкой.
  *
  * @package  Topvisor\XlsxCreator
  */
-class Row extends Style{
+class Row extends Style {
 	private $worksheet;
 	private $number;
 	private $height;
@@ -34,7 +34,7 @@ class Row extends Style{
 	 * @param Worksheet $worksheet - таблица
 	 * @param int $number - номер строки
 	 */
-	function __construct(Worksheet $worksheet, int $number){
+	public function __construct(Worksheet $worksheet, int $number) {
 		$this->worksheet = $worksheet;
 		$this->number = $number;
 
@@ -45,7 +45,7 @@ class Row extends Style{
 		$this->cells = [];
 	}
 
-	function __destruct(){
+	public function __destruct() {
 		parent::__destruct();
 
 		unset($this->worksheet);
@@ -54,14 +54,14 @@ class Row extends Style{
 	/**
 	 * @return Worksheet - таблица
 	 */
-	function getWorksheet() : Worksheet{
+	public function getWorksheet(): Worksheet {
 		return $this->worksheet;
 	}
 
 	/**
 	 * @return int - номер строки
 	 */
-	function getNumber() : int{
+	public function getNumber(): int {
 		return $this->number;
 	}
 
@@ -69,7 +69,7 @@ class Row extends Style{
 	 * @param string|null $numFmt - формат чисел ячейки
 	 * @return Style - $this
 	 */
-	function setNumFmt(string $numFmt = null) : Style{
+	public function setNumFmt(?string $numFmt = null): Style {
 		parent::setNumFmt($numFmt);
 		foreach ($this->cells as $cell) $cell->setNumFmt($numFmt);
 
@@ -80,7 +80,7 @@ class Row extends Style{
 	 * @param Font|null $font - шрифт
 	 * @return Style - $this
 	 */
-	function setFont(Font $font = null) : Style{
+	public function setFont(?Font $font = null): Style {
 		parent::setFont($font);
 		foreach ($this->cells as $cell) $cell->setFont($font);
 
@@ -91,7 +91,7 @@ class Row extends Style{
 	 * @param Color|null $color - заливка ячейки
 	 * @return Style - $this
 	 */
-	function setFill(Color $color = null) : Style{
+	public function setFill(?Color $color = null): Style {
 		parent::setFill($color);
 		foreach ($this->cells as $cell) $cell->setFill($color);
 
@@ -102,7 +102,7 @@ class Row extends Style{
 	 * @param Borders|null $borders - границы ячейки
 	 * @return Style - $this
 	 */
-	function setBorders(Borders $borders = null) : Style{
+	public function setBorders(?Borders $borders = null): Style {
 		parent::setBorders($borders);
 		foreach ($this->cells as $cell) $cell->setBorders($borders);
 
@@ -113,7 +113,7 @@ class Row extends Style{
 	 * @param Alignment|null $alignment - выравнивание текста
 	 * @return Style - $this
 	 */
-	function setAlignment(Alignment $alignment = null) : Style{
+	public function setAlignment(?Alignment $alignment = null): Style {
 		parent::setAlignment($alignment);
 		foreach ($this->cells as $cell) $cell->setAlignment($alignment);
 
@@ -123,7 +123,7 @@ class Row extends Style{
 	/**
 	 * @return null|int - высота строки
 	 */
-	function getHeight(){
+	public function getHeight() {
 		return $this->height;
 	}
 
@@ -131,17 +131,18 @@ class Row extends Style{
 	 * @param int|null $height - высота строки
 	 * @return Row - $this
 	 */
-	function setHeight(int $height = null) : self{
+	public function setHeight(?int $height = null): self {
 		Validator::validateInRange($height, 0, 409, '$height');
 
 		$this->height = $height;
+
 		return $this;
 	}
 
 	/**
 	 * @return bool - скрытая ли строка
 	 */
-	function isHidden() : bool{
+	public function isHidden(): bool {
 		return $this->hidden;
 	}
 
@@ -149,15 +150,16 @@ class Row extends Style{
 	 * @param bool $hidden - скрыть строку
 	 * @return Row - $this
 	 */
-	function setHidden(bool $hidden) : self{
+	public function setHidden(bool $hidden): self {
 		$this->hidden = $hidden;
+
 		return $this;
 	}
 
 	/**
 	 * @return int - row outline level
 	 */
-	function getOutlineLevel() : int{
+	public function getOutlineLevel(): int {
 		return $this->outlineLevel;
 	}
 
@@ -165,10 +167,11 @@ class Row extends Style{
 	 * @param int $outlineLevel - row outline level
 	 * @return Row - $this
 	 */
-	function setOutlineLevel(int $outlineLevel) : self{
+	public function setOutlineLevel(int $outlineLevel): self {
 		Validator::validateInRange($outlineLevel, 0, 409, '$outlineLevel');
 
 		$this->outlineLevel = $outlineLevel;
+
 		return $this;
 	}
 
@@ -176,7 +179,7 @@ class Row extends Style{
 	 * @param int $col - номер колонки
 	 * @return Cell - ячейка
 	 */
-	function getCell(int $col) : Cell{
+	public function getCell(int $col): Cell {
 		Validator::validateInRange($col, 1, 16384, '$col');
 
 		if (count($this->cells) < $col)
@@ -193,7 +196,7 @@ class Row extends Style{
 	 * @return Row - $this
 	 * @throws InvalidValueException
 	 */
-	function setCells(array $values = null) : self{
+	public function setCells(?array $values = null): self {
 		$this->cells = [];
 
 		if ($values)
@@ -210,22 +213,23 @@ class Row extends Style{
 	 * @return Cell - ячейка
 	 * @throws InvalidValueException
 	 */
-	function addCell($value) : Cell{
+	public function addCell($value): Cell {
 		return $this->setCell($value, count($this->cells) + 1);
 	}
 
 	/**
 	 * @return bool - есть ли в строке ячейки
 	 */
-	function hasValues(){
+	public function hasValues() {
 		foreach ($this->cells as $cell) if ($cell->getType() !== Value::TYPE_NULL) return true;
+
 		return false;
 	}
 
 	/**
 	 *	Зафиксировать строку (и предыдущие).
 	 */
-	function commit(){
+	public function commit() {
 		$this->worksheet->commitRows($this->number);
 	}
 
@@ -235,7 +239,7 @@ class Row extends Style{
 	 * @param Comments $comments - комментарии таблицы
 	 * @return array|null - модель строки
 	 */
-	function prepareToCommit(Styles $styles, SheetRels $sheetRels, Comments $comments){
+	public function prepareToCommit(Styles $styles, SheetRels $sheetRels, Comments $comments) {
 		$cellsModels = [];
 		$min = 0;
 		$max = 0;
@@ -258,7 +262,7 @@ class Row extends Style{
 			'height' => $this->height,
 			'hidden' => $this->hidden,
 			'outlineLevel' => $this->outlineLevel,
-			'collapsed' => (bool) ($this->outlineLevel && $this->outlineLevel >= $this->worksheet->getOutlineLevelRow())
+			'collapsed' => (bool) ($this->outlineLevel && $this->outlineLevel >= $this->worksheet->getOutlineLevelRow()),
 		];
 	}
 
@@ -269,7 +273,7 @@ class Row extends Style{
 	 * @param int $col - колонка ячейки
 	 * @return Cell - ячейка
 	 */
-	private function setCell($value, int $col) : Cell{
+	private function setCell($value, int $col): Cell {
 		$cell = new Cell($this, $col);
 
 		$cell->setValue($value);
@@ -287,7 +291,7 @@ class Row extends Style{
 	/**
 	 * @return bool - является ли строка не измененной
 	 */
-	private function isDefault() : bool{
+	private function isDefault(): bool {
 		if ($this->cells) return false;
 		if ($this->height) return false;
 		if ($this->hidden) return false;

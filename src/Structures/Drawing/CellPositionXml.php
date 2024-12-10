@@ -5,14 +5,14 @@ namespace Topvisor\XlsxCreator\Structures\Drawing;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class CellPositionXml extends BaseXml{
+class CellPositionXml extends BaseXml {
 	private $tag;
 
-	function __construct(string $tag){
+	public function __construct(string $tag) {
 		$this->tag = $tag;
 	}
 
-	function render(XMLWriter $xml, array $model = null){
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if (!$model) return;
 
 		$xml->startElement($this->tag);

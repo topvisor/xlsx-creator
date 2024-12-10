@@ -6,8 +6,8 @@ use Topvisor\XlsxCreator\Xml\BaseXml;
 use Topvisor\XlsxCreator\Xml\ListXml;
 use XMLWriter;
 
-class WorkbookXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+class WorkbookXml extends BaseXml {
+	public function render(XMLWriter $xml, ?array $model = null) {
 		$xml->startDocument('1.0', 'UTF-8', 'yes');
 		$xml->startElement('workbook');
 

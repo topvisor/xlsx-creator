@@ -5,14 +5,14 @@ namespace Topvisor\XlsxCreator\Xml\Simple;
 use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
-class BoolXml extends BaseXml{
+class BoolXml extends BaseXml {
 	private $tag;
 
-	function __construct(string $tag = ''){
+	public function __construct(string $tag = '') {
 		$this->tag = $tag;
 	}
 
-	function render(XMLWriter $xml, array $model = null){
+	public function render(XMLWriter $xml, ?array $model = null) {
 		if ($model && ($model[0] ?? false)) $xml->writeElement($this->tag);
 	}
 }

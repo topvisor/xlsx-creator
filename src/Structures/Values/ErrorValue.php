@@ -10,15 +10,15 @@ use Topvisor\XlsxCreator\Helpers\Validator;
  *
  * @package  Topvisor\XlsxCreator\Structures\Values
  */
-class ErrorValue extends Value{
-	const VALID_ERRORS = [
+class ErrorValue extends Value {
+	public const VALID_ERRORS = [
 		'notApplicable' => '#N/A',
 		'ref' => '#REF!',
 		'name' => '#NAME?',
 		'divZero' => '#DIV/0!',
 		'null' => '#NULL!',
 		'value' => '#VALUE!',
-		'num' => '#NUM!'
+		'num' => '#NUM!',
 	];
 
 	/**
@@ -27,7 +27,7 @@ class ErrorValue extends Value{
 	 * @param string $error - текст ошибки
 	 * @throws InvalidValueException
 	 */
-	function __construct(string $error){
+	public function __construct(string $error) {
 		Validator::validate($error, '$error', self::VALID_ERRORS);
 
 		parent::__construct($error, parent::TYPE_ERROR);
@@ -38,7 +38,7 @@ class ErrorValue extends Value{
 	 * @return Value - значение ячейки
 	 * @throws InvalidValueException
 	 */
-	static function parse($value): Value{
+	public static function parse($value): Value {
 		return new self($value);
 	}
 }
