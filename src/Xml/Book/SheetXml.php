@@ -6,7 +6,7 @@ use Topvisor\XlsxCreator\Xml\BaseXml;
 use XMLWriter;
 
 class SheetXml extends BaseXml{
-	function render(XMLWriter $xml, array $model = null){
+	function render(XMLWriter $xml, ?array $model = null){
 		if (!$model) return;
 
 		$xml->startElement('sheet');
