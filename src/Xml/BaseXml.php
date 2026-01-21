@@ -43,7 +43,7 @@ abstract class BaseXml {
 
 		for ($i = 0; $i < mb_strlen($text); $i++) {
 			$chr = mb_substr($text, $i, 1);
-			$ord = ord($chr);
+			$ord = ord($chr[0]);
 
 			$encode = true;
 			if (strlen($chr) > 1) $encode = false;
