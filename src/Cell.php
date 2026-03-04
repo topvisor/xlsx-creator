@@ -27,6 +27,7 @@ class Cell extends Style {
 	private $commentHeight;
 
 	private $value;
+	private $useSharedStringOverride;
 	private $master;
 
 	/**
@@ -44,6 +45,7 @@ class Cell extends Style {
 		$this->commentHeight = 1;
 
 		$this->value = Value::parse(null);
+		$this->useSharedStringOverride = null;
 	}
 
 	public function __destruct() {
@@ -51,6 +53,7 @@ class Cell extends Style {
 
 		unset($this->row);
 		unset($this->value);
+		unset($this->useSharedStringOverride);
 		unset($this->master);
 	}
 
@@ -63,14 +66,19 @@ class Cell extends Style {
 
 	/**
 	 * @param $value - значение ячейки
+	 * @param bool|null $useSharedString - использовать ли shared strings для строк и текста гиперссылки
 	 * @throws InvalidValueException
 	 * @return Cell - $this
 	 */
-	public function setValue($value): self {
+	public function setValue($value, ?bool $useSharedString = null): self {
 		if (!($value instanceof Value)) $value = Value::parse($value);
 
-		if ($this->master) $this->master->setValue($value);
-		else $this->value = $value;
+		if ($this->master) {
+			$this->master->setValue($value, $useSharedString);
+		} else {
+			$this->value = $value;
+			$this->useSharedStringOverride = $useSharedString;
+		}
 
 		return $this;
 	}
@@ -89,8 +97,11 @@ class Cell extends Style {
 	public function setCommentWidth(int $width): self {
 		Validator::validateInRange($width, 1, 409, '$width');
 
-		if ($this->master) $this->master->setCommentWidth($width);
-		else $this->commentWidth = $width;
+		if ($this->master) {
+			$this->master->setCommentWidth($width);
+		} else {
+			$this->commentWidth = $width;
+		}
 
 		return $this;
 	}
@@ -109,8 +120,11 @@ class Cell extends Style {
 	public function setCommentHeight(int $height): self {
 		Validator::validateInRange($height, 1, 409, '$height');
 
-		if ($this->master) $this->master->setCommentHeight($height);
-		else $this->commentHeight = $height;
+		if ($this->master) {
+			$this->master->setCommentHeight($height);
+		} else {
+			$this->commentHeight = $height;
+		}
 
 		return $this;
 	}
@@ -134,8 +148,11 @@ class Cell extends Style {
 				throw new InvalidValueException('$comment must be string or rich text');
 		}
 
-		if ($this->master) $this->master->setComment($comment);
-		else $this->comment = $comment;
+		if ($this->master) {
+			$this->master->setComment($comment);
+		} else {
+			$this->comment = $comment;
+		}
 
 		return $this;
 	}
@@ -170,8 +187,9 @@ class Cell extends Style {
 	public function prepareToCommit(Styles $styles, SheetRels $sheetRels, Comments $comments): array {
 		$workbook = $this->row->getWorksheet()->getWorkbook();
 		$value = $this->value;
+		$useSharedStrings = $this->useSharedStringOverride ?? $workbook->getUseSharedStrings();
 
-		if ($workbook->getUseSharedStrings()) {
+		if ($useSharedStrings) {
 			switch ($value->getType()) {
 				case Value::TYPE_STRING:
 					$value = $workbook->addSharedString($value);
@@ -180,8 +198,9 @@ class Cell extends Style {
 
 				case Value::TYPE_HYPERLINK:
 					$valueModel = $value->getValue();
-					if (!isset($valueModel['ssId']))
+					if (!isset($valueModel['ssId'])) {
 						$value = new HyperlinkValue($valueModel['hyperlink'], $workbook->addSharedString($valueModel['text']));
+					}
 			}
 		}
 
